@@ -1,6 +1,8 @@
 # console-table
 
-Simple table library that renders any `List<T>` or `List<List<T>>` into a nicely formatted markdown table
+Simple table library that renders any `List<T>` into a nicely formatted `markdown` table
+
+## Markdown format
 
 | Field1 | Field2            | Field3        | Field4 | Field5      | Field6 |
 | ------ | ----------------- | ------------- | ------ | ----------- | ------ |
