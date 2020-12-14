@@ -22,9 +22,9 @@
 
 using System;
 using System.Collections.Generic;
-using console_table;
+using table.lib;
 
-namespace console_table_runner
+namespace table.runner
 {
     class Program
     {
@@ -38,7 +38,7 @@ namespace console_table_runner
                 new TestClass {Field1 = 13, Field2 = "Hi very long text", Field3 = 21111121.32m, Field4 = true, Field5 = new DateTime(1970, 1,1), Field6 = 34.43}
             };
 
-            ConsoleTable<TestClass>.Initialize(list).Write();
+            Table<TestClass>.New(list).WriteConsole();
 
             //var test = new List<List<string>>
             //{
@@ -48,7 +48,7 @@ namespace console_table_runner
             //    new List<string>() {"AAA", "BBB", "CCC"}
             //};
 
-            //ConsoleTable<List<string>>.Initialize(test).Write();
+            //Table<List<string>>.New(test).WriteConsole();
         }
     }
 }

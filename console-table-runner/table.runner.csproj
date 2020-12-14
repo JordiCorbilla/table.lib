@@ -3,11 +3,11 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>console_table_runner</RootNamespace>
+    <RootNamespace>table.runner</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\console-table\console-table.csproj" />
+    <ProjectReference Include="..\console-table\table.lib.csproj" />
   </ItemGroup>
 
 </Project>

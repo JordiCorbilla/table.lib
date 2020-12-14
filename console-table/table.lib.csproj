@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>console_table</RootNamespace>
+    <RootNamespace>table.lib</RootNamespace>
   </PropertyGroup>
 
 </Project>

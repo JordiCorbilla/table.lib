@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace console_table_runner
+namespace table.runner
 {
     public class TestClass
     {

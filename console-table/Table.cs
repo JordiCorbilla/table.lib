@@ -24,19 +24,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace console_table
+namespace table.lib
 {
-    public class ConsoleTable<T>
+    public class Table<T>
     {
         public List<string> PropertyNames { get; set; }
         public Dictionary<string, int> MaxWidth { get; set; }
         private List<T> Items { get; }
 
-        public static ConsoleTable<T> Initialize(List<T> list)
+        public static Table<T> New(List<T> list)
         {
-            return new ConsoleTable<T>(list);
+            return new Table<T>(list);
         }
-        public ConsoleTable(List<T> list)
+        public Table(List<T> list)
         {
             if (list.Count <= 0) return;
             PropertyNames = new List<string>();
@@ -54,15 +54,8 @@ namespace console_table
                 foreach (var property in PropertyNames)
                 {
                     var value = GetValue(row, property);
-                    if (!MaxWidth.ContainsKey(property))
-                    {
-                        MaxWidth.Add(property, value.Length);
-                    }
-                    else
-                    {
-                        if (value.Length > MaxWidth[property])
-                            MaxWidth[property] = value.Length;
-                    }
+                    if (value.Length > MaxWidth[property])
+                        MaxWidth[property] = value.Length;
                 }
             }
         }
@@ -82,7 +75,7 @@ namespace console_table
             };
         }
 
-        public void Write()
+        public void WriteConsole()
         {
             if (Items.Count <= 0) return;
             var s = "|";
