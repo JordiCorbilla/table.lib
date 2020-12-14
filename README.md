@@ -1,8 +1,12 @@
-# console-table
+# table.lib
 
 Simple table library that renders any `List<T>` into a nicely formatted `markdown` table
 
 ## Markdown format
+
+```c#
+Table<TestClass>.New(list).WriteConsole();
+```
 
 | Field1 | Field2            | Field3        | Field4 | Field5      | Field6 |
 | ------ | ----------------- | ------------- | ------ | ----------- | ------ |
