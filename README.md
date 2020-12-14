@@ -5,7 +5,7 @@ Simple table library that renders any `List<T>` into a nicely formatted `markdow
 ## Markdown format
 
 ```c#
-Table<TestClass>.New(list).WriteConsole();
+Table<TestClass>.Add(list).WriteToConsole();
 ```
 
 | Field1 | Field2            | Field3        | Field4 | Field5      | Field6 |
