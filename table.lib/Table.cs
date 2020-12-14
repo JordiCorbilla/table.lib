@@ -37,11 +37,6 @@ namespace table.lib
             return new Table<T>(list);
         }
 
-        public static void WriteToConsole(List<T> list)
-        {
-            new Table<T>(list).WriteConsole();
-        }
-
         public Table(List<T> list)
         {
             if (list.Count <= 0) return;
@@ -81,7 +76,7 @@ namespace table.lib
             };
         }
 
-        public void WriteConsole()
+        public void WriteToConsole()
         {
             if (Items.Count <= 0) return;
             var s = "|";
