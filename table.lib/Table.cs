@@ -32,10 +32,16 @@ namespace table.lib
         public Dictionary<string, int> MaxWidth { get; set; }
         private List<T> Items { get; }
 
-        public static Table<T> New(List<T> list)
+        public static Table<T> Add(List<T> list)
         {
             return new Table<T>(list);
         }
+
+        public static void WriteToConsole(List<T> list)
+        {
+            new Table<T>(list).WriteConsole();
+        }
+
         public Table(List<T> list)
         {
             if (list.Count <= 0) return;
