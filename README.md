@@ -86,7 +86,7 @@ Table<IEnumerable<string>>.Add(test).
 
 ## Column filtering
 
-You don't want to show all the columns. Easy, just use the `FilterColumns` property:
+You don't want to show all the columns? Easy, just use the `FilterColumns` property:
 
 ```c#
 Table<IEnumerable<string>>.Add(test).
