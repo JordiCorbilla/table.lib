@@ -72,6 +72,7 @@ namespace table.lib
                 {
                     var props = row.GetType().GetProperties();
 
+                    int propertyIndex = 0;
                     foreach (var propertyInfo in props)
                     {
                         // Indexed property
@@ -86,7 +87,7 @@ namespace table.lib
                                     var res = propertyInfo.GetValue(row, new object[] {index});
                                     if (!MaxWidth.ContainsKey($"Dynamic{index}"))
                                     {
-                                        PropertyNames.Add(new PropertyName($"Dynamic{index}", index));
+                                        PropertyNames.Add(new PropertyName($"Dynamic{index}", index, propertyIndex));
                                         MaxWidth.Add($"Dynamic{index}", $"Dynamic{index}".Length);
                                     }
 
@@ -112,6 +113,8 @@ namespace table.lib
                             if (value.Length > MaxWidth[propertyInfo.Name])
                                 MaxWidth[propertyInfo.Name] = value.Length;
                         }
+
+                        propertyIndex++;
                     }
                 }
             }
@@ -121,9 +124,17 @@ namespace table.lib
         {
             if (!string.IsNullOrEmpty(property.Name))
             {
-                var properties = item.GetType().GetProperty(property.Name);
-
-                var value = properties?.GetValue(item, !property.IsCollection ? null : new object[] { property.Index });
+                object value;
+                if (property.IsCollection)
+                {
+                    var prop = item.GetType().GetProperties()[property.PropertyIndex];
+                    value = prop.GetValue(item, new object[] { property.Index });
+                }
+                else
+                {
+                    var properties = item.GetType().GetProperty(property.Name);
+                    value = properties?.GetValue(item,  null);
+                }
 
                 return value switch
                 {
@@ -147,7 +158,7 @@ namespace table.lib
             foreach (var property in PropertyNames)
             {
                 var length = MaxWidth[property.Name] - property.Name.Length;
-                s += $" {property}{new string(' ', length)} |";
+                s += $" {property.Name}{new string(' ', length)} |";
             }
             Console.WriteLine(s);
 
@@ -165,6 +176,7 @@ namespace table.lib
                 }
                 Console.WriteLine(s);
             }
+            Console.WriteLine();
         }
     }
 }
