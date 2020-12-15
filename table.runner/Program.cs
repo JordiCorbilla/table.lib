@@ -42,13 +42,22 @@ namespace table.runner
 
             var test = new List<IEnumerable<string>>
             {
-                new List<string>() {"AAA", "BBB", "CCC"},
-                new List<string>() {"AAA", "BBB", "CCC"},
-                new List<string>() {"AAA", "BBB", "CCC"},
-                new List<string>() {"AAA", "BBB", "CCC"}
+                new List<string> {"AAA", "BBB", "CCC"},
+                new List<string> {"AAA", "BBB", "CCC"},
+                new List<string> {"AAA", "BBB", "CCC"},
+                new List<string> {"AAA", "BBB", "CCC"}
             };
 
             Table<IEnumerable<string>>.Add(test).WriteToConsole();
+
+            Table<IEnumerable<string>>.Add(test).
+                OverrideColumns(new Dictionary<string, string> {{"Dynamic0","ColumnA"}}).
+                WriteToConsole();
+
+            Table<IEnumerable<string>>.Add(test).
+                OverrideColumns(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
+                FilterColumns(new Dictionary<string, bool> { { "Capacity", false }, { "Count", false } }).
+                WriteToConsole();
         }
     }
 }

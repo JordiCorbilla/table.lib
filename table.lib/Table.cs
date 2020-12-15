@@ -30,7 +30,8 @@ namespace table.lib
     {
         public List<PropertyName> PropertyNames { get; set; }
         public Dictionary<string, int> MaxWidth { get; set; }
-        public Dictionary<string, string> Headers { get; set; }
+        public Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, bool> ColumnFilter { get; set; } = new Dictionary<string, bool>();
         private List<T> Items { get; }
 
         public static Table<T> Add(List<T> list)
@@ -38,9 +39,20 @@ namespace table.lib
             return new Table<T>(list);
         }
 
-        public Table<T> OverrideHeaders(Dictionary<string, string> headers)
+        public Table<T> OverrideColumns(Dictionary<string, string> columns)
         {
-            Headers = headers;
+            Headers = columns;
+            foreach (var header in Headers)
+            {
+                if (header.Value.Length > MaxWidth[header.Key])
+                    MaxWidth[header.Key] = header.Value.Length;
+            }
+            return this;
+        }
+
+        public Table<T> FilterColumns(Dictionary<string, bool> columns)
+        {
+            ColumnFilter = columns;
             return this;
         }
 
@@ -157,12 +169,30 @@ namespace table.lib
             var s = "|";
             foreach (var property in PropertyNames)
             {
-                var length = MaxWidth[property.Name] - property.Name.Length;
-                s += $" {property.Name}{new string(' ', length)} |";
+                string headerName = property.Name;
+                if (!ColumnFilter.ContainsKey(headerName))
+                {
+                    if (Headers != null && Headers.Count > 0)
+                    {
+                        if (Headers.ContainsKey(property.Name))
+                            headerName = Headers[property.Name];
+                    }
+
+                    var length = MaxWidth[property.Name] - headerName.Length;
+                    s += $" {headerName}{new string(' ', length)} |";
+                }
             }
             Console.WriteLine(s);
 
-            s = PropertyNames.Aggregate("|", (current, property) => current + $" {new string('-', MaxWidth[property.Name])} |");
+            s = "|";
+            foreach (var name in PropertyNames)
+            {
+                if (!ColumnFilter.ContainsKey(name.Name))
+                {
+                    s = s + $" {new string('-', MaxWidth[name.Name])} |";
+                }
+            }
+
             Console.WriteLine(s);
 
             foreach (var row in Items)
@@ -170,9 +200,12 @@ namespace table.lib
                 s = "|";
                 foreach (var property in PropertyNames)
                 {
-                    var value = GetValue(row, property);
-                    var length = MaxWidth[property.Name] - value.Length;
-                    s += $" {value}{new string(' ', length)} |";
+                    if (!ColumnFilter.ContainsKey(property.Name))
+                    {
+                        var value = GetValue(row, property);
+                        var length = MaxWidth[property.Name] - value.Length;
+                        s += $" {value}{new string(' ', length)} |";
+                    }
                 }
                 Console.WriteLine(s);
             }
