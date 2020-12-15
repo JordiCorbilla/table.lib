@@ -38,17 +38,17 @@ namespace table.runner
                 new TestClass {Field1 = 13, Field2 = "Hi very long text", Field3 = 21111121.32m, Field4 = true, Field5 = new DateTime(1970, 1,1), Field6 = 34.43}
             };
 
-            Table<TestClass>.Add(list).WriteToConsole();
+            //Table<TestClass>.Add(list).WriteToConsole();
 
-            //var test = new List<List<string>>
-            //{
-            //    new List<string>() {"AAA", "BBB", "CCC"},
-            //    new List<string>() {"AAA", "BBB", "CCC"},
-            //    new List<string>() {"AAA", "BBB", "CCC"},
-            //    new List<string>() {"AAA", "BBB", "CCC"}
-            //};
+            var test = new List<IEnumerable<string>>
+            {
+                new List<string>() {"AAA", "BBB", "CCC"},
+                new List<string>() {"AAA", "BBB", "CCC"},
+                new List<string>() {"AAA", "BBB", "CCC"},
+                new List<string>() {"AAA", "BBB", "CCC"}
+            };
 
-            //Table<List<string>>.New(test).WriteConsole();
+            Table<IEnumerable<string>>.Add(test).WriteToConsole();
         }
     }
 }

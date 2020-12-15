@@ -28,8 +28,9 @@ namespace table.lib
 {
     public class Table<T>
     {
-        public List<string> PropertyNames { get; set; }
+        public List<PropertyName> PropertyNames { get; set; }
         public Dictionary<string, int> MaxWidth { get; set; }
+        public Dictionary<string, string> Headers { get; set; }
         private List<T> Items { get; }
 
         public static Table<T> Add(List<T> list)
@@ -37,43 +38,106 @@ namespace table.lib
             return new Table<T>(list);
         }
 
+        public Table<T> OverrideHeaders(Dictionary<string, string> headers)
+        {
+            Headers = headers;
+            return this;
+        }
+
         public Table(List<T> list)
         {
             if (list.Count <= 0) return;
-            PropertyNames = new List<string>();
+            PropertyNames = new List<PropertyName>();
             MaxWidth = new Dictionary<string, int>();
             Items = list;
             var properties = typeof(T).GetProperties();
             foreach (var property in properties)
             {
-                PropertyNames.Add(property.Name);
+                PropertyNames.Add(new PropertyName(property.Name));
                 MaxWidth.Add(property.Name, property.Name.Length);
             }
 
             foreach (var row in Items)
             {
-                foreach (var property in PropertyNames)
+                if (properties.Length != 0)
                 {
-                    var value = GetValue(row, property);
-                    if (value.Length > MaxWidth[property])
-                        MaxWidth[property] = value.Length;
+                    foreach (var property in PropertyNames)
+                    {
+                        var value = GetValue(row, new PropertyName(property.Name));
+                        if (value.Length > MaxWidth[property.Name])
+                            MaxWidth[property.Name] = value.Length;
+                    }
+                }
+                else
+                {
+                    var props = row.GetType().GetProperties();
+
+                    foreach (var propertyInfo in props)
+                    {
+                        // Indexed property
+                        if (propertyInfo.GetIndexParameters().Length > 0)
+                        {
+                            bool reading = true;
+                            int index = 0;
+                            while (reading)
+                            {
+                                try
+                                {
+                                    var res = propertyInfo.GetValue(row, new object[] {index});
+                                    if (!MaxWidth.ContainsKey($"Dynamic{index}"))
+                                    {
+                                        PropertyNames.Add(new PropertyName($"Dynamic{index}", index));
+                                        MaxWidth.Add($"Dynamic{index}", $"Dynamic{index}".Length);
+                                    }
+
+                                    if (res.ToString().Length > MaxWidth[$"Dynamic{index}"])
+                                        MaxWidth[$"Dynamic{index}"] = res.ToString().Length;
+                                    index++;
+                                }
+                                catch (Exception)
+                                {
+                                    reading = false;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (!MaxWidth.ContainsKey(propertyInfo.Name))
+                            {
+                                PropertyNames.Add(new PropertyName(propertyInfo.Name));
+                                MaxWidth.Add(propertyInfo.Name, propertyInfo.Name.Length);
+                            }
+
+                            var value = GetValue(row, new PropertyName(propertyInfo.Name));
+                            if (value.Length > MaxWidth[propertyInfo.Name])
+                                MaxWidth[propertyInfo.Name] = value.Length;
+                        }
+                    }
                 }
             }
         }
 
-        private static string GetValue(T item, string property)
+        private string GetValue(T item, PropertyName property)
         {
-            var value = item.GetType().GetProperty(property)?.GetValue(item, null);
-            return value switch
+            if (!string.IsNullOrEmpty(property.Name))
             {
-                string s => s,
-                int _ => value.ToString(),
-                bool _ => value.ToString(),
-                DateTime time => time.ToString("dd-MMM-yyyy"),
-                decimal value1 => value1.ToString("#,##0.00"),
-                double value1 => value1.ToString("#,##0.00"),
-                _ => (value != null ? value.ToString() : "")
-            };
+                var properties = item.GetType().GetProperty(property.Name);
+
+                var value = properties?.GetValue(item, !property.IsCollection ? null : new object[] { property.Index });
+
+                return value switch
+                {
+                    string s => s,
+                    int _ => value.ToString(),
+                    bool _ => value.ToString(),
+                    DateTime time => time.ToString("dd-MMM-yyyy"),
+                    decimal value1 => value1.ToString("#,##0.00"),
+                    double value1 => value1.ToString("#,##0.00"),
+                    _ => (value != null ? value.ToString() : "")
+                };
+            }
+            
+            return null;
         }
 
         public void WriteToConsole()
@@ -82,12 +146,12 @@ namespace table.lib
             var s = "|";
             foreach (var property in PropertyNames)
             {
-                var length = MaxWidth[property] - property.Length;
+                var length = MaxWidth[property.Name] - property.Name.Length;
                 s += $" {property}{new string(' ', length)} |";
             }
             Console.WriteLine(s);
 
-            s = PropertyNames.Aggregate("|", (current, property) => current + $" {new string('-', MaxWidth[property])} |");
+            s = PropertyNames.Aggregate("|", (current, property) => current + $" {new string('-', MaxWidth[property.Name])} |");
             Console.WriteLine(s);
 
             foreach (var row in Items)
@@ -96,7 +160,7 @@ namespace table.lib
                 foreach (var property in PropertyNames)
                 {
                     var value = GetValue(row, property);
-                    var length = MaxWidth[property] - value.Length;
+                    var length = MaxWidth[property.Name] - value.Length;
                     s += $" {value}{new string(' ', length)} |";
                 }
                 Console.WriteLine(s);
