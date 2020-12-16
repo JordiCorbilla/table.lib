@@ -28,7 +28,7 @@ namespace table.runner
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             var list = new List<TestClass>
             {

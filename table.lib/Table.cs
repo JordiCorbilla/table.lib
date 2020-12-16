@@ -22,7 +22,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace table.lib
 {
@@ -210,6 +209,11 @@ namespace table.lib
                 Console.WriteLine(s);
             }
             Console.WriteLine();
+        }
+
+        public void WriteToHtml(string fileName)
+        {
+
         }
     }
 }
