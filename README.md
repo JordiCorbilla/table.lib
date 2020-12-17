@@ -110,3 +110,14 @@ Table<IEnumerable<string>>.Add(test).
 | AAA      | BBB      | CCC      |
 | AAA      | BBB      | CCC      |
 | AAA      | BBB      | CCC      |
+
+## HTML Output
+
+Transform your output into a nicely formatted HTML table
+
+```c#
+Table<IEnumerable<string>>.Add(test).
+    OverrideColumns(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
+    FilterColumns(new Dictionary<string, bool> { { "Capacity", false }, { "Count", false } }).
+    WriteToHtml("C:\temp\file.html");
+```
