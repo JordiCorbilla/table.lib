@@ -50,6 +50,11 @@ namespace table.lib
                 value = value.Replace(Environment.NewLine, " ");
             }
 
+            if (value.Contains("\n"))
+            {
+                value = value.Replace("\n", " ");
+            }
+
             return value;
         }
     }
