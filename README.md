@@ -263,7 +263,7 @@ Real HTML output:
 
 ## CSV Output
 
-Trasform your output into a nicelt formatted CSV file
+Trasform your output into a nicely formatted `CSV` file
 
 ```c#
 Table<TestClass>.Add(list).
