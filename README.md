@@ -127,8 +127,139 @@ Transform your output into a nicely formatted HTML table
 Table<IEnumerable<string>>.Add(test).
     OverrideColumns(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
     FilterColumns(new Dictionary<string, bool> { { "Capacity", false }, { "Count", false } }).
-    WriteToHtml("C:\temp\file.html");
+    WriteToHtml(@"C:\temp\test.html");
+
+Table<TestClass>.Add(list).
+    WriteToHtml(@"C:\temp\test-list.html");
 ```
+
+Sample generated code:
+
+```html
+<table style="border-collapse: collapse; width: 100%;">
+<tr>
+<th style="text-align: center; background-color: #052a3d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Field1</th>
+<th style="text-align: center; background-color: #052a3d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Field2</th>
+<th style="text-align: center; background-color: #052a3d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Field3</th>
+<th style="text-align: center; background-color: #052a3d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Field4</th>
+<th style="text-align: center; background-color: #052a3d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Field5</th>
+<th style="text-align: center; background-color: #052a3d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Field6</th>
+</tr>
+<tr>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">321121</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Hi 312321</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">2,121.32</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">True</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">01-Jan-1970</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">34.43</td>
+</tr>
+<tr>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">32321</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Hi long text</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">21,111,111.32</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">True</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">01-Jan-1970</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">34.43</td>
+</tr>
+<tr>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">321</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Hi longer text</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">2,121.32</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">True</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">01-Jan-1970</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">34.43</td>
+</tr>
+<tr>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">13</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Hi very long text</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">21,111,121.32</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">True</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">01-Jan-1970</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">34.43</td>
+</tr>
+<tr>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">13</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Hi very, long text</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">21,111,121.32</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">True</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">01-Jan-1970</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">34.43</td>
+</tr>
+<tr>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">13</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Hi "very" long<br> text</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">21,111,121.32</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">True</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">01-Jan-1970</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">34.43</td>
+</tr>
+</table>
+```
+
+Sample output:
+
+<table style="border-collapse: collapse; width: 100%;">
+<tr>
+<th style="text-align: center; background-color: #052a3d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Field1</th>
+<th style="text-align: center; background-color: #052a3d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Field2</th>
+<th style="text-align: center; background-color: #052a3d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Field3</th>
+<th style="text-align: center; background-color: #052a3d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Field4</th>
+<th style="text-align: center; background-color: #052a3d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Field5</th>
+<th style="text-align: center; background-color: #052a3d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Field6</th>
+</tr>
+<tr>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">321121</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Hi 312321</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">2,121.32</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">True</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">01-Jan-1970</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">34.43</td>
+</tr>
+<tr>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">32321</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Hi long text</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">21,111,111.32</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">True</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">01-Jan-1970</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">34.43</td>
+</tr>
+<tr>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">321</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Hi longer text</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">2,121.32</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">True</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">01-Jan-1970</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">34.43</td>
+</tr>
+<tr>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">13</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Hi very long text</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">21,111,121.32</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">True</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">01-Jan-1970</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">34.43</td>
+</tr>
+<tr>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">13</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Hi very, long text</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">21,111,121.32</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">True</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">01-Jan-1970</td>
+<td style="text-align: right; color: black; background-color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">34.43</td>
+</tr>
+<tr>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">13</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">Hi "very" long<br> text</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">21,111,121.32</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">True</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">01-Jan-1970</td>
+<td style="text-align: right; color: black; background-color: #f2f2f2;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;">34.43</td>
+</tr>
+</table>
+
+Real HTML output:
+
+![htmlresult](htmlresult.png)
 
 ## CSV Output
 
