@@ -119,6 +119,20 @@ Table<IEnumerable<string>>.Add(test).
 | AAA      | BBB      | CCC      |
 | AAA      | BBB      | CCC      |
 
+## Column Justification
+
+You need one of the columns, right aligned or centered? Use the column justification option.
+
+```c#
+Table<IEnumerable<string>>.Add(test).
+    OverrideColumns(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
+    FilterColumns(new[] { "Capacity", "Count" }).
+    ColumnJustification(new Dictionary<string, TextJustification>{{"Dynamic0", TextJustification.Right}}).
+    WriteToConsole();
+```
+
+Note that this will only affect `markdown`, `console` and `html` outputs and only their data. Columns will remain left aligned.
+
 ## HTML Output
 
 Transform your output into a nicely formatted HTML table
