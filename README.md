@@ -99,7 +99,7 @@ You don't want to show all the columns? Easy, just use the `FilterColumns` prope
 ```c#
 Table<IEnumerable<string>>.Add(test).
     OverrideColumns(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-    FilterColumns(new Dictionary<string, bool> { { "Capacity", false }, { "Count", false } }).
+    FilterColumns(new []{ "Capacity", "Count"}).
     WriteToConsole();
 ```
 
@@ -126,7 +126,7 @@ Transform your output into a nicely formatted HTML table
 ```c#
 Table<IEnumerable<string>>.Add(test).
     OverrideColumns(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-    FilterColumns(new Dictionary<string, bool> { { "Capacity", false }, { "Count", false } }).
+    FilterColumns(new []{ "Capacity", "Count"}).
     WriteToHtml(@"C:\temp\test.html");
 
 Table<TestClass>.Add(list).
