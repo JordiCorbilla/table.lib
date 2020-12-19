@@ -1,6 +1,6 @@
 ﻿//MIT License
 
-//Copyright (c) 2020 Jordi Corbilla
+//Copyright (c) 2020-2021 Jordi Corbilla
 
 //Permission is hereby granted, free of charge, to any person obtaining a copy
 //of this software and associated documentation files (the "Software"), to deal
@@ -68,6 +68,14 @@ namespace table.runner
 
             Table<TestClass>.Add(list).
                 WriteToCsv(@"C:\temp\test-list.csv");
+
+            Table<IEnumerable<string>>.Add(test).
+                OverrideColumns(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
+                FilterColumns(new Dictionary<string, bool> { { "Capacity", false }, { "Count", false } }).
+                WriteToHtml(@"C:\temp\test.html");
+
+            Table<TestClass>.Add(list).
+                WriteToHtml(@"C:\temp\test-list.html");
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿//MIT License
 
-//Copyright (c) 2020 Jordi Corbilla
+//Copyright (c) 2020-2021 Jordi Corbilla
 
 //Permission is hereby granted, free of charge, to any person obtaining a copy
 //of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace table.lib
@@ -42,10 +43,10 @@ namespace table.lib
         public Table<T> OverrideColumns(Dictionary<string, string> columns)
         {
             Headers = columns;
-            foreach (var header in Headers)
+            foreach (var (key, value) in Headers)
             {
-                if (header.Value.Length > MaxWidth[header.Key])
-                    MaxWidth[header.Key] = header.Value.Length;
+                if (value.Length > MaxWidth[key])
+                    MaxWidth[key] = value.Length;
             }
             return this;
         }
@@ -84,14 +85,14 @@ namespace table.lib
                 {
                     var props = row.GetType().GetProperties();
 
-                    int propertyIndex = 0;
+                    var propertyIndex = 0;
                     foreach (var propertyInfo in props)
                     {
                         // Indexed property
                         if (propertyInfo.GetIndexParameters().Length > 0)
                         {
                             bool reading = true;
-                            int index = 0;
+                            var index = 0;
                             while (reading)
                             {
                                 try
@@ -132,35 +133,32 @@ namespace table.lib
             }
         }
 
-        private string GetValue(T item, PropertyName property)
+        private static string GetValue(T item, PropertyName property)
         {
-            if (!string.IsNullOrEmpty(property.Name))
+            if (string.IsNullOrEmpty(property.Name)) return null;
+            object value;
+            if (property.IsCollection)
             {
-                object value;
-                if (property.IsCollection)
-                {
-                    var prop = item.GetType().GetProperties()[property.PropertyIndex];
-                    value = prop.GetValue(item, new object[] { property.Index });
-                }
-                else
-                {
-                    var properties = item.GetType().GetProperty(property.Name);
-                    value = properties?.GetValue(item,  null);
-                }
-
-                return value switch
-                {
-                    string s => s,
-                    int _ => value.ToString(),
-                    bool _ => value.ToString(),
-                    DateTime time => time.ToString("dd-MMM-yyyy"),
-                    decimal value1 => value1.ToString("#,##0.00"),
-                    double value1 => value1.ToString("#,##0.00"),
-                    _ => (value != null ? value.ToString() : "")
-                };
+                var prop = item.GetType().GetProperties()[property.PropertyIndex];
+                value = prop.GetValue(item, new object[] { property.Index });
             }
-            
-            return null;
+            else
+            {
+                var properties = item.GetType().GetProperty(property.Name);
+                value = properties?.GetValue(item,  null);
+            }
+
+            return value switch
+            {
+                string s => s,
+                int _ => value.ToString(),
+                bool _ => value.ToString(),
+                DateTime time => time.ToString("dd-MMM-yyyy"),
+                decimal value1 => value1.ToString("#,##0.00"),
+                double value1 => value1.ToString("#,##0.00"),
+                _ => (value != null ? value.ToString() : "")
+            };
+
         }
 
         public void WriteToConsole()
@@ -169,29 +167,21 @@ namespace table.lib
             var s = "|";
             foreach (var property in PropertyNames)
             {
-                string headerName = property.Name;
-                if (!ColumnFilter.ContainsKey(headerName))
+                var headerName = property.Name;
+                if (ColumnFilter.ContainsKey(headerName)) continue;
+                if (Headers != null && Headers.Count > 0)
                 {
-                    if (Headers != null && Headers.Count > 0)
-                    {
-                        if (Headers.ContainsKey(property.Name))
-                            headerName = Headers[property.Name];
-                    }
-
-                    var length = MaxWidth[property.Name] - headerName.Length;
-                    s += $" {headerName.ToValidOutput()}{new string(' ', length)} |";
+                    if (Headers.ContainsKey(property.Name))
+                        headerName = Headers[property.Name];
                 }
+
+                var length = MaxWidth[property.Name] - headerName.Length;
+                s += $" {headerName.ToValidOutput()}{new string(' ', length)} |";
             }
             Console.WriteLine(s);
 
-            s = "|";
-            foreach (var name in PropertyNames)
-            {
-                if (!ColumnFilter.ContainsKey(name.Name))
-                {
-                    s = s + $" {new string('-', MaxWidth[name.Name])} |";
-                }
-            }
+            s = PropertyNames.Where(name => !ColumnFilter.ContainsKey(name.Name))
+                .Aggregate("|", (current, name) => current + $" {new string('-', MaxWidth[name.Name])} |");
 
             Console.WriteLine(s);
 
@@ -200,12 +190,10 @@ namespace table.lib
                 s = "|";
                 foreach (var property in PropertyNames)
                 {
-                    if (!ColumnFilter.ContainsKey(property.Name))
-                    {
-                        var value = GetValue(row, property);
-                        var length = MaxWidth[property.Name] - value.Length;
-                        s += $" {value.ToValidOutput()}{new string(' ', length)} |";
-                    }
+                    if (ColumnFilter.ContainsKey(property.Name)) continue;
+                    var value = GetValue(row, property);
+                    var length = MaxWidth[property.Name] - value.Length;
+                    s += $" {value.ToValidOutput()}{new string(' ', length)} |";
                 }
                 Console.WriteLine(s);
             }
@@ -214,7 +202,44 @@ namespace table.lib
 
         public void WriteToHtml(string fileName)
         {
+            var stringBuilder = new StringBuilder();
+            if (Items.Count <= 0) return;
+            stringBuilder.AppendLine("<table style=\"border-collapse: collapse; width: 100%;\">");
+            stringBuilder.AppendLine("<tr>");
+            foreach (var property in PropertyNames)
+            {
+                var headerName = property.Name;
+                if (ColumnFilter.ContainsKey(headerName)) continue;
+                if (Headers != null && Headers.Count > 0)
+                {
+                    if (Headers.ContainsKey(property.Name))
+                        headerName = Headers[property.Name];
+                }
 
+                stringBuilder.AppendLine($"<th style=\"text-align: center; background-color: #052a3d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">{headerName.ToHtml()}</th>");
+            }
+
+            stringBuilder.AppendLine("</tr>");
+
+            var rowNumber = 1;
+            foreach (var row in Items)
+            {
+                stringBuilder.AppendLine("<tr>");
+                foreach (var property in PropertyNames)
+                {
+                    if (ColumnFilter.ContainsKey(property.Name)) continue;
+                    var color = (rowNumber % 2 == 0) ? "#f2f2f2" : "white";
+                    var value = GetValue(row, property);
+                    stringBuilder.AppendLine($"<td style=\"text-align: right; color: black; background-color: {color};padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">{value.ToHtml()}</td>");
+                }
+                rowNumber++;
+                stringBuilder.AppendLine("</tr>");
+            }
+
+            stringBuilder.AppendLine("</table>");
+
+            using var file = new System.IO.StreamWriter(fileName);
+            file.WriteLine(stringBuilder.ToString());
         }
 
         public void WriteToCsv(string fileName)
@@ -224,17 +249,15 @@ namespace table.lib
             var s = "";
             foreach (var property in PropertyNames)
             {
-                string headerName = property.Name;
-                if (!ColumnFilter.ContainsKey(headerName))
+                var headerName = property.Name;
+                if (ColumnFilter.ContainsKey(headerName)) continue;
+                if (Headers != null && Headers.Count > 0)
                 {
-                    if (Headers != null && Headers.Count > 0)
-                    {
-                        if (Headers.ContainsKey(property.Name))
-                            headerName = Headers[property.Name];
-                    }
-
-                    s += $"{headerName.ToCsv()},";
+                    if (Headers.ContainsKey(property.Name))
+                        headerName = Headers[property.Name];
                 }
+
+                s += $"{headerName.ToCsv()},";
             }
 
             s = s.Remove(s.Length - 1);
@@ -242,15 +265,8 @@ namespace table.lib
 
             foreach (var row in Items)
             {
-                s = "";
-                foreach (var property in PropertyNames)
-                {
-                    if (!ColumnFilter.ContainsKey(property.Name))
-                    {
-                        var value = GetValue(row, property);
-                        s += $"{value.ToCsv()},";
-                    }
-                }
+                s = (from property in PropertyNames where !ColumnFilter.ContainsKey(property.Name) 
+                    select GetValue(row, property)).Aggregate("", (current, value) => current + $"{value.ToCsv()},");
                 s = s.Remove(s.Length - 1);
                 stringBuilder.AppendLine(s);
             }

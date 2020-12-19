@@ -1,6 +1,6 @@
 ﻿//MIT License
 
-//Copyright (c) 2020 Jordi Corbilla
+//Copyright (c) 2020-2021 Jordi Corbilla
 
 //Permission is hereby granted, free of charge, to any person obtaining a copy
 //of this software and associated documentation files (the "Software"), to deal
@@ -53,6 +53,21 @@ namespace table.lib
             if (value.Contains("\n"))
             {
                 value = value.Replace("\n", " ");
+            }
+
+            return value;
+        }
+
+        public static string ToHtml(this string value)
+        {
+            if (value.Contains(Environment.NewLine))
+            {
+                value = value.Replace(Environment.NewLine, "<br>");
+            }
+
+            if (value.Contains("\n"))
+            {
+                value = value.Replace("\n", "<br>");
             }
 
             return value;
