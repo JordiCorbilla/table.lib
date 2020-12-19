@@ -64,6 +64,12 @@ namespace table.runner
             Table<IEnumerable<string>>.Add(test).
                 OverrideColumns(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
                 FilterColumns(new[] { "Capacity", "Count" }).
+                ColumnJustification(new Dictionary<string, TextJustification>{{"Dynamic0", TextJustification.Right}}).
+                WriteToConsole();
+
+            Table<IEnumerable<string>>.Add(test).
+                OverrideColumns(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
+                FilterColumns(new[] { "Capacity", "Count" }).
                 WriteToCsv(@"C:\temp\test.csv");
 
             Table<TestClass>.Add(list).

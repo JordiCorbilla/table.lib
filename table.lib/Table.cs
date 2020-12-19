@@ -34,6 +34,7 @@ namespace table.lib
         public Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>();
         public Dictionary<string, bool> ColumnFilter { get; set; } = new Dictionary<string, bool>();
         private List<T> Items { get; }
+        public Dictionary<string, TextJustification> ColumnFormat { get; set; } = new Dictionary<string, TextJustification>();
 
         public static Table<T> Add(List<T> list)
         {
@@ -53,12 +54,14 @@ namespace table.lib
 
         public Table<T> FilterColumns(string[] columns)
         {
-            var filter = new Dictionary<string, bool>();
-            foreach (var column in columns)
-            {
-                filter.Add(column, false);
-            }
+            var filter = columns.ToDictionary(column => column, column => false);
             ColumnFilter = filter;
+            return this;
+        }
+
+        public Table<T> ColumnJustification(Dictionary<string, TextJustification> columns)
+        {
+            ColumnFormat = columns;
             return this;
         }
 
