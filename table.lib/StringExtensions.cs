@@ -20,28 +20,37 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
+using System;
+
 namespace table.lib
 {
-    public class PropertyName
+    public static class StringExtensions
     {
-        public string Name { get; set; }
-        public int Index { get; set; }
-        public bool IsCollection { get; set; }
-        public int PropertyIndex { get; set; }
-
-        public PropertyName(string name)
+        public static string ToCsv(this string value)
         {
-            Name = name;
-            Index = 0;
-            IsCollection = false;
+            var enclose = false;
+            if (value.Contains("\""))
+            {
+                value = value.Replace("\"", "\"\"");
+                enclose = true;
+            }
+
+            if (value.Contains(Environment.NewLine) || value.Contains(","))
+            {
+                enclose = true;
+            }
+
+            return enclose ? $"\"{value}\"" : value;
         }
 
-        public PropertyName(string name, int index, int propertyIndex)
+        public static string ToValidOutput(this string value)
         {
-            Name = name;
-            Index = index;
-            PropertyIndex = propertyIndex;
-            IsCollection = true;
+            if (value.Contains(Environment.NewLine))
+            {
+                value = value.Replace(Environment.NewLine, " ");
+            }
+
+            return value;
         }
     }
 }

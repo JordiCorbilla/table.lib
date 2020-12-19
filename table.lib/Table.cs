@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace table.lib
 {
@@ -178,7 +179,7 @@ namespace table.lib
                     }
 
                     var length = MaxWidth[property.Name] - headerName.Length;
-                    s += $" {headerName}{new string(' ', length)} |";
+                    s += $" {headerName.ToValidOutput()}{new string(' ', length)} |";
                 }
             }
             Console.WriteLine(s);
@@ -203,7 +204,7 @@ namespace table.lib
                     {
                         var value = GetValue(row, property);
                         var length = MaxWidth[property.Name] - value.Length;
-                        s += $" {value}{new string(' ', length)} |";
+                        s += $" {value.ToValidOutput()}{new string(' ', length)} |";
                     }
                 }
                 Console.WriteLine(s);
@@ -214,6 +215,48 @@ namespace table.lib
         public void WriteToHtml(string fileName)
         {
 
+        }
+
+        public void WriteToCsv(string fileName)
+        {
+            var stringBuilder = new StringBuilder();
+            if (Items.Count <= 0) return;
+            var s = "";
+            foreach (var property in PropertyNames)
+            {
+                string headerName = property.Name;
+                if (!ColumnFilter.ContainsKey(headerName))
+                {
+                    if (Headers != null && Headers.Count > 0)
+                    {
+                        if (Headers.ContainsKey(property.Name))
+                            headerName = Headers[property.Name];
+                    }
+
+                    s += $"{headerName.ToCsv()},";
+                }
+            }
+
+            s = s.Remove(s.Length - 1);
+            stringBuilder.AppendLine(s);
+
+            foreach (var row in Items)
+            {
+                s = "";
+                foreach (var property in PropertyNames)
+                {
+                    if (!ColumnFilter.ContainsKey(property.Name))
+                    {
+                        var value = GetValue(row, property);
+                        s += $"{value.ToCsv()},";
+                    }
+                }
+                s = s.Remove(s.Length - 1);
+                stringBuilder.AppendLine(s);
+            }
+
+            using var file = new System.IO.StreamWriter(fileName);
+            file.WriteLine(stringBuilder.ToString());
         }
     }
 }
