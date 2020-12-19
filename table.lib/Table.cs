@@ -51,9 +51,14 @@ namespace table.lib
             return this;
         }
 
-        public Table<T> FilterColumns(Dictionary<string, bool> columns)
+        public Table<T> FilterColumns(string[] columns)
         {
-            ColumnFilter = columns;
+            var filter = new Dictionary<string, bool>();
+            foreach (var column in columns)
+            {
+                filter.Add(column, false);
+            }
+            ColumnFilter = filter;
             return this;
         }
 

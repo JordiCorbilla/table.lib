@@ -58,12 +58,12 @@ namespace table.runner
 
             Table<IEnumerable<string>>.Add(test).
                 OverrideColumns(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-                FilterColumns(new Dictionary<string, bool> { { "Capacity", false }, { "Count", false } }).
+                FilterColumns(new []{ "Capacity", "Count"}).
                 WriteToConsole();
 
             Table<IEnumerable<string>>.Add(test).
                 OverrideColumns(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-                FilterColumns(new Dictionary<string, bool> { { "Capacity", false }, { "Count", false } }).
+                FilterColumns(new[] { "Capacity", "Count" }).
                 WriteToCsv(@"C:\temp\test.csv");
 
             Table<TestClass>.Add(list).
@@ -71,7 +71,7 @@ namespace table.runner
 
             Table<IEnumerable<string>>.Add(test).
                 OverrideColumns(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-                FilterColumns(new Dictionary<string, bool> { { "Capacity", false }, { "Count", false } }).
+                FilterColumns(new[] { "Capacity", "Count" }).
                 WriteToHtml(@"C:\temp\test.html");
 
             Table<TestClass>.Add(list).
