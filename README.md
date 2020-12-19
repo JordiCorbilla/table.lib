@@ -9,20 +9,28 @@ Table<TestClass>.Add(list).WriteToConsole();
 ```
 
 ```bash
-| Field1 | Field2            | Field3        | Field4 | Field5      | Field6 |
-| ------ | ----------------- | ------------- | ------ | ----------- | ------ |
-| 321121 | Hi 312321         | 2,121.32      | True   | 01-Jan-1970 | 34.43  |
-| 32321  | Hi long text      | 21,111,111.32 | True   | 01-Jan-1970 | 34.43  |
-| 321    | Hi longer text    | 2,121.32      | True   | 01-Jan-1970 | 34.43  |
-| 13     | Hi very long text | 21,111,121.32 | True   | 01-Jan-1970 | 34.43  |
+| Field1 | Field2               | Field3        | Field4 | Field5      | Field6 |
+| ------ | -------------------- | ------------- | ------ | ----------- | ------ |
+| 321121 | Hi 312321            | 2,121.32      | True   | 01-Jan-1970 | 34.43  |
+| 32321  | Hi long text         | 21,111,111.32 | True   | 01-Jan-1970 | 34.43  |
+| 321    | Hi longer text       | 2,121.32      | True   | 01-Jan-1970 | 34.43  |
+| 13     | Hi very long text    | 21,111,121.32 | True   | 01-Jan-1970 | 34.43  |
+| 13     | Hi very, long text   | 21,111,121.32 | True   | 01-Jan-1970 | 34.43  |
+| 13     | Hi "very" long  text | 21,111,121.32 | True   | 01-Jan-1970 | 34.43  |
 ```
 
-| Field1 | Field2            | Field3        | Field4 | Field5      | Field6 |
-| ------ | ----------------- | ------------- | ------ | ----------- | ------ |
-| 321121 | Hi 312321         | 2,121.32      | True   | 01-Jan-1970 | 34.43  |
-| 32321  | Hi long text      | 21,111,111.32 | True   | 01-Jan-1970 | 34.43  |
-| 321    | Hi longer text    | 2,121.32      | True   | 01-Jan-1970 | 34.43  |
-| 13     | Hi very long text | 21,111,121.32 | True   | 01-Jan-1970 | 34.43  |
+| Field1 | Field2               | Field3        | Field4 | Field5      | Field6 |
+| ------ | -------------------- | ------------- | ------ | ----------- | ------ |
+| 321121 | Hi 312321            | 2,121.32      | True   | 01-Jan-1970 | 34.43  |
+| 32321  | Hi long text         | 21,111,111.32 | True   | 01-Jan-1970 | 34.43  |
+| 321    | Hi longer text       | 2,121.32      | True   | 01-Jan-1970 | 34.43  |
+| 13     | Hi very long text    | 21,111,121.32 | True   | 01-Jan-1970 | 34.43  |
+| 13     | Hi very, long text   | 21,111,121.32 | True   | 01-Jan-1970 | 34.43  |
+| 13     | Hi "very" long  text | 21,111,121.32 | True   | 01-Jan-1970 | 34.43  |
+
+Considerations:
+
+- Any `CRLF` will be automatically transformed into a space ` ` for easy representation of the output
 
 ## Dynamic Fields
 
@@ -121,3 +129,29 @@ Table<IEnumerable<string>>.Add(test).
     FilterColumns(new Dictionary<string, bool> { { "Capacity", false }, { "Count", false } }).
     WriteToHtml("C:\temp\file.html");
 ```
+
+## CSV Output
+
+Trasform your output into a nicelt formatted CSV file
+
+```c#
+Table<TestClass>.Add(list).
+    WriteToCsv(@"C:\temp\test-list.csv");
+```
+
+The format of the file can be seen here:
+
+```bash
+Field1,Field2,Field3,Field4,Field5,Field6
+321121,Hi 312321,"2,121.32",True,01-Jan-1970,34.43
+32321,Hi long text,"21,111,111.32",True,01-Jan-1970,34.43
+321,Hi longer text,"2,121.32",True,01-Jan-1970,34.43
+13,Hi very long text,"21,111,121.32",True,01-Jan-1970,34.43
+13,"Hi very, long text","21,111,121.32",True,01-Jan-1970,34.43
+13,"Hi ""very"" long
+ text","21,111,121.32",True,01-Jan-1970,34.43
+```
+
+Note that we use the [CSV standard](https://tools.ietf.org/html/rfc4180) when processing `CRLF`, `"` or `,` characters surrouding the value with double quotes. 
+
+![csvoutput](csvoutput.png)
