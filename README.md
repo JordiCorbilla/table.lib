@@ -1,6 +1,6 @@
 # table.lib
 
-Simple table library that renders any `List<T>` into a nicely formatted `markdown`, `html` or `console` table
+Simple table library that renders any `List<T>` into a nicely formatted `markdown`, `csv`, `html` or `console` table, allowing for extra formats.
 
 ## Markdown format
 
