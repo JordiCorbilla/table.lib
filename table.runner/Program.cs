@@ -54,7 +54,7 @@ namespace table.runner
 
             Table<IEnumerable<string>>.Add(test).
                 OverrideColumns(new Dictionary<string, string> {{"Dynamic0","ColumnA"}}).
-                WriteToConsole();
+                ToMarkDown(@"C:\temp\test.md", true);
 
             Table<IEnumerable<string>>.Add(test).
                 OverrideColumns(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).

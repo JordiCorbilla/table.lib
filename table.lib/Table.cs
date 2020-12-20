@@ -208,7 +208,7 @@ namespace table.lib
             Console.WriteLine();
         }
 
-        public void WriteToMarkDown(string fileName)
+        public void ToMarkDown(string fileName, bool consoleVerbose = false)
         {
             if (Items.Count <= 0) return;
             var stringBuilder = new StringBuilder();
@@ -234,7 +234,23 @@ namespace table.lib
                 if (!ColumnFilter.ContainsKey(name.Name))
                 {
                     var columnSeparator = $" {new string('-', MaxWidth[name.Name])} |";
-                    s = s + columnSeparator;
+                    if (ColumnFormat.ContainsKey(name.Name))
+                    {
+                        switch (ColumnFormat[name.Name])
+                        {
+                            case TextJustification.Centered:
+                                columnSeparator = columnSeparator.Replace("- ", ": ");
+                                columnSeparator = columnSeparator.Replace(" -", " :");
+                                break;
+                            case TextJustification.Right:
+                                columnSeparator = columnSeparator.Replace("- ", ": ");
+                                break;
+                            case TextJustification.Left:
+                                columnSeparator = columnSeparator.Replace(" -", " :");
+                                break;
+                        }
+                    }
+                    s += columnSeparator;
                 }
             }
 
@@ -256,6 +272,9 @@ namespace table.lib
 
             using var file = new System.IO.StreamWriter(fileName);
             file.WriteLine(stringBuilder.ToString());
+
+            if (consoleVerbose)
+                Console.WriteLine(stringBuilder.ToString());
         }
 
         public void WriteToHtml(string fileName)
