@@ -99,7 +99,7 @@ namespace table.lib
                         // Indexed property (collections)
                         if (propertyInfo.GetIndexParameters().Length > 0)
                         {
-                            bool reading = true;
+                            var reading = true;
                             var index = 0;
                             while (reading)
                             {
@@ -231,27 +231,29 @@ namespace table.lib
             s = "|";
             foreach (var name in PropertyNames)
             {
-                if (!ColumnFilter.ContainsKey(name.Name))
+                if (ColumnFilter.ContainsKey(name.Name)) continue;
+                var columnSeparator = $" {new string('-', MaxWidth[name.Name])} |";
+                if (ColumnFormat.ContainsKey(name.Name))
                 {
-                    var columnSeparator = $" {new string('-', MaxWidth[name.Name])} |";
-                    if (ColumnFormat.ContainsKey(name.Name))
+                    switch (ColumnFormat[name.Name])
                     {
-                        switch (ColumnFormat[name.Name])
-                        {
-                            case TextJustification.Centered:
-                                columnSeparator = columnSeparator.Replace("- ", ": ");
-                                columnSeparator = columnSeparator.Replace(" -", " :");
-                                break;
-                            case TextJustification.Right:
-                                columnSeparator = columnSeparator.Replace("- ", ": ");
-                                break;
-                            case TextJustification.Left:
-                                columnSeparator = columnSeparator.Replace(" -", " :");
-                                break;
-                        }
+                        case TextJustification.Centered:
+                            columnSeparator = columnSeparator.Replace("- ", ": ");
+                            columnSeparator = columnSeparator.Replace(" -", " :");
+                            break;
+                        case TextJustification.Right:
+                            columnSeparator = columnSeparator.Replace("- ", ": ");
+                            break;
+                        case TextJustification.Left:
+                            columnSeparator = columnSeparator.Replace(" -", " :");
+                            break;
+                        case TextJustification.Justified:
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
-                    s += columnSeparator;
                 }
+                s += columnSeparator;
             }
 
             stringBuilder.AppendLine(s);
