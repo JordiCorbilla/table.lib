@@ -5,7 +5,7 @@ Simple `c#` table library that renders any `List<T>` into a nicely formatted `ma
 ## Markdown format
 
 ```c#
-Table<TestClass>.Add(list).WriteToConsole();
+Table<TestClass>.Add(list).ToConsole();
 ```
 
 ```bash
@@ -30,7 +30,7 @@ Table<TestClass>.Add(list).WriteToConsole();
 
 Considerations:
 
-- Any `CRLF` will be automatically transformed into a space ` ` for easy representation of the output
+- Any `CRLF` will be automatically transformed into a space ` ` for an easy representation of the output
 
 ## Dynamic Fields
 
@@ -45,7 +45,7 @@ var test = new List<IEnumerable<string>>
     new List<string>() {"AAA", "BBB", "CCC"}
 };
 
-Table<IEnumerable<string>>.Add(test).WriteToConsole();
+Table<IEnumerable<string>>.Add(test).ToConsole();
 ```
 
 ```bash
@@ -66,12 +66,12 @@ Table<IEnumerable<string>>.Add(test).WriteToConsole();
 
 ## Column Name change
 
-If the name of the column is not of your liking, you can change it via `OverrideColumns` and provide your preferred name. Note that this will also alter the column width to allow for more room if the new name is larger than the previous one.
+If the name of the column is not of your liking, you can change it via `OverrideColumnsNames` and provide your preferred name. Note that this will also alter the column width to allow for more room if the new name is larger than the previous one.
 
 ```c#
 Table<IEnumerable<string>>.Add(test).
-    OverrideColumns(new Dictionary<string, string> {{"Dynamic0","ColumnA"}}).
-    WriteToConsole();
+    OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0","ColumnA"}}).
+    ToConsole();
 ```
 
 ```bash
@@ -94,13 +94,13 @@ Table<IEnumerable<string>>.Add(test).
 
 ## Column filtering
 
-You don't want to show all the columns? Easy, just use the `FilterColumns` property:
+You don't want to show all the columns? Easy, just use the `FilterOutColumns` property:
 
 ```c#
 Table<IEnumerable<string>>.Add(test).
-    OverrideColumns(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-    FilterColumns(new []{ "Capacity", "Count"}).
-    WriteToConsole();
+    OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
+    FilterOutColumns(new []{ "Capacity", "Count"}).
+    ToConsole();
 ```
 
 ```bash
@@ -125,13 +125,29 @@ You need one of the columns, right aligned or centered? Use the column justifica
 
 ```c#
 Table<IEnumerable<string>>.Add(test).
-    OverrideColumns(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-    FilterColumns(new[] { "Capacity", "Count" }).
-    ColumnJustification(new Dictionary<string, TextJustification>{{"Dynamic0", TextJustification.Right}}).
-    WriteToConsole();
+    OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
+    FilterOutColumns(new[] { "Capacity", "Count" }).
+    ColumnContentTextJustification(new Dictionary<string, TextJustification>{{"Dynamic0", TextJustification.Right}}).
+    ToMarkDown(@"C:\temp\test.md", true);
 ```
 
-Note that this will only affect `markdown`, `console` and `html` outputs and only their data. Columns will remain left aligned.
+Note that this will only affect `markdown`, `console` and `html` outputs and only their data. Columns labels will remain left aligned.
+
+```bash
+| ColumnA  | Dynamic1 | Dynamic2 |
+| -------: | -------- | -------- |
+| AAA      | BBB      | CCC      |
+| AAA      | BBB      | CCC      |
+| AAA      | BBB      | CCC      |
+| AAA      | BBB      | CCC      |
+```
+
+| ColumnA  | Dynamic1 | Dynamic2 |
+| -------: | -------- | -------- |
+| AAA      | BBB      | CCC      |
+| AAA      | BBB      | CCC      |
+| AAA      | BBB      | CCC      |
+| AAA      | BBB      | CCC      |
 
 ## HTML Output
 
