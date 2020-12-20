@@ -41,7 +41,7 @@ namespace table.lib
             return new Table<T>(list);
         }
 
-        public Table<T> OverrideColumns(Dictionary<string, string> columns)
+        public Table<T> OverrideColumnsNames(Dictionary<string, string> columns)
         {
             Headers = columns;
             foreach (var (key, value) in Headers)
@@ -52,14 +52,14 @@ namespace table.lib
             return this;
         }
 
-        public Table<T> FilterColumns(string[] columns)
+        public Table<T> FilterOutColumns(string[] columns)
         {
             var filter = columns.ToDictionary(column => column, column => false);
             ColumnFilter = filter;
             return this;
         }
 
-        public Table<T> ColumnJustification(Dictionary<string, TextJustification> columns)
+        public Table<T> ColumnContentTextJustification(Dictionary<string, TextJustification> columns)
         {
             ColumnFormat = columns;
             return this;
@@ -96,7 +96,7 @@ namespace table.lib
                     var propertyIndex = 0;
                     foreach (var propertyInfo in props)
                     {
-                        // Indexed property
+                        // Indexed property (collections)
                         if (propertyInfo.GetIndexParameters().Length > 0)
                         {
                             bool reading = true;
@@ -169,7 +169,7 @@ namespace table.lib
 
         }
 
-        public void WriteToConsole()
+        public void ToConsole()
         {
             if (Items.Count <= 0) return;
             var s = "|";
@@ -277,7 +277,7 @@ namespace table.lib
                 Console.WriteLine(stringBuilder.ToString());
         }
 
-        public void WriteToHtml(string fileName)
+        public void ToHtml(string fileName)
         {
             var stringBuilder = new StringBuilder();
             if (Items.Count <= 0) return;
@@ -319,7 +319,7 @@ namespace table.lib
             file.WriteLine(stringBuilder.ToString());
         }
 
-        public void WriteToCsv(string fileName)
+        public void ToCsv(string fileName)
         {
             var stringBuilder = new StringBuilder();
             if (Items.Count <= 0) return;

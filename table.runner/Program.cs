@@ -40,7 +40,7 @@ namespace table.runner
                 new TestClass {Field1 = 13, Field2 = "Hi \"very\" long\n text", Field3 = 21111121.32m, Field4 = true, Field5 = new DateTime(1970, 1,1), Field6 = 34.43}
             };
 
-            Table<TestClass>.Add(list).WriteToConsole();
+            Table<TestClass>.Add(list).ToConsole();
 
             var test = new List<IEnumerable<string>>
             {
@@ -50,38 +50,44 @@ namespace table.runner
                 new List<string> {"AAA", "BBB", "CCC"}
             };
 
-            Table<IEnumerable<string>>.Add(test).WriteToConsole();
+            Table<IEnumerable<string>>.Add(test).ToConsole();
 
             Table<IEnumerable<string>>.Add(test).
-                OverrideColumns(new Dictionary<string, string> {{"Dynamic0","ColumnA"}}).
+                OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0","ColumnA"}}).
+                ToConsole();
+
+            Table<IEnumerable<string>>.Add(test).
+                OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
+                FilterOutColumns(new []{ "Capacity", "Count"}).
+                ToConsole();
+
+            Table<IEnumerable<string>>.Add(test).
+                OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
+                FilterOutColumns(new[] { "Capacity", "Count" }).
+                ColumnContentTextJustification(new Dictionary<string, TextJustification>{{"Dynamic0", TextJustification.Right}}).
+                ToConsole();
+
+            Table<IEnumerable<string>>.Add(test).
+                OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
+                FilterOutColumns(new[] { "Capacity", "Count" }).
+                ToCsv(@"C:\temp\test.csv");
+
+            Table<TestClass>.Add(list).
+                ToCsv(@"C:\temp\test-list.csv");
+
+            Table<IEnumerable<string>>.Add(test).
+                OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
+                FilterOutColumns(new[] { "Capacity", "Count" }).
+                ToHtml(@"C:\temp\test.html");
+
+            Table<TestClass>.Add(list).
+                ToHtml(@"C:\temp\test-list.html");
+
+            Table<IEnumerable<string>>.Add(test).
+                OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
+                FilterOutColumns(new[] { "Capacity", "Count" }).
+                ColumnContentTextJustification(new Dictionary<string, TextJustification> { { "Dynamic0", TextJustification.Right } }).
                 ToMarkDown(@"C:\temp\test.md", true);
-
-            Table<IEnumerable<string>>.Add(test).
-                OverrideColumns(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-                FilterColumns(new []{ "Capacity", "Count"}).
-                WriteToConsole();
-
-            Table<IEnumerable<string>>.Add(test).
-                OverrideColumns(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-                FilterColumns(new[] { "Capacity", "Count" }).
-                ColumnJustification(new Dictionary<string, TextJustification>{{"Dynamic0", TextJustification.Right}}).
-                WriteToConsole();
-
-            Table<IEnumerable<string>>.Add(test).
-                OverrideColumns(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-                FilterColumns(new[] { "Capacity", "Count" }).
-                WriteToCsv(@"C:\temp\test.csv");
-
-            Table<TestClass>.Add(list).
-                WriteToCsv(@"C:\temp\test-list.csv");
-
-            Table<IEnumerable<string>>.Add(test).
-                OverrideColumns(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-                FilterColumns(new[] { "Capacity", "Count" }).
-                WriteToHtml(@"C:\temp\test.html");
-
-            Table<TestClass>.Add(list).
-                WriteToHtml(@"C:\temp\test-list.html");
         }
     }
 }
