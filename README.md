@@ -125,21 +125,30 @@ You need one of the columns, right aligned or centered? Use the column justifica
 
 ```c#
 Table<IEnumerable<string>>.Add(test).
-    OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
+    OverrideColumnsNames(new Dictionary<string, string>
+    {
+        { "Dynamic0", "A" },
+        { "Dynamic1", "B" },
+        { "Dynamic2", "C" }
+    }).
     FilterOutColumns(new[] { "Capacity", "Count" }).
-    ColumnContentTextJustification(new Dictionary<string, TextJustification>{{"Dynamic0", TextJustification.Right}}).
-    ToMarkDown(@"C:\temp\test.md", true);
+    ColumnContentTextJustification(new Dictionary<string, TextJustification>
+    {
+        {"Dynamic0", TextJustification.Right}, 
+        { "Dynamic1", TextJustification.Centered }
+    }).
+    ToConsole();
 ```
 
 Note that this will only affect `markdown`, `console` and `html` outputs and only their data. Columns labels will remain left aligned.
 
 ```bash
-| ColumnA  | Dynamic1 | Dynamic2 |
-| -------: | -------- | -------- |
-| AAA      | BBB      | CCC      |
-| AAA      | BBB      | CCC      |
-| AAA      | BBB      | CCC      |
-| AAA      | BBB      | CCC      |
+|    A     |    B     |    C     |
+| -------- | -------- | -------- |
+|      AAA |   BBB    | CCC      |
+|      AAA |   BBB    | CCC      |
+|      AAA |   BBB    | CCC      |
+|      AAA |   BBB    | CCC      |
 ```
 
 | ColumnA  | Dynamic1 | Dynamic2 |
