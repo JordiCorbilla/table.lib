@@ -31,10 +31,10 @@ namespace table.lib
     {
         public List<PropertyName> PropertyNames { get; set; }
         public Dictionary<string, int> MaxWidth { get; set; }
-        public Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, string> ColumnNameOverrides { get; set; } = new Dictionary<string, string>();
         public Dictionary<string, bool> ColumnFilter { get; set; } = new Dictionary<string, bool>();
         private List<T> Items { get; }
-        public Dictionary<string, TextJustification> ColumnFormat { get; set; } = new Dictionary<string, TextJustification>();
+        public Dictionary<string, TextJustification> ColumnTextJustification { get; set; } = new Dictionary<string, TextJustification>();
 
         public static Table<T> Add(List<T> list)
         {
@@ -43,8 +43,8 @@ namespace table.lib
 
         public Table<T> OverrideColumnsNames(Dictionary<string, string> columns)
         {
-            Headers = columns;
-            foreach (var (key, value) in Headers)
+            ColumnNameOverrides = columns;
+            foreach (var (key, value) in ColumnNameOverrides)
             {
                 if (value.Length > MaxWidth[key])
                     MaxWidth[key] = value.Length;
@@ -61,7 +61,7 @@ namespace table.lib
 
         public Table<T> ColumnContentTextJustification(Dictionary<string, TextJustification> columns)
         {
-            ColumnFormat = columns;
+            ColumnTextJustification = columns;
             return this;
         }
 
@@ -177,11 +177,8 @@ namespace table.lib
             {
                 var headerName = property.Name;
                 if (ColumnFilter.ContainsKey(headerName)) continue;
-                if (Headers != null && Headers.Count > 0)
-                {
-                    if (Headers.ContainsKey(property.Name))
-                        headerName = Headers[property.Name];
-                }
+                if (ColumnNameOverrides.ContainsKey(property.Name))
+                    headerName = ColumnNameOverrides[property.Name];
 
                 var length = MaxWidth[property.Name] - headerName.Length;
                 s += $" {headerName.ToValidOutput()}{new string(' ', length)} |";
@@ -217,11 +214,8 @@ namespace table.lib
             {
                 var headerName = property.Name;
                 if (ColumnFilter.ContainsKey(headerName)) continue;
-                if (Headers != null && Headers.Count > 0)
-                {
-                    if (Headers.ContainsKey(property.Name))
-                        headerName = Headers[property.Name];
-                }
+                if (ColumnNameOverrides.ContainsKey(property.Name))
+                    headerName = ColumnNameOverrides[property.Name];
 
                 var length = MaxWidth[property.Name] - headerName.Length;
                 s += $" {headerName.ToValidOutput()}{new string(' ', length)} |";
@@ -233,9 +227,9 @@ namespace table.lib
             {
                 if (ColumnFilter.ContainsKey(name.Name)) continue;
                 var columnSeparator = $" {new string('-', MaxWidth[name.Name])} |";
-                if (ColumnFormat.ContainsKey(name.Name))
+                if (ColumnTextJustification.ContainsKey(name.Name))
                 {
-                    switch (ColumnFormat[name.Name])
+                    switch (ColumnTextJustification[name.Name])
                     {
                         case TextJustification.Centered:
                             columnSeparator = columnSeparator.Replace("- ", ": ");
@@ -289,11 +283,8 @@ namespace table.lib
             {
                 var headerName = property.Name;
                 if (ColumnFilter.ContainsKey(headerName)) continue;
-                if (Headers != null && Headers.Count > 0)
-                {
-                    if (Headers.ContainsKey(property.Name))
-                        headerName = Headers[property.Name];
-                }
+                if (ColumnNameOverrides.ContainsKey(property.Name))
+                    headerName = ColumnNameOverrides[property.Name];
 
                 stringBuilder.AppendLine($"<th style=\"text-align: center; background-color: #052a3d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">{headerName.ToHtml()}</th>");
             }
@@ -330,11 +321,8 @@ namespace table.lib
             {
                 var headerName = property.Name;
                 if (ColumnFilter.ContainsKey(headerName)) continue;
-                if (Headers != null && Headers.Count > 0)
-                {
-                    if (Headers.ContainsKey(property.Name))
-                        headerName = Headers[property.Name];
-                }
+                if (ColumnNameOverrides.ContainsKey(property.Name))
+                    headerName = ColumnNameOverrides[property.Name];
 
                 s += $"{headerName.ToCsv()},";
             }
