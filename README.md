@@ -155,12 +155,12 @@ Transform your output into a nicely formatted HTML table
 
 ```c#
 Table<IEnumerable<string>>.Add(test).
-    OverrideColumns(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-    FilterColumns(new []{ "Capacity", "Count"}).
-    WriteToHtml(@"C:\temp\test.html");
+    OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
+    FilterOutColumns(new []{ "Capacity", "Count"}).
+    ToHtml(@"C:\temp\test.html");
 
 Table<TestClass>.Add(list).
-    WriteToHtml(@"C:\temp\test-list.html");
+    ToHtml(@"C:\temp\test-list.html");
 ```
 
 Sample generated code:
@@ -297,7 +297,7 @@ Trasform your output into a nicely formatted `CSV` file
 
 ```c#
 Table<TestClass>.Add(list).
-    WriteToCsv(@"C:\temp\test-list.csv");
+    ToCsv(@"C:\temp\test-list.csv");
 ```
 
 The format of the file can be seen here:
