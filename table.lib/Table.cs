@@ -181,7 +181,10 @@ namespace table.lib
                     headerName = ColumnNameOverrides[property.Name];
 
                 var length = MaxWidth[property.Name] - headerName.Length;
-                s += $" {headerName.ToValidOutput()}{new string(' ', length)} |";
+
+                var totalLength = $"{new string(' ', length)}{headerName.ToValidOutput()}".Length;
+                var remaining = totalLength - $"{new string(' ', length / 2)}{headerName.ToValidOutput()}".Length;
+                s += $" {new string(' ', length / 2)}{headerName.ToValidOutput()}{new string(' ', remaining)} |";
             }
             Console.WriteLine(s);
 
@@ -198,7 +201,33 @@ namespace table.lib
                     if (ColumnFilter.ContainsKey(property.Name)) continue;
                     var value = GetValue(row, property);
                     var length = MaxWidth[property.Name] - value.Length;
-                    s += $" {value.ToValidOutput()}{new string(' ', length)} |";
+
+                    if (ColumnTextJustification.ContainsKey(property.Name))
+                    {
+                        switch (ColumnTextJustification[property.Name])
+                        {
+                            case TextJustification.Centered:
+                                var totalLength = $"{new string(' ', length)}{value.ToValidOutput()}".Length;
+                                var remaining = totalLength - $"{new string(' ', length / 2)}{value.ToValidOutput()}".Length;
+                                s += $" {new string(' ', length / 2)}{value.ToValidOutput()}{new string(' ', remaining)} |";
+                                break;
+                            case TextJustification.Right:
+                                s += $" {new string(' ', length)}{value.ToValidOutput()} |";
+                                break;
+                            case TextJustification.Left:
+                                s += $" {value.ToValidOutput()}{new string(' ', length)} |";
+                                break;
+                            case TextJustification.Justified:
+                                s += $" {value.ToValidOutput()}{new string(' ', length)} |";
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                    }
+                    else
+                    {
+                        s += $" {value.ToValidOutput()}{new string(' ', length)} |";
+                    }
                 }
                 Console.WriteLine(s);
             }
@@ -223,13 +252,13 @@ namespace table.lib
             stringBuilder.AppendLine(s);
 
             s = "|";
-            foreach (var name in PropertyNames)
+            foreach (var property in PropertyNames)
             {
-                if (ColumnFilter.ContainsKey(name.Name)) continue;
-                var columnSeparator = $" {new string('-', MaxWidth[name.Name])} |";
-                if (ColumnTextJustification.ContainsKey(name.Name))
+                if (ColumnFilter.ContainsKey(property.Name)) continue;
+                var columnSeparator = $" {new string('-', MaxWidth[property.Name])} |";
+                if (ColumnTextJustification.ContainsKey(property.Name))
                 {
-                    switch (ColumnTextJustification[name.Name])
+                    switch (ColumnTextJustification[property.Name])
                     {
                         case TextJustification.Centered:
                             columnSeparator = columnSeparator.Replace("- ", ": ");

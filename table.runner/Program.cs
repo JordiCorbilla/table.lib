@@ -62,9 +62,18 @@ namespace table.runner
                 ToConsole();
 
             Table<IEnumerable<string>>.Add(test).
-                OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
+                OverrideColumnsNames(new Dictionary<string, string>
+                {
+                    { "Dynamic0", "A" },
+                    { "Dynamic1", "B" },
+                    { "Dynamic2", "C" }
+                }).
                 FilterOutColumns(new[] { "Capacity", "Count" }).
-                ColumnContentTextJustification(new Dictionary<string, TextJustification>{{"Dynamic0", TextJustification.Right}}).
+                ColumnContentTextJustification(new Dictionary<string, TextJustification>
+                {
+                    {"Dynamic0", TextJustification.Right}, 
+                    { "Dynamic1", TextJustification.Centered }
+                }).
                 ToConsole();
 
             Table<IEnumerable<string>>.Add(test).
