@@ -208,6 +208,56 @@ namespace table.lib
             Console.WriteLine();
         }
 
+        public void WriteToMarkDown(string fileName)
+        {
+            if (Items.Count <= 0) return;
+            var stringBuilder = new StringBuilder();
+            var s = "|";
+            foreach (var property in PropertyNames)
+            {
+                var headerName = property.Name;
+                if (ColumnFilter.ContainsKey(headerName)) continue;
+                if (Headers != null && Headers.Count > 0)
+                {
+                    if (Headers.ContainsKey(property.Name))
+                        headerName = Headers[property.Name];
+                }
+
+                var length = MaxWidth[property.Name] - headerName.Length;
+                s += $" {headerName.ToValidOutput()}{new string(' ', length)} |";
+            }
+            stringBuilder.AppendLine(s);
+
+            s = "|";
+            foreach (var name in PropertyNames)
+            {
+                if (!ColumnFilter.ContainsKey(name.Name))
+                {
+                    var columnSeparator = $" {new string('-', MaxWidth[name.Name])} |";
+                    s = s + columnSeparator;
+                }
+            }
+
+            stringBuilder.AppendLine(s);
+
+            foreach (var row in Items)
+            {
+                s = "|";
+                foreach (var property in PropertyNames)
+                {
+                    if (ColumnFilter.ContainsKey(property.Name)) continue;
+                    var value = GetValue(row, property);
+                    var length = MaxWidth[property.Name] - value.Length;
+                    s += $" {value.ToValidOutput()}{new string(' ', length)} |";
+                }
+                stringBuilder.AppendLine(s);
+            }
+            stringBuilder.AppendLine();
+
+            using var file = new System.IO.StreamWriter(fileName);
+            file.WriteLine(stringBuilder.ToString());
+        }
+
         public void WriteToHtml(string fileName)
         {
             var stringBuilder = new StringBuilder();
