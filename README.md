@@ -1,6 +1,6 @@
 # table.lib
 
-Simple `c#` table library that renders any `List<T>` into a nicely formatted `markdown`, `csv`, `html` or `console` table, allowing for extra formats.
+Simple `c# (.NET 5)` table library that renders any `List<T>` into a nicely formatted `markdown`, `csv`, `html` or `console` table, allowing for extra formats.
 
 ## Markdown format
 
