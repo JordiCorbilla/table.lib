@@ -26,9 +26,9 @@ using table.lib;
 
 namespace table.runner
 {
-    class Program
+    internal class Program
     {
-        static void Main()
+        private static void Main()
         {
             var list = new List<TestClass>
             {
