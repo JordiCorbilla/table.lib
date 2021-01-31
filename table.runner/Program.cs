@@ -106,7 +106,8 @@ namespace table.runner
                 new List<int> {1,2,3}
             };
 
-            Table<IEnumerable<int>>.Add(matrix).ToConsole();
+            Table<IEnumerable<int>>.Add(matrix, "T")
+                .ToConsole();
 
         }
     }

@@ -33,12 +33,18 @@ namespace table.lib
         public Dictionary<string, int> MaxWidth { get; set; }
         public Dictionary<string, string> ColumnNameOverrides { get; set; } = new Dictionary<string, string>();
         public Dictionary<string, bool> ColumnFilter { get; set; } = new Dictionary<string, bool>();
+        public string DynamicName { get; set; } = "Dynamic";
         private List<T> Items { get; }
         public Dictionary<string, TextJustification> ColumnTextJustification { get; set; } = new Dictionary<string, TextJustification>();
 
         public static Table<T> Add(List<T> list)
         {
             return new Table<T>(list);
+        }
+
+        public static Table<T> Add(List<T> list, string overrideDynamic)
+        {
+            return new Table<T>(list, overrideDynamic);
         }
 
         public Table<T> OverrideColumnsNames(Dictionary<string, string> columns)
@@ -65,9 +71,11 @@ namespace table.lib
             return this;
         }
 
-        public Table(List<T> list)
+        public Table(List<T> list, string overrideDynamicName = null)
         {
             if (list.Count <= 0) return;
+            if (!string.IsNullOrEmpty(overrideDynamicName))
+                DynamicName = overrideDynamicName;
             PropertyNames = new List<PropertyName>();
             MaxWidth = new Dictionary<string, int>();
             Items = list;
@@ -106,14 +114,14 @@ namespace table.lib
                                 try
                                 {
                                     var res = propertyInfo.GetValue(row, new object[] {index});
-                                    if (!MaxWidth.ContainsKey($"Dynamic{index}"))
+                                    if (!MaxWidth.ContainsKey($"{DynamicName}{index}"))
                                     {
-                                        PropertyNames.Add(new PropertyName($"Dynamic{index}", index, propertyIndex));
-                                        MaxWidth.Add($"Dynamic{index}", $"Dynamic{index}".Length);
+                                        PropertyNames.Add(new PropertyName($"{DynamicName}{index}", index, propertyIndex));
+                                        MaxWidth.Add($"{DynamicName}{index}", $"{DynamicName}{index}".Length);
                                     }
 
-                                    if (res.ToString().Length > MaxWidth[$"Dynamic{index}"])
-                                        MaxWidth[$"Dynamic{index}"] = res.ToString().Length;
+                                    if (res.ToString().Length > MaxWidth[$"{DynamicName}{index}"])
+                                        MaxWidth[$"{DynamicName}{index}"] = res.ToString().Length;
                                     index++;
                                 }
                                 catch (Exception)
