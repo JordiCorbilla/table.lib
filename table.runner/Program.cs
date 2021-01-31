@@ -97,6 +97,17 @@ namespace table.runner
                 FilterOutColumns(new[] { "Capacity", "Count" }).
                 ColumnContentTextJustification(new Dictionary<string, TextJustification> { { "Dynamic0", TextJustification.Right } }).
                 ToMarkDown(@"C:\temp\test.md", true);
+
+            var matrix = new List<IEnumerable<int>>
+            {
+                new List<int> {1,2,3},
+                new List<int> {1,2,3},
+                new List<int> {1,2,3},
+                new List<int> {1,2,3}
+            };
+
+            Table<IEnumerable<int>>.Add(matrix).ToConsole();
+
         }
     }
 }
