@@ -2,6 +2,12 @@
 
 Simple `c# (.NET 5)` table library that renders any `List<T>` into a nicely formatted `markdown`, `csv`, `html` or `console` table, allowing for extra formats.
 
+## Installation
+
+```bash
+dotnet add package table.lib --version 1.1.0
+```
+
 ## Markdown format
 
 ```c#
