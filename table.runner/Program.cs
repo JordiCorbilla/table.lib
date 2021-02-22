@@ -32,12 +32,36 @@ namespace table.runner
         {
             var list = new List<TestClass>
             {
-                new TestClass {Field1 = 321121, Field2 = "Hi 312321", Field3 = 2121.32m, Field4 = true, Field5 = new DateTime(1970, 1,1), Field6 = 34.43},
-                new TestClass {Field1 = 32321, Field2 = "Hi long text", Field3 = 21111111.32m, Field4 = true, Field5 = new DateTime(1970, 1,1), Field6 = 34.43},
-                new TestClass {Field1 = 321, Field2 = "Hi longer text", Field3 = 2121.32m, Field4 = true, Field5 = new DateTime(1970, 1,1), Field6 = 34.43},
-                new TestClass {Field1 = 13, Field2 = "Hi very long text", Field3 = 21111121.32m, Field4 = true, Field5 = new DateTime(1970, 1,1), Field6 = 34.43},
-                new TestClass {Field1 = 13, Field2 = "Hi very, long text", Field3 = 21111121.32m, Field4 = true, Field5 = new DateTime(1970, 1,1), Field6 = 34.43},
-                new TestClass {Field1 = 13, Field2 = "Hi \"very\" long\n text", Field3 = 21111121.32m, Field4 = true, Field5 = new DateTime(1970, 1,1), Field6 = 34.43}
+                new TestClass
+                {
+                    Field1 = 321121, Field2 = "Hi 312321", Field3 = 2121.32m, Field4 = true,
+                    Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
+                },
+                new TestClass
+                {
+                    Field1 = 32321, Field2 = "Hi long text", Field3 = 21111111.32m, Field4 = true,
+                    Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
+                },
+                new TestClass
+                {
+                    Field1 = 321, Field2 = "Hi longer text", Field3 = 2121.32m, Field4 = true,
+                    Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
+                },
+                new TestClass
+                {
+                    Field1 = 13, Field2 = "Hi very long text", Field3 = 21111121.32m, Field4 = true,
+                    Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
+                },
+                new TestClass
+                {
+                    Field1 = 13, Field2 = "Hi very, long text", Field3 = 21111121.32m, Field4 = true,
+                    Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
+                },
+                new TestClass
+                {
+                    Field1 = 13, Field2 = "Hi \"very\" long\n text", Field3 = 21111121.32m, Field4 = true,
+                    Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
+                }
             };
 
             Table<TestClass>.Add(list).ToConsole();
@@ -52,63 +76,53 @@ namespace table.runner
 
             Table<IEnumerable<string>>.Add(test).ToConsole();
 
-            Table<IEnumerable<string>>.Add(test).
-                OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0","ColumnA"}}).
-                ToConsole();
+            Table<IEnumerable<string>>.Add(test)
+                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}}).ToConsole();
 
-            Table<IEnumerable<string>>.Add(test).
-                OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-                FilterOutColumns(new []{ "Capacity", "Count"}).
-                ToConsole();
+            Table<IEnumerable<string>>.Add(test)
+                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
+                .FilterOutColumns(new[] {"Capacity", "Count"}).ToConsole();
 
-            Table<IEnumerable<string>>.Add(test).
-                OverrideColumnsNames(new Dictionary<string, string>
+            Table<IEnumerable<string>>.Add(test).OverrideColumnsNames(new Dictionary<string, string>
+            {
+                {"Dynamic0", "A"},
+                {"Dynamic1", "B"},
+                {"Dynamic2", "C"}
+            }).FilterOutColumns(new[] {"Capacity", "Count"}).ColumnContentTextJustification(
+                new Dictionary<string, TextJustification>
                 {
-                    { "Dynamic0", "A" },
-                    { "Dynamic1", "B" },
-                    { "Dynamic2", "C" }
-                }).
-                FilterOutColumns(new[] { "Capacity", "Count" }).
-                ColumnContentTextJustification(new Dictionary<string, TextJustification>
-                {
-                    {"Dynamic0", TextJustification.Right}, 
-                    { "Dynamic1", TextJustification.Centered }
-                }).
-                ToConsole();
+                    {"Dynamic0", TextJustification.Right},
+                    {"Dynamic1", TextJustification.Centered}
+                }).ToConsole();
 
-            Table<IEnumerable<string>>.Add(test).
-                OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-                FilterOutColumns(new[] { "Capacity", "Count" }).
-                ToCsv(@"C:\temp\test.csv");
+            Table<IEnumerable<string>>.Add(test)
+                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
+                .FilterOutColumns(new[] {"Capacity", "Count"}).ToCsv(@"C:\temp\test.csv");
 
-            Table<TestClass>.Add(list).
-                ToCsv(@"C:\temp\test-list.csv");
+            Table<TestClass>.Add(list).ToCsv(@"C:\temp\test-list.csv");
 
-            Table<IEnumerable<string>>.Add(test).
-                OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-                FilterOutColumns(new[] { "Capacity", "Count" }).
-                ToHtml(@"C:\temp\test.html");
+            Table<IEnumerable<string>>.Add(test)
+                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
+                .FilterOutColumns(new[] {"Capacity", "Count"}).ToHtml(@"C:\temp\test.html");
 
-            Table<TestClass>.Add(list).
-                ToHtml(@"C:\temp\test-list.html");
+            Table<TestClass>.Add(list).ToHtml(@"C:\temp\test-list.html");
 
-            Table<IEnumerable<string>>.Add(test).
-                OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-                FilterOutColumns(new[] { "Capacity", "Count" }).
-                ColumnContentTextJustification(new Dictionary<string, TextJustification> { { "Dynamic0", TextJustification.Right } }).
-                ToMarkDown(@"C:\temp\test.md", true);
+            Table<IEnumerable<string>>.Add(test)
+                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
+                .FilterOutColumns(new[] {"Capacity", "Count"})
+                .ColumnContentTextJustification(new Dictionary<string, TextJustification>
+                    {{"Dynamic0", TextJustification.Right}}).ToMarkDown(@"C:\temp\test.md", true);
 
             var matrix = new List<IEnumerable<int>>
             {
-                new List<int> {1,2,3},
-                new List<int> {1,2,3},
-                new List<int> {1,2,3},
-                new List<int> {1,2,3}
+                new List<int> {1, 2, 3},
+                new List<int> {1, 2, 3},
+                new List<int> {1, 2, 3},
+                new List<int> {1, 2, 3}
             };
 
             Table<IEnumerable<int>>.Add(matrix, "T")
                 .ToConsole();
-
         }
     }
 }

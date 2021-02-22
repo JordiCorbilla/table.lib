@@ -24,11 +24,6 @@ namespace table.lib
 {
     public class PropertyName
     {
-        public string Name { get; set; }
-        public int Index { get; set; }
-        public bool IsCollection { get; set; }
-        public int PropertyIndex { get; set; }
-
         public PropertyName(string name)
         {
             Name = name;
@@ -43,5 +38,10 @@ namespace table.lib
             PropertyIndex = propertyIndex;
             IsCollection = true;
         }
+
+        public string Name { get; set; }
+        public int Index { get; set; }
+        public bool IsCollection { get; set; }
+        public int PropertyIndex { get; set; }
     }
 }

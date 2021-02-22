@@ -35,40 +35,25 @@ namespace table.lib
                 enclose = true;
             }
 
-            if (value.Contains(Environment.NewLine) || value.Contains(","))
-            {
-                enclose = true;
-            }
+            if (value.Contains(Environment.NewLine) || value.Contains(",")) enclose = true;
 
             return enclose ? $"\"{value}\"" : value;
         }
 
         public static string ToValidOutput(this string value)
         {
-            if (value.Contains(Environment.NewLine))
-            {
-                value = value.Replace(Environment.NewLine, " ");
-            }
+            if (value.Contains(Environment.NewLine)) value = value.Replace(Environment.NewLine, " ");
 
-            if (value.Contains("\n"))
-            {
-                value = value.Replace("\n", " ");
-            }
+            if (value.Contains("\n")) value = value.Replace("\n", " ");
 
             return value;
         }
 
         public static string ToHtml(this string value)
         {
-            if (value.Contains(Environment.NewLine))
-            {
-                value = value.Replace(Environment.NewLine, "<br>");
-            }
+            if (value.Contains(Environment.NewLine)) value = value.Replace(Environment.NewLine, "<br>");
 
-            if (value.Contains("\n"))
-            {
-                value = value.Replace("\n", "<br>");
-            }
+            if (value.Contains("\n")) value = value.Replace("\n", "<br>");
 
             return value;
         }

@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -29,48 +30,6 @@ namespace table.lib
 {
     public class Table<T>
     {
-        public List<PropertyName> PropertyNames { get; set; }
-        public Dictionary<string, int> MaxWidth { get; set; }
-        public Dictionary<string, string> ColumnNameOverrides { get; set; } = new Dictionary<string, string>();
-        public Dictionary<string, bool> ColumnFilter { get; set; } = new Dictionary<string, bool>();
-        public string DynamicName { get; set; } = "Dynamic";
-        private List<T> Items { get; }
-        public Dictionary<string, TextJustification> ColumnTextJustification { get; set; } = new Dictionary<string, TextJustification>();
-
-        public static Table<T> Add(List<T> list)
-        {
-            return new Table<T>(list);
-        }
-
-        public static Table<T> Add(List<T> list, string overrideDynamic)
-        {
-            return new Table<T>(list, overrideDynamic);
-        }
-
-        public Table<T> OverrideColumnsNames(Dictionary<string, string> columns)
-        {
-            ColumnNameOverrides = columns;
-            foreach (var (key, value) in ColumnNameOverrides)
-            {
-                if (value.Length > MaxWidth[key])
-                    MaxWidth[key] = value.Length;
-            }
-            return this;
-        }
-
-        public Table<T> FilterOutColumns(string[] columns)
-        {
-            var filter = columns.ToDictionary(column => column, column => false);
-            ColumnFilter = filter;
-            return this;
-        }
-
-        public Table<T> ColumnContentTextJustification(Dictionary<string, TextJustification> columns)
-        {
-            ColumnTextJustification = columns;
-            return this;
-        }
-
         public Table(List<T> list, string overrideDynamicName = null)
         {
             if (list.Count <= 0) return;
@@ -87,7 +46,6 @@ namespace table.lib
             }
 
             foreach (var row in Items)
-            {
                 if (properties.Length != 0)
                 {
                     foreach (var property in PropertyNames)
@@ -110,13 +68,13 @@ namespace table.lib
                             var reading = true;
                             var index = 0;
                             while (reading)
-                            {
                                 try
                                 {
                                     var res = propertyInfo.GetValue(row, new object[] {index});
                                     if (!MaxWidth.ContainsKey($"{DynamicName}{index}"))
                                     {
-                                        PropertyNames.Add(new PropertyName($"{DynamicName}{index}", index, propertyIndex));
+                                        PropertyNames.Add(new PropertyName($"{DynamicName}{index}", index,
+                                            propertyIndex));
                                         MaxWidth.Add($"{DynamicName}{index}", $"{DynamicName}{index}".Length);
                                     }
 
@@ -128,7 +86,6 @@ namespace table.lib
                                 {
                                     reading = false;
                                 }
-                            }
                         }
                         else
                         {
@@ -146,7 +103,48 @@ namespace table.lib
                         propertyIndex++;
                     }
                 }
-            }
+        }
+
+        public List<PropertyName> PropertyNames { get; set; }
+        public Dictionary<string, int> MaxWidth { get; set; }
+        public Dictionary<string, string> ColumnNameOverrides { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, bool> ColumnFilter { get; set; } = new Dictionary<string, bool>();
+        public string DynamicName { get; set; } = "Dynamic";
+        private List<T> Items { get; }
+
+        public Dictionary<string, TextJustification> ColumnTextJustification { get; set; } =
+            new Dictionary<string, TextJustification>();
+
+        public static Table<T> Add(List<T> list)
+        {
+            return new Table<T>(list);
+        }
+
+        public static Table<T> Add(List<T> list, string overrideDynamic)
+        {
+            return new Table<T>(list, overrideDynamic);
+        }
+
+        public Table<T> OverrideColumnsNames(Dictionary<string, string> columns)
+        {
+            ColumnNameOverrides = columns;
+            foreach (var (key, value) in ColumnNameOverrides)
+                if (value.Length > MaxWidth[key])
+                    MaxWidth[key] = value.Length;
+            return this;
+        }
+
+        public Table<T> FilterOutColumns(string[] columns)
+        {
+            var filter = columns.ToDictionary(column => column, column => false);
+            ColumnFilter = filter;
+            return this;
+        }
+
+        public Table<T> ColumnContentTextJustification(Dictionary<string, TextJustification> columns)
+        {
+            ColumnTextJustification = columns;
+            return this;
         }
 
         private static string GetValue(T item, PropertyName property)
@@ -156,12 +154,12 @@ namespace table.lib
             if (property.IsCollection)
             {
                 var prop = item.GetType().GetProperties()[property.PropertyIndex];
-                value = prop.GetValue(item, new object[] { property.Index });
+                value = prop.GetValue(item, new object[] {property.Index});
             }
             else
             {
                 var properties = item.GetType().GetProperty(property.Name);
-                value = properties?.GetValue(item,  null);
+                value = properties?.GetValue(item, null);
             }
 
             return value switch
@@ -174,7 +172,6 @@ namespace table.lib
                 double value1 => value1.ToString("#,##0.00"),
                 _ => (value != null ? value.ToString() : "")
             };
-
         }
 
         public void ToConsole()
@@ -194,6 +191,7 @@ namespace table.lib
                 var remaining = totalLength - $"{new string(' ', length / 2)}{headerName.ToValidOutput()}".Length;
                 s += $" {new string(' ', length / 2)}{headerName.ToValidOutput()}{new string(' ', remaining)} |";
             }
+
             Console.WriteLine(s);
 
             s = PropertyNames.Where(name => !ColumnFilter.ContainsKey(name.Name))
@@ -211,13 +209,14 @@ namespace table.lib
                     var length = MaxWidth[property.Name] - value.Length;
 
                     if (ColumnTextJustification.ContainsKey(property.Name))
-                    {
                         switch (ColumnTextJustification[property.Name])
                         {
                             case TextJustification.Centered:
                                 var totalLength = $"{new string(' ', length)}{value.ToValidOutput()}".Length;
-                                var remaining = totalLength - $"{new string(' ', length / 2)}{value.ToValidOutput()}".Length;
-                                s += $" {new string(' ', length / 2)}{value.ToValidOutput()}{new string(' ', remaining)} |";
+                                var remaining = totalLength -
+                                                $"{new string(' ', length / 2)}{value.ToValidOutput()}".Length;
+                                s +=
+                                    $" {new string(' ', length / 2)}{value.ToValidOutput()}{new string(' ', remaining)} |";
                                 break;
                             case TextJustification.Right:
                                 s += $" {new string(' ', length)}{value.ToValidOutput()} |";
@@ -231,14 +230,13 @@ namespace table.lib
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
-                    }
                     else
-                    {
                         s += $" {value.ToValidOutput()}{new string(' ', length)} |";
-                    }
                 }
+
                 Console.WriteLine(s);
             }
+
             Console.WriteLine();
         }
 
@@ -257,6 +255,7 @@ namespace table.lib
                 var length = MaxWidth[property.Name] - headerName.Length;
                 s += $" {headerName.ToValidOutput()}{new string(' ', length)} |";
             }
+
             stringBuilder.AppendLine(s);
 
             s = "|";
@@ -265,7 +264,6 @@ namespace table.lib
                 if (ColumnFilter.ContainsKey(property.Name)) continue;
                 var columnSeparator = $" {new string('-', MaxWidth[property.Name])} |";
                 if (ColumnTextJustification.ContainsKey(property.Name))
-                {
                     switch (ColumnTextJustification[property.Name])
                     {
                         case TextJustification.Centered:
@@ -283,7 +281,7 @@ namespace table.lib
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
-                }
+
                 s += columnSeparator;
             }
 
@@ -299,11 +297,13 @@ namespace table.lib
                     var length = MaxWidth[property.Name] - value.Length;
                     s += $" {value.ToValidOutput()}{new string(' ', length)} |";
                 }
+
                 stringBuilder.AppendLine(s);
             }
+
             stringBuilder.AppendLine();
 
-            using var file = new System.IO.StreamWriter(fileName);
+            using var file = new StreamWriter(fileName);
             file.WriteLine(stringBuilder.ToString());
 
             if (consoleVerbose)
@@ -323,7 +323,8 @@ namespace table.lib
                 if (ColumnNameOverrides.ContainsKey(property.Name))
                     headerName = ColumnNameOverrides[property.Name];
 
-                stringBuilder.AppendLine($"<th style=\"text-align: center; background-color: #052a3d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">{headerName.ToHtml()}</th>");
+                stringBuilder.AppendLine(
+                    $"<th style=\"text-align: center; background-color: #052a3d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">{headerName.ToHtml()}</th>");
             }
 
             stringBuilder.AppendLine("</tr>");
@@ -335,17 +336,19 @@ namespace table.lib
                 foreach (var property in PropertyNames)
                 {
                     if (ColumnFilter.ContainsKey(property.Name)) continue;
-                    var color = (rowNumber % 2 == 0) ? "#f2f2f2" : "white";
+                    var color = rowNumber % 2 == 0 ? "#f2f2f2" : "white";
                     var value = GetValue(row, property);
-                    stringBuilder.AppendLine($"<td style=\"text-align: right; color: black; background-color: {color};padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">{value.ToHtml()}</td>");
+                    stringBuilder.AppendLine(
+                        $"<td style=\"text-align: right; color: black; background-color: {color};padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">{value.ToHtml()}</td>");
                 }
+
                 rowNumber++;
                 stringBuilder.AppendLine("</tr>");
             }
 
             stringBuilder.AppendLine("</table>");
 
-            using var file = new System.IO.StreamWriter(fileName);
+            using var file = new StreamWriter(fileName);
             file.WriteLine(stringBuilder.ToString());
         }
 
@@ -369,13 +372,14 @@ namespace table.lib
 
             foreach (var row in Items)
             {
-                s = (from property in PropertyNames where !ColumnFilter.ContainsKey(property.Name) 
+                s = (from property in PropertyNames
+                    where !ColumnFilter.ContainsKey(property.Name)
                     select GetValue(row, property)).Aggregate("", (current, value) => current + $"{value.ToCsv()},");
                 s = s.Remove(s.Length - 1);
                 stringBuilder.AppendLine(s);
             }
 
-            using var file = new System.IO.StreamWriter(fileName);
+            using var file = new StreamWriter(fileName);
             file.WriteLine(stringBuilder.ToString());
         }
     }
