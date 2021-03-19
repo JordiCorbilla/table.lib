@@ -77,18 +77,22 @@ namespace table.runner
             Table<IEnumerable<string>>.Add(test).ToConsole();
 
             Table<IEnumerable<string>>.Add(test)
+                .FilterColumns(new[] {"Dynamic0"}, FilterAction.Include)
+                .ToConsole();
+
+            Table<IEnumerable<string>>.Add(test)
                 .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}}).ToConsole();
 
             Table<IEnumerable<string>>.Add(test)
                 .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
-                .FilterOutColumns(new[] {"Capacity", "Count"}).ToConsole();
+                .FilterColumns(new[] {"Capacity", "Count"}).ToConsole();
 
             Table<IEnumerable<string>>.Add(test).OverrideColumnsNames(new Dictionary<string, string>
             {
                 {"Dynamic0", "A"},
                 {"Dynamic1", "B"},
                 {"Dynamic2", "C"}
-            }).FilterOutColumns(new[] {"Capacity", "Count"}).ColumnContentTextJustification(
+            }).FilterColumns(new[] {"Capacity", "Count"}).ColumnContentTextJustification(
                 new Dictionary<string, TextJustification>
                 {
                     {"Dynamic0", TextJustification.Right},
@@ -97,19 +101,19 @@ namespace table.runner
 
             Table<IEnumerable<string>>.Add(test)
                 .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
-                .FilterOutColumns(new[] {"Capacity", "Count"}).ToCsv(@"C:\temp\test.csv");
+                .FilterColumns(new[] {"Capacity", "Count"}).ToCsv(@"C:\temp\test.csv");
 
             Table<TestClass>.Add(list).ToCsv(@"C:\temp\test-list.csv");
 
             Table<IEnumerable<string>>.Add(test)
                 .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
-                .FilterOutColumns(new[] {"Capacity", "Count"}).ToHtml(@"C:\temp\test.html");
+                .FilterColumns(new[] {"Capacity", "Count"}).ToHtml(@"C:\temp\test.html");
 
             Table<TestClass>.Add(list).ToHtml(@"C:\temp\test-list.html");
 
             Table<IEnumerable<string>>.Add(test)
                 .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
-                .FilterOutColumns(new[] {"Capacity", "Count"})
+                .FilterColumns(new[] {"Capacity", "Count"})
                 .ColumnContentTextJustification(new Dictionary<string, TextJustification>
                     {{"Dynamic0", TextJustification.Right}}).ToMarkDown(@"C:\temp\test.md", true);
 

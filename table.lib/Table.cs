@@ -30,6 +30,12 @@ namespace table.lib
 {
     public class Table<T>
     {
+        /// <summary>
+        ///     Where the magic happens.
+        ///     Retrieve the entire content of the collection using reflection
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="overrideDynamicName"></param>
         public Table(List<T> list, string overrideDynamicName = null)
         {
             if (list.Count <= 0) return;
@@ -109,6 +115,7 @@ namespace table.lib
         public Dictionary<string, int> MaxWidth { get; set; }
         public Dictionary<string, string> ColumnNameOverrides { get; set; } = new Dictionary<string, string>();
         public Dictionary<string, bool> ColumnFilter { get; set; } = new Dictionary<string, bool>();
+        public FilterAction ColumnAction { get; set; } = FilterAction.Exclude;
         public string DynamicName { get; set; } = "Dynamic";
         private List<T> Items { get; }
 
@@ -134,12 +141,15 @@ namespace table.lib
             return this;
         }
 
-        public Table<T> FilterOutColumns(string[] columns)
+        public Table<T> FilterColumns(string[] columns, FilterAction action = FilterAction.Exclude)
         {
             var filter = columns.ToDictionary(column => column, column => false);
             ColumnFilter = filter;
+            ColumnAction = action;
             return this;
         }
+
+        
 
         public Table<T> ColumnContentTextJustification(Dictionary<string, TextJustification> columns)
         {
@@ -178,10 +188,28 @@ namespace table.lib
         {
             if (Items.Count <= 0) return;
             var s = "|";
-            foreach (var property in PropertyNames)
+
+            List<PropertyName> filteredPropertyNames = new List<PropertyName>();
+
+            foreach (var propertyName in PropertyNames)
+            {
+                if (ColumnAction == FilterAction.Include)
+                {
+                    if (ColumnFilter.ContainsKey(propertyName.Name))
+                        filteredPropertyNames.Add(propertyName);
+
+                }
+                if (ColumnAction == FilterAction.Exclude)
+                {
+                    if (!ColumnFilter.ContainsKey(propertyName.Name))
+                        filteredPropertyNames.Add(propertyName);
+                }
+            }
+
+
+            foreach (var property in filteredPropertyNames)
             {
                 var headerName = property.Name;
-                if (ColumnFilter.ContainsKey(headerName)) continue;
                 if (ColumnNameOverrides.ContainsKey(property.Name))
                     headerName = ColumnNameOverrides[property.Name];
 
@@ -194,17 +222,15 @@ namespace table.lib
 
             Console.WriteLine(s);
 
-            s = PropertyNames.Where(name => !ColumnFilter.ContainsKey(name.Name))
-                .Aggregate("|", (current, name) => current + $" {new string('-', MaxWidth[name.Name])} |");
+            s = filteredPropertyNames.Aggregate("|", (current, name) => current + $" {new string('-', MaxWidth[name.Name])} |");
 
             Console.WriteLine(s);
 
             foreach (var row in Items)
             {
                 s = "|";
-                foreach (var property in PropertyNames)
+                foreach (var property in filteredPropertyNames)
                 {
-                    if (ColumnFilter.ContainsKey(property.Name)) continue;
                     var value = GetValue(row, property);
                     var length = MaxWidth[property.Name] - value.Length;
 
