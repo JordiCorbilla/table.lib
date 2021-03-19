@@ -149,7 +149,6 @@ namespace table.lib
             return this;
         }
 
-        
 
         public Table<T> ColumnContentTextJustification(Dictionary<string, TextJustification> columns)
         {
@@ -184,28 +183,41 @@ namespace table.lib
             };
         }
 
+        private List<PropertyName> FilterProperties()
+        {
+            var filteredPropertyNames = new List<PropertyName>();
+
+            foreach (var propertyName in PropertyNames)
+            {
+                switch (ColumnAction)
+                {
+                    case FilterAction.Include:
+                    {
+                        if (ColumnFilter.ContainsKey(propertyName.Name))
+                            filteredPropertyNames.Add(propertyName);
+                        break;
+                    }
+                    case FilterAction.Exclude:
+                    {
+                        if (!ColumnFilter.ContainsKey(propertyName.Name))
+                            filteredPropertyNames.Add(propertyName);
+                        break;
+                    }
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            return filteredPropertyNames;
+        }
+             
+
         public void ToConsole()
         {
             if (Items.Count <= 0) return;
             var s = "|";
 
-            List<PropertyName> filteredPropertyNames = new List<PropertyName>();
-
-            foreach (var propertyName in PropertyNames)
-            {
-                if (ColumnAction == FilterAction.Include)
-                {
-                    if (ColumnFilter.ContainsKey(propertyName.Name))
-                        filteredPropertyNames.Add(propertyName);
-
-                }
-                if (ColumnAction == FilterAction.Exclude)
-                {
-                    if (!ColumnFilter.ContainsKey(propertyName.Name))
-                        filteredPropertyNames.Add(propertyName);
-                }
-            }
-
+            var filteredPropertyNames = FilterProperties();
 
             foreach (var property in filteredPropertyNames)
             {
@@ -222,7 +234,8 @@ namespace table.lib
 
             Console.WriteLine(s);
 
-            s = filteredPropertyNames.Aggregate("|", (current, name) => current + $" {new string('-', MaxWidth[name.Name])} |");
+            s = filteredPropertyNames.Aggregate("|",
+                (current, name) => current + $" {new string('-', MaxWidth[name.Name])} |");
 
             Console.WriteLine(s);
 
@@ -271,10 +284,12 @@ namespace table.lib
             if (Items.Count <= 0) return;
             var stringBuilder = new StringBuilder();
             var s = "|";
-            foreach (var property in PropertyNames)
+
+            var filteredPropertyNames = FilterProperties();
+
+            foreach (var property in filteredPropertyNames)
             {
                 var headerName = property.Name;
-                if (ColumnFilter.ContainsKey(headerName)) continue;
                 if (ColumnNameOverrides.ContainsKey(property.Name))
                     headerName = ColumnNameOverrides[property.Name];
 
@@ -285,9 +300,8 @@ namespace table.lib
             stringBuilder.AppendLine(s);
 
             s = "|";
-            foreach (var property in PropertyNames)
+            foreach (var property in filteredPropertyNames)
             {
-                if (ColumnFilter.ContainsKey(property.Name)) continue;
                 var columnSeparator = $" {new string('-', MaxWidth[property.Name])} |";
                 if (ColumnTextJustification.ContainsKey(property.Name))
                     switch (ColumnTextJustification[property.Name])
@@ -316,9 +330,8 @@ namespace table.lib
             foreach (var row in Items)
             {
                 s = "|";
-                foreach (var property in PropertyNames)
+                foreach (var property in filteredPropertyNames)
                 {
-                    if (ColumnFilter.ContainsKey(property.Name)) continue;
                     var value = GetValue(row, property);
                     var length = MaxWidth[property.Name] - value.Length;
                     s += $" {value.ToValidOutput()}{new string(' ', length)} |";
@@ -342,10 +355,11 @@ namespace table.lib
             if (Items.Count <= 0) return;
             stringBuilder.AppendLine("<table style=\"border-collapse: collapse; width: 100%;\">");
             stringBuilder.AppendLine("<tr>");
-            foreach (var property in PropertyNames)
+
+            var filteredPropertyNames = FilterProperties();
+            foreach (var property in filteredPropertyNames)
             {
                 var headerName = property.Name;
-                if (ColumnFilter.ContainsKey(headerName)) continue;
                 if (ColumnNameOverrides.ContainsKey(property.Name))
                     headerName = ColumnNameOverrides[property.Name];
 
@@ -359,9 +373,8 @@ namespace table.lib
             foreach (var row in Items)
             {
                 stringBuilder.AppendLine("<tr>");
-                foreach (var property in PropertyNames)
+                foreach (var property in filteredPropertyNames)
                 {
-                    if (ColumnFilter.ContainsKey(property.Name)) continue;
                     var color = rowNumber % 2 == 0 ? "#f2f2f2" : "white";
                     var value = GetValue(row, property);
                     stringBuilder.AppendLine(
@@ -383,10 +396,10 @@ namespace table.lib
             var stringBuilder = new StringBuilder();
             if (Items.Count <= 0) return;
             var s = "";
-            foreach (var property in PropertyNames)
+            var filteredPropertyNames = FilterProperties();
+            foreach (var property in filteredPropertyNames)
             {
                 var headerName = property.Name;
-                if (ColumnFilter.ContainsKey(headerName)) continue;
                 if (ColumnNameOverrides.ContainsKey(property.Name))
                     headerName = ColumnNameOverrides[property.Name];
 
@@ -398,8 +411,7 @@ namespace table.lib
 
             foreach (var row in Items)
             {
-                s = (from property in PropertyNames
-                    where !ColumnFilter.ContainsKey(property.Name)
+                s = (from property in filteredPropertyNames
                     select GetValue(row, property)).Aggregate("", (current, value) => current + $"{value.ToCsv()},");
                 s = s.Remove(s.Length - 1);
                 stringBuilder.AppendLine(s);
