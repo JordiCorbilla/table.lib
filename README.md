@@ -100,12 +100,14 @@ Table<IEnumerable<string>>.Add(test).
 
 ## Column filtering
 
-You don't want to show all the columns? Easy, just use the `FilterOutColumns` property:
+You don't want to show all the columns? Easy, just use the `FilterColumns` property and define the action to perform `FilterAction.Include` or `FilterAction.Exclude`:
+
+By default it will use the `FilterAction.Exclude` functionality:
 
 ```c#
 Table<IEnumerable<string>>.Add(test).
     OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-    FilterOutColumns(new []{ "Capacity", "Count"}).
+    FilterColumns(new []{ "Capacity", "Count"}).
     ToConsole();
 ```
 
@@ -124,6 +126,24 @@ Table<IEnumerable<string>>.Add(test).
 | AAA      | BBB      | CCC      |
 | AAA      | BBB      | CCC      |
 | AAA      | BBB      | CCC      |
+
+
+```c#
+Table<IEnumerable<string>>.Add(test).
+    OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
+    FilterColumns(new []{ "Dynamic0"}, FilterActions.Include).
+    ToConsole();
+```
+
+```bash
+| Dynamic0 |
+| -------- |
+| AAA      |
+| AAA      |
+| AAA      |
+| AAA      |
+```
+
 
 ## Column Justification
 
@@ -171,7 +191,7 @@ Transform your output into a nicely formatted HTML table
 ```c#
 Table<IEnumerable<string>>.Add(test).
     OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-    FilterOutColumns(new []{ "Capacity", "Count"}).
+    FilterColumns(new []{ "Capacity", "Count"}).
     ToHtml(@"C:\temp\test.html");
 
 Table<TestClass>.Add(list).
