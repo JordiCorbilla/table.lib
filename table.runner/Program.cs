@@ -81,6 +81,11 @@ namespace table.runner
                 .ToConsole();
 
             Table<IEnumerable<string>>.Add(test)
+                .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
+                .FilterColumns(new[] { "Dynamic0" }, FilterAction.Include)
+                .ToConsole();
+
+            Table<IEnumerable<string>>.Add(test)
                 .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}}).ToConsole();
 
             Table<IEnumerable<string>>.Add(test)
