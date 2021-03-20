@@ -8,7 +8,9 @@ Simple `c# (.NET 5)` table library that renders any `List<T>` into a nicely form
 dotnet add package table.lib --version 1.2.0
 ```
 
-## Markdown format
+## Markdown format in console output
+
+To make it easier to share, `table.lib` outputs the console output as markdown friendly. Note that there is a specific `markdown` output so the text justification can happen as per markdown specification.
 
 ```c#
 Table<TestClass>.Add(list).ToConsole();
