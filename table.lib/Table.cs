@@ -117,6 +117,8 @@ namespace table.lib
         public Dictionary<string, bool> ColumnFilter { get; set; } = new Dictionary<string, bool>();
         public FilterAction ColumnAction { get; set; } = FilterAction.Exclude;
         public string DynamicName { get; set; } = "Dynamic";
+        public ConsoleColor BackgroundColor { get; set; } = ConsoleColor.Black;
+        public ConsoleColor ForegroundColor { get; set; } = ConsoleColor.Green;
         private List<T> Items { get; }
 
         public Dictionary<string, TextJustification> ColumnTextJustification { get; set; } =
@@ -153,6 +155,13 @@ namespace table.lib
         public Table<T> ColumnContentTextJustification(Dictionary<string, TextJustification> columns)
         {
             ColumnTextJustification = columns;
+            return this;
+        }
+
+        public Table<T> HighlightRows(ConsoleColor backgroundColor, ConsoleColor foregroundColor)
+        {
+            BackgroundColor = backgroundColor;
+            ForegroundColor = foregroundColor;
             return this;
         }
 
@@ -241,7 +250,7 @@ namespace table.lib
 
             foreach (var row in Items)
             {
-                s = "|";
+                Console.Write("|");
                 foreach (var property in filteredPropertyNames)
                 {
                     var value = GetValue(row, property);
@@ -252,27 +261,68 @@ namespace table.lib
                         {
                             case TextJustification.Centered:
                                 var totalLength = $"{new string(' ', length)}{value.ToValidOutput()}".Length;
-                                var remaining = totalLength -
-                                                $"{new string(' ', length / 2)}{value.ToValidOutput()}".Length;
-                                s += $" {new string(' ', length / 2)}{value.ToValidOutput()}{new string(' ', remaining)} |";
+                                var remaining = totalLength - $"{new string(' ', length / 2)}{value.ToValidOutput()}".Length;
+                                var content = $"{new string(' ', length / 2)}{value.ToValidOutput()}{new string(' ', remaining)}";
+
+                                Console.Write(" ");
+                                Console.BackgroundColor = BackgroundColor;
+                                Console.ForegroundColor = ForegroundColor;
+                                Console.Write(content);
+                                Console.ResetColor();
+                                Console.Write(" |");
+
+                                //s += $" {content} |";
                                 break;
                             case TextJustification.Right:
-                                s += $" {new string(' ', length)}{value.ToValidOutput()} |";
+                                var detail = $"{new string(' ', length)}{value.ToValidOutput()}";
+
+                                Console.Write(" ");
+                                Console.BackgroundColor = BackgroundColor;
+                                Console.ForegroundColor = ForegroundColor;
+                                Console.Write(detail);
+                                Console.ResetColor();
+                                Console.Write(" |");
+                                //s += $" {new string(' ', length)}{value.ToValidOutput()} |";
                                 break;
                             case TextJustification.Left:
-                                s += $" {value.ToValidOutput()}{new string(' ', length)} |";
+                                var detailLeft = $"{value.ToValidOutput()}{new string(' ', length)}";
+
+                                Console.Write(" ");
+                                Console.BackgroundColor = BackgroundColor;
+                                Console.ForegroundColor = ForegroundColor;
+                                Console.Write(detailLeft);
+                                Console.ResetColor();
+                                Console.Write(" |");
+                                //s += $" {value.ToValidOutput()}{new string(' ', length)} |";
                                 break;
                             case TextJustification.Justified:
-                                s += $" {value.ToValidOutput()}{new string(' ', length)} |";
+                                var justified = $"{value.ToValidOutput()}{new string(' ', length)}";
+
+                                Console.Write(" ");
+                                Console.BackgroundColor = BackgroundColor;
+                                Console.ForegroundColor = ForegroundColor;
+                                Console.Write(justified);
+                                Console.ResetColor();
+                                Console.Write(" |");
+                                //s += $" {value.ToValidOutput()}{new string(' ', length)} |";
                                 break;
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
                     else
-                        s += $" {value.ToValidOutput()}{new string(' ', length)} |";
+                    {
+                        Console.Write(" ");
+                        Console.BackgroundColor = BackgroundColor;
+                        Console.ForegroundColor = ForegroundColor;
+                        Console.Write($"{value.ToValidOutput()}{new string(' ', length)}");
+                        Console.ResetColor();
+                        Console.Write(" |");
+                        //s += $" {value.ToValidOutput()}{new string(' ', length)} |";
+                    }
                 }
 
-                Console.WriteLine(s);
+                //Console.WriteLine(s);
+                Console.Write("\n");
             }
 
             Console.WriteLine();
