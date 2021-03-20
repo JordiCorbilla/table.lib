@@ -107,7 +107,7 @@ By default it will use the `FilterAction.Exclude` functionality:
 ```c#
 Table<IEnumerable<string>>.Add(test).
     OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-    FilterColumns(new []{ "Capacity", "Count"}).
+    FilterColumns(new []{ "Capacity", "Count" }).
     ToConsole();
 ```
 
@@ -131,7 +131,7 @@ Table<IEnumerable<string>>.Add(test).
 ```c#
 Table<IEnumerable<string>>.Add(test).
     OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-    FilterColumns(new []{ "Dynamic0"}, FilterActions.Include).
+    FilterColumns(new []{ "Dynamic0" }, FilterActions.Include).
     ToConsole();
 ```
 
@@ -160,7 +160,7 @@ Table<IEnumerable<string>>.Add(test).
     FilterOutColumns(new[] { "Capacity", "Count" }).
     ColumnContentTextJustification(new Dictionary<string, TextJustification>
     {
-        {"Dynamic0", TextJustification.Right}, 
+        { "Dynamic0", TextJustification.Right }, 
         { "Dynamic1", TextJustification.Centered }
     }).
     ToConsole();
@@ -191,7 +191,7 @@ Transform your output into a nicely formatted HTML table
 ```c#
 Table<IEnumerable<string>>.Add(test).
     OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-    FilterColumns(new []{ "Capacity", "Count"}).
+    FilterColumns(new []{ "Capacity", "Count" }).
     ToHtml(@"C:\temp\test.html");
 
 Table<TestClass>.Add(list).
