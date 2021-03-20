@@ -120,6 +120,7 @@ namespace table.lib
         public ConsoleColor BackgroundColor { get; set; } = ConsoleColor.Black;
         public ConsoleColor ForegroundColor { get; set; } = ConsoleColor.Green;
         private List<T> Items { get; }
+        public HighlightOperator Operation { get; set; }
 
         public Dictionary<string, TextJustification> ColumnTextJustification { get; set; } =
             new Dictionary<string, TextJustification>();
@@ -132,6 +133,12 @@ namespace table.lib
         public static Table<T> Add(List<T> list, string overrideDynamic)
         {
             return new Table<T>(list, overrideDynamic);
+        }
+
+        public Table<T> HighlightValue(HighlightOperator operation)
+        {
+            Operation = operation;
+            return this;
         }
 
         public Table<T> OverrideColumnsNames(Dictionary<string, string> columns)
@@ -221,6 +228,16 @@ namespace table.lib
         }
              
 
+        private void ConsoleRender(string value)
+        {
+            Console.Write(" ");
+            Console.BackgroundColor = BackgroundColor;
+            Console.ForegroundColor = ForegroundColor;
+            Console.Write(value);
+            Console.ResetColor();
+            Console.Write(" |");
+        }
+
         public void ToConsole()
         {
             if (Items.Count <= 0) return;
@@ -262,66 +279,25 @@ namespace table.lib
                             case TextJustification.Centered:
                                 var totalLength = $"{new string(' ', length)}{value.ToValidOutput()}".Length;
                                 var remaining = totalLength - $"{new string(' ', length / 2)}{value.ToValidOutput()}".Length;
-                                var content = $"{new string(' ', length / 2)}{value.ToValidOutput()}{new string(' ', remaining)}";
-
-                                Console.Write(" ");
-                                Console.BackgroundColor = BackgroundColor;
-                                Console.ForegroundColor = ForegroundColor;
-                                Console.Write(content);
-                                Console.ResetColor();
-                                Console.Write(" |");
-
-                                //s += $" {content} |";
+                                ConsoleRender($"{new string(' ', length / 2)}{value.ToValidOutput()}{new string(' ', remaining)}");
                                 break;
                             case TextJustification.Right:
-                                var detail = $"{new string(' ', length)}{value.ToValidOutput()}";
-
-                                Console.Write(" ");
-                                Console.BackgroundColor = BackgroundColor;
-                                Console.ForegroundColor = ForegroundColor;
-                                Console.Write(detail);
-                                Console.ResetColor();
-                                Console.Write(" |");
-                                //s += $" {new string(' ', length)}{value.ToValidOutput()} |";
+                                ConsoleRender($"{new string(' ', length)}{value.ToValidOutput()}");
                                 break;
                             case TextJustification.Left:
-                                var detailLeft = $"{value.ToValidOutput()}{new string(' ', length)}";
-
-                                Console.Write(" ");
-                                Console.BackgroundColor = BackgroundColor;
-                                Console.ForegroundColor = ForegroundColor;
-                                Console.Write(detailLeft);
-                                Console.ResetColor();
-                                Console.Write(" |");
-                                //s += $" {value.ToValidOutput()}{new string(' ', length)} |";
+                                ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}");
                                 break;
                             case TextJustification.Justified:
-                                var justified = $"{value.ToValidOutput()}{new string(' ', length)}";
-
-                                Console.Write(" ");
-                                Console.BackgroundColor = BackgroundColor;
-                                Console.ForegroundColor = ForegroundColor;
-                                Console.Write(justified);
-                                Console.ResetColor();
-                                Console.Write(" |");
-                                //s += $" {value.ToValidOutput()}{new string(' ', length)} |";
+                                ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}");
                                 break;
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
                     else
                     {
-                        Console.Write(" ");
-                        Console.BackgroundColor = BackgroundColor;
-                        Console.ForegroundColor = ForegroundColor;
-                        Console.Write($"{value.ToValidOutput()}{new string(' ', length)}");
-                        Console.ResetColor();
-                        Console.Write(" |");
-                        //s += $" {value.ToValidOutput()}{new string(' ', length)} |";
+                        ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}");
                     }
                 }
-
-                //Console.WriteLine(s);
                 Console.Write("\n");
             }
 
