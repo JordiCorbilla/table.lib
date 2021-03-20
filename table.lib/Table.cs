@@ -204,7 +204,6 @@ namespace table.lib
             var filteredPropertyNames = new List<PropertyName>();
 
             foreach (var propertyName in PropertyNames)
-            {
                 switch (ColumnAction)
                 {
                     case FilterAction.Include:
@@ -222,17 +221,65 @@ namespace table.lib
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-            }
 
             return filteredPropertyNames;
         }
-             
 
-        private void ConsoleRender(string value)
+
+        private void ConsoleRender(string value, string column)
         {
             Console.Write(" ");
             Console.BackgroundColor = BackgroundColor;
             Console.ForegroundColor = ForegroundColor;
+
+            if (Operation != null)
+                if (column == Operation.Field)
+                    switch (Operation.Type)
+                    {
+                        case HighlightType.Decimal:
+                            try
+                            {
+                                var parsed = decimal.Parse(value.Trim());
+                                if (parsed != Operation.DecimalValue)
+                                {
+                                    Console.BackgroundColor = Operation.BackgroundColorIfDifferent;
+                                    Console.ForegroundColor = Operation.ForegroundColorIfDifferent;
+                                }
+                                else
+                                {
+                                    Console.BackgroundColor = Operation.BackgroundColorIfEqual;
+                                    Console.ForegroundColor = Operation.ForegroundColorIfEqual;
+                                }
+                            }
+                            catch
+                            {
+                                // do nothing
+                            }
+
+                            break;
+                        case HighlightType.String:
+                            try
+                            {
+                                if (value.Trim() != Operation.StringValue)
+                                {
+                                    Console.BackgroundColor = Operation.BackgroundColorIfDifferent;
+                                    Console.ForegroundColor = Operation.ForegroundColorIfDifferent;
+                                }
+                                else
+                                {
+                                    Console.BackgroundColor = Operation.BackgroundColorIfEqual;
+                                    Console.ForegroundColor = Operation.ForegroundColorIfEqual;
+                                }
+                            }
+                            catch
+                            {
+                                // do nothing
+                            }
+
+                            break;
+                    }
+
+
             Console.Write(value);
             Console.ResetColor();
             Console.Write(" |");
@@ -278,26 +325,28 @@ namespace table.lib
                         {
                             case TextJustification.Centered:
                                 var totalLength = $"{new string(' ', length)}{value.ToValidOutput()}".Length;
-                                var remaining = totalLength - $"{new string(' ', length / 2)}{value.ToValidOutput()}".Length;
-                                ConsoleRender($"{new string(' ', length / 2)}{value.ToValidOutput()}{new string(' ', remaining)}");
+                                var remaining = totalLength -
+                                                $"{new string(' ', length / 2)}{value.ToValidOutput()}".Length;
+                                ConsoleRender(
+                                    $"{new string(' ', length / 2)}{value.ToValidOutput()}{new string(' ', remaining)}",
+                                    property.Name);
                                 break;
                             case TextJustification.Right:
-                                ConsoleRender($"{new string(' ', length)}{value.ToValidOutput()}");
+                                ConsoleRender($"{new string(' ', length)}{value.ToValidOutput()}", property.Name);
                                 break;
                             case TextJustification.Left:
-                                ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}");
+                                ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}", property.Name);
                                 break;
                             case TextJustification.Justified:
-                                ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}");
+                                ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}", property.Name);
                                 break;
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
                     else
-                    {
-                        ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}");
-                    }
+                        ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}", property.Name);
                 }
+
                 Console.Write("\n");
             }
 

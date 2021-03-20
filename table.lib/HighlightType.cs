@@ -24,7 +24,7 @@ namespace table.lib
 {
     public enum HighlightType
     {
-        String=0,
-        Decimal=1
+        String = 0,
+        Decimal = 1
     }
 }

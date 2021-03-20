@@ -30,9 +30,9 @@ namespace table.lib
         public string StringValue { get; set; }
         public decimal DecimalValue { get; set; }
         public ConsoleColor ForegroundColorIfEqual { get; set; } = ConsoleColor.White;
-        public ConsoleColor BackgroundColorIfEqual { get; set; } = ConsoleColor.Green;
+        public ConsoleColor BackgroundColorIfEqual { get; set; } = ConsoleColor.DarkGreen;
         public ConsoleColor ForegroundColorIfDifferent { get; set; } = ConsoleColor.White;
-        public ConsoleColor BackgroundColorIfDifferent { get; set; } = ConsoleColor.Red;
+        public ConsoleColor BackgroundColorIfDifferent { get; set; } = ConsoleColor.DarkRed;
         public HighlightType Type { get; set; } = HighlightType.String;
     }
 }

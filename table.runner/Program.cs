@@ -66,6 +66,11 @@ namespace table.runner
 
             Table<TestClass>.Add(list).ToConsole();
 
+            Table<TestClass>.Add(list)
+                .HighlightValue(new HighlightOperator
+                    {Field = "Field3", Type = HighlightType.Decimal, DecimalValue = 2121.32m})
+                .ToConsole();
+
             var test = new List<IEnumerable<string>>
             {
                 new List<string> {"AAA", "BBB", "CCC"},
@@ -81,13 +86,13 @@ namespace table.runner
                 .ToConsole();
 
             Table<IEnumerable<string>>.Add(test)
-                .FilterColumns(new[] { "Dynamic0", "Dynamic1" }, FilterAction.Include)
+                .FilterColumns(new[] {"Dynamic0", "Dynamic1"}, FilterAction.Include)
                 .HighlightRows(ConsoleColor.Red, ConsoleColor.White)
                 .ToConsole();
 
             Table<IEnumerable<string>>.Add(test)
-                .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
-                .FilterColumns(new[] { "Dynamic0" }, FilterAction.Include)
+                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
+                .FilterColumns(new[] {"Dynamic0"}, FilterAction.Include)
                 .ToConsole();
 
             Table<IEnumerable<string>>.Add(test)

@@ -24,7 +24,7 @@ namespace table.lib
 {
     public enum FilterAction
     {
-        Include=0,
-        Exclude=1
+        Include = 0,
+        Exclude = 1
     }
 }
