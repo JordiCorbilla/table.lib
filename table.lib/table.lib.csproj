@@ -3,15 +3,17 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>table.lib</RootNamespace>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <Copyright>Jordi Corbilla</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/JordiCorbilla/table.lib</RepositoryUrl>
-    <PackageReleaseNotes>v1.1
-- Allow Dynamic columns to be replaced</PackageReleaseNotes>
+    <PackageReleaseNotes>v1.2
+- Update filter methods to include/exclude columns</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Description>Simple c# (.NET 5) table library that renders any List&lt;T&gt; into a nicely formatted markdown, csv, html or console table, allowing for extra formats.</Description>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
+    <FileVersion>1.2.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

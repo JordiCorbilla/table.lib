@@ -254,8 +254,7 @@ namespace table.lib
                                 var totalLength = $"{new string(' ', length)}{value.ToValidOutput()}".Length;
                                 var remaining = totalLength -
                                                 $"{new string(' ', length / 2)}{value.ToValidOutput()}".Length;
-                                s +=
-                                    $" {new string(' ', length / 2)}{value.ToValidOutput()}{new string(' ', remaining)} |";
+                                s += $" {new string(' ', length / 2)}{value.ToValidOutput()}{new string(' ', remaining)} |";
                                 break;
                             case TextJustification.Right:
                                 s += $" {new string(' ', length)}{value.ToValidOutput()} |";
