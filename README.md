@@ -157,6 +157,8 @@ Table<IEnumerable<string>>.Add(GetStringMatrix())
     .ToConsole();
 ```
 
+**Note that this option will highlight all the rows
+
 ![image](https://user-images.githubusercontent.com/7347994/111919193-9da1b680-8a80-11eb-9218-d3b4e796e5fb.png)
 
 
@@ -170,6 +172,8 @@ Table<TestClass>.Add(GetSampleOutput())
         {Field = "Field3", Type = HighlightType.Decimal, DecimalValue = 2121.32m})
     .ToConsole();
 ```
+
+**Note that this option will highlight one specific cell and it will use two colors, one for `=` and one for `<>`
 
 ![image](https://user-images.githubusercontent.com/7347994/111919177-84006f00-8a80-11eb-8f58-e8e965b07f15.png)
 
