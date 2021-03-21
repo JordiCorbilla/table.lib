@@ -77,9 +77,9 @@ Table<IEnumerable<string>>.Add(test).ToConsole();
 If the name of the column is not of your liking, you can change it via `OverrideColumnsNames` and provide your preferred name. Note that this will also alter the column width to allow for more room if the new name is larger than the previous one.
 
 ```c#
-Table<IEnumerable<string>>.Add(test).
-    OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0","ColumnA"}}).
-    ToConsole();
+Table<IEnumerable<string>>.Add(test)
+    .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0","ColumnA"}})
+    .ToConsole();
 ```
 
 ```bash
@@ -107,10 +107,10 @@ You don't want to show all the columns? Easy, just use the `FilterColumns` prope
 By default it will use the `FilterAction.Exclude` functionality:
 
 ```c#
-Table<IEnumerable<string>>.Add(test).
-    OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-    FilterColumns(new []{ "Capacity", "Count" }).
-    ToConsole();
+Table<IEnumerable<string>>.Add(test)
+    .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
+    .FilterColumns(new []{ "Capacity", "Count" })
+    .ToConsole();
 ```
 
 ```bash
@@ -131,10 +131,10 @@ Table<IEnumerable<string>>.Add(test).
 
 
 ```c#
-Table<IEnumerable<string>>.Add(test).
-    OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-    FilterColumns(new []{ "Dynamic0" }, FilterActions.Include).
-    ToConsole();
+Table<IEnumerable<string>>.Add(test)
+    .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
+    .FilterColumns(new []{ "Dynamic0" }, FilterActions.Include)
+    .ToConsole();
 ```
 
 ```bash
@@ -152,20 +152,20 @@ Table<IEnumerable<string>>.Add(test).
 You need one of the columns, right aligned or centered? Use the column justification option.
 
 ```c#
-Table<IEnumerable<string>>.Add(test).
-    OverrideColumnsNames(new Dictionary<string, string>
+Table<IEnumerable<string>>.Add(test)
+    .OverrideColumnsNames(new Dictionary<string, string>
     {
         { "Dynamic0", "A" },
         { "Dynamic1", "B" },
         { "Dynamic2", "C" }
-    }).
-    FilterOutColumns(new[] { "Capacity", "Count" }).
-    ColumnContentTextJustification(new Dictionary<string, TextJustification>
+    })
+    .FilterOutColumns(new[] { "Capacity", "Count" })
+    .ColumnContentTextJustification(new Dictionary<string, TextJustification>
     {
         { "Dynamic0", TextJustification.Right }, 
         { "Dynamic1", TextJustification.Centered }
-    }).
-    ToConsole();
+    })
+    .ToConsole();
 ```
 
 Note that this will only affect `markdown`, `console` and `html` outputs and only their data. Columns labels will remain left aligned.
@@ -191,13 +191,13 @@ Note that this will only affect `markdown`, `console` and `html` outputs and onl
 Transform your output into a nicely formatted HTML table
 
 ```c#
-Table<IEnumerable<string>>.Add(test).
-    OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).
-    FilterColumns(new []{ "Capacity", "Count" }).
-    ToHtml(@"C:\temp\test.html");
+Table<IEnumerable<string>>.Add(test)
+    .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
+    .FilterColumns(new []{ "Capacity", "Count" })
+    .ToHtml(@"C:\temp\test.html");
 
-Table<TestClass>.Add(list).
-    ToHtml(@"C:\temp\test-list.html");
+Table<TestClass>.Add(list)
+    .ToHtml(@"C:\temp\test-list.html");
 ```
 
 Sample generated code:
@@ -333,8 +333,8 @@ Real HTML output:
 Trasform your output into a nicely formatted `CSV` file
 
 ```c#
-Table<TestClass>.Add(list).
-    ToCsv(@"C:\temp\test-list.csv");
+Table<TestClass>.Add(list)
+    .ToCsv(@"C:\temp\test-list.csv");
 ```
 
 The format of the file can be seen here:
