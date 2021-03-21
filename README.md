@@ -146,6 +146,33 @@ Table<IEnumerable<string>>.Add(test)
 | AAA      |
 ```
 
+## Row Highlighter
+
+With a simple operation, we can now highlight the entire content of the table using the code below:
+
+```c#
+Table<IEnumerable<string>>.Add(GetStringMatrix())
+    .FilterColumns(new[] { "Dynamic0", "Dynamic1" }, FilterAction.Include)
+    .HighlightRows(ConsoleColor.Red, ConsoleColor.White)
+    .ToConsole();
+```
+
+![image](https://user-images.githubusercontent.com/7347994/111919193-9da1b680-8a80-11eb-9218-d3b4e796e5fb.png)
+
+
+## Field Highlighter
+
+You need more control over the field you want to highlight? then use the highlight operator:
+
+```c#
+Table<TestClass>.Add(GetSampleOutput())
+    .HighlightValue(new HighlightOperator
+        {Field = "Field3", Type = HighlightType.Decimal, DecimalValue = 2121.32m})
+    .ToConsole();
+```
+
+![image](https://user-images.githubusercontent.com/7347994/111919177-84006f00-8a80-11eb-8f58-e8e965b07f15.png)
+
 
 ## Column Justification
 
