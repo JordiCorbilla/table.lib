@@ -38,7 +38,7 @@ namespace table.lib
         /// <param name="overrideDynamicName"></param>
         public Table(List<T> list, string overrideDynamicName = null)
         {
-            if (list.Count <= 0) return;
+            if (list.Count == 0) return;
             if (!string.IsNullOrEmpty(overrideDynamicName))
                 DynamicName = overrideDynamicName;
             PropertyNames = new List<PropertyName>();
@@ -287,7 +287,7 @@ namespace table.lib
 
         public void ToConsole()
         {
-            if (Items.Count <= 0) return;
+            if (Items.Count == 0) return;
             var s = "|";
 
             var filteredPropertyNames = FilterProperties();
@@ -355,7 +355,7 @@ namespace table.lib
 
         public void ToMarkDown(string fileName, bool consoleVerbose = false)
         {
-            if (Items.Count <= 0) return;
+            if (Items.Count == 0) return;
             var stringBuilder = new StringBuilder();
             var s = "|";
 
@@ -426,7 +426,7 @@ namespace table.lib
         public void ToHtml(string fileName)
         {
             var stringBuilder = new StringBuilder();
-            if (Items.Count <= 0) return;
+            if (Items.Count == 0) return;
             stringBuilder.AppendLine("<table style=\"border-collapse: collapse; width: 100%;\">");
             stringBuilder.AppendLine("<tr>");
 
@@ -468,7 +468,7 @@ namespace table.lib
         public void ToCsv(string fileName)
         {
             var stringBuilder = new StringBuilder();
-            if (Items.Count <= 0) return;
+            if (Items.Count == 0) return;
             var s = "";
             var filteredPropertyNames = FilterProperties();
             foreach (var property in filteredPropertyNames)
