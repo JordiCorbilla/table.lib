@@ -28,7 +28,7 @@ using System.Text;
 
 namespace table.lib
 {
-    public class Table<T>
+    public class Table<T> : Base<T>
     {
         /// <summary>
         ///     Where the magic happens.
@@ -111,19 +111,6 @@ namespace table.lib
                 }
         }
 
-        public List<PropertyName> PropertyNames { get; set; }
-        public Dictionary<string, int> MaxWidth { get; set; }
-        public Dictionary<string, string> ColumnNameOverrides { get; set; } = new Dictionary<string, string>();
-        public Dictionary<string, bool> ColumnFilter { get; set; } = new Dictionary<string, bool>();
-        public FilterAction ColumnAction { get; set; } = FilterAction.Exclude;
-        public string DynamicName { get; set; } = "Dynamic";
-        public ConsoleColor BackgroundColor { get; set; } = ConsoleColor.Black;
-        public ConsoleColor ForegroundColor { get; set; } = ConsoleColor.Green;
-        private List<T> Items { get; }
-        public HighlightOperator Operation { get; set; }
-
-        public Dictionary<string, TextJustification> ColumnTextJustification { get; set; } =
-            new Dictionary<string, TextJustification>();
 
         public static Table<T> Add(List<T> list)
         {
@@ -172,32 +159,6 @@ namespace table.lib
             return this;
         }
 
-        private static string GetValue(T item, PropertyName property)
-        {
-            if (string.IsNullOrEmpty(property.Name)) return null;
-            object value;
-            if (property.IsCollection)
-            {
-                var prop = item.GetType().GetProperties()[property.PropertyIndex];
-                value = prop.GetValue(item, new object[] {property.Index});
-            }
-            else
-            {
-                var properties = item.GetType().GetProperty(property.Name);
-                value = properties?.GetValue(item, null);
-            }
-
-            return value switch
-            {
-                string s => s,
-                int _ => value.ToString(),
-                bool _ => value.ToString(),
-                DateTime time => time.ToString("dd-MMM-yyyy"),
-                decimal value1 => value1.ToString("#,##0.00"),
-                double value1 => value1.ToString("#,##0.00"),
-                _ => (value != null ? value.ToString() : "")
-            };
-        }
 
         private List<PropertyName> FilterProperties()
         {

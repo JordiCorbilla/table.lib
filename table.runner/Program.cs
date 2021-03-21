@@ -32,7 +32,7 @@ namespace table.runner
         {
             Samples.SimpleConsoleOutputForList();
             Samples.SimpleConsoleOutputWithHighlighterForList();
-            
+
 
             var test = new List<IEnumerable<string>>
             {
