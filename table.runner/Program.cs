@@ -20,10 +20,6 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using table.lib;
-
 namespace table.runner
 {
     internal class Program
@@ -32,79 +28,15 @@ namespace table.runner
         {
             Samples.SimpleConsoleOutputForList();
             Samples.SimpleConsoleOutputWithHighlighterForList();
-
-
-            var test = new List<IEnumerable<string>>
-            {
-                new List<string> {"AAA", "BBB", "CCC"},
-                new List<string> {"AAA", "BBB", "CCC"},
-                new List<string> {"AAA", "BBB", "CCC"},
-                new List<string> {"AAA", "BBB", "CCC"}
-            };
-
-            Table<IEnumerable<string>>.Add(test).ToConsole();
-
-            Table<IEnumerable<string>>.Add(test)
-                .FilterColumns(new[] {"Dynamic0"}, FilterAction.Include)
-                .ToConsole();
-
-            Table<IEnumerable<string>>.Add(test)
-                .FilterColumns(new[] {"Dynamic0", "Dynamic1"}, FilterAction.Include)
-                .HighlightRows(ConsoleColor.Red, ConsoleColor.White)
-                .ToConsole();
-
-            Table<IEnumerable<string>>.Add(test)
-                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
-                .FilterColumns(new[] {"Dynamic0"}, FilterAction.Include)
-                .ToConsole();
-
-            Table<IEnumerable<string>>.Add(test)
-                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}}).ToConsole();
-
-            Table<IEnumerable<string>>.Add(test)
-                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
-                .FilterColumns(new[] {"Capacity", "Count"}).ToConsole();
-
-            Table<IEnumerable<string>>.Add(test).OverrideColumnsNames(new Dictionary<string, string>
-            {
-                {"Dynamic0", "A"},
-                {"Dynamic1", "B"},
-                {"Dynamic2", "C"}
-            }).FilterColumns(new[] {"Capacity", "Count"}).ColumnContentTextJustification(
-                new Dictionary<string, TextJustification>
-                {
-                    {"Dynamic0", TextJustification.Right},
-                    {"Dynamic1", TextJustification.Centered}
-                }).ToConsole();
-
-            Table<IEnumerable<string>>.Add(test)
-                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
-                .FilterColumns(new[] {"Capacity", "Count"}).ToCsv(@"C:\temp\test.csv");
-
             Samples.SimpleCsvOutputForList();
-
-            Table<IEnumerable<string>>.Add(test)
-                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
-                .FilterColumns(new[] {"Capacity", "Count"}).ToHtml(@"C:\temp\test.html");
-
             Samples.SimpleHtmlOutputForList();
-
-            Table<IEnumerable<string>>.Add(test)
-                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
-                .FilterColumns(new[] {"Capacity", "Count"})
-                .ColumnContentTextJustification(new Dictionary<string, TextJustification>
-                    {{"Dynamic0", TextJustification.Right}}).ToMarkDown(@"C:\temp\test.md", true);
-
-            var matrix = new List<IEnumerable<int>>
-            {
-                new List<int> {1, 2, 3},
-                new List<int> {1, 2, 3},
-                new List<int> {1, 2, 3},
-                new List<int> {1, 2, 3}
-            };
-
-            Table<IEnumerable<int>>.Add(matrix, "T")
-                .ToConsole();
+            Samples.ComplexConsoleOutputForList();
+            Samples.ComplexConsoleOutputFilteringForList();
+            Samples.ComplexConsoleOutputOverrideFilteringForList();
+            Samples.ComplexCsvOutputFilteringForList();
+            Samples.ComplexHtmlOutputFilteringForList();
+            Samples.ComplexMarkDownOutputFilteringForList();
+            Samples.ComplexConsoleMatrix();
         }
     }
 }

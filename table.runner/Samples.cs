@@ -66,6 +66,30 @@ namespace table.runner
             return list;
         }
 
+        public static List<IEnumerable<string>> GetStringMatrix()
+        {
+            var test = new List<IEnumerable<string>>
+            {
+                new List<string> {"AAA", "BBB", "CCC"},
+                new List<string> {"AAA", "BBB", "CCC"},
+                new List<string> {"AAA", "BBB", "CCC"},
+                new List<string> {"AAA", "BBB", "CCC"}
+            };
+            return test;
+        }
+
+        public static List<IEnumerable<int>> GetIntMatrix()
+        {
+            var matrix = new List<IEnumerable<int>>
+            {
+                new List<int> {1, 2, 3},
+                new List<int> {1, 2, 3},
+                new List<int> {1, 2, 3},
+                new List<int> {1, 2, 3}
+            };
+            return matrix;
+        }
+
         public static void SimpleConsoleOutputForList()
         {
             Table<TestClass>.Add(GetSampleOutput()).ToConsole();
@@ -87,6 +111,83 @@ namespace table.runner
         public static void SimpleHtmlOutputForList()
         {
             Table<TestClass>.Add(GetSampleOutput()).ToHtml(@"C:\temp\test-list.html");
+        }
+
+        public static void ComplexConsoleOutputForList()
+        {
+            Table<IEnumerable<string>>.Add(GetStringMatrix()).ToConsole();
+        }
+
+        public static void ComplexConsoleOutputFilteringForList()
+        {
+            Table<IEnumerable<string>>.Add(GetStringMatrix())
+                .FilterColumns(new[] { "Dynamic0" }, FilterAction.Include)
+                .ToConsole();
+
+            Table<IEnumerable<string>>.Add(GetStringMatrix())
+                .FilterColumns(new[] { "Dynamic0" }, FilterAction.Include)
+                .ToConsole();
+
+            Table<IEnumerable<string>>.Add(GetStringMatrix())
+                .FilterColumns(new[] { "Dynamic0", "Dynamic1" }, FilterAction.Include)
+                .HighlightRows(ConsoleColor.Red, ConsoleColor.White)
+                .ToConsole();
+        }
+
+        public static void ComplexConsoleOutputOverrideFilteringForList()
+        {
+            Table<IEnumerable<string>>.Add(GetStringMatrix())
+                .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
+                .FilterColumns(new[] { "Dynamic0" }, FilterAction.Include)
+                .ToConsole();
+
+            Table<IEnumerable<string>>.Add(GetStringMatrix())
+                .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).ToConsole();
+
+            Table<IEnumerable<string>>.Add(GetStringMatrix())
+                .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
+                .FilterColumns(new[] { "Capacity", "Count" }).ToConsole();
+
+            Table<IEnumerable<string>>.Add(GetStringMatrix()).OverrideColumnsNames(new Dictionary<string, string>
+            {
+                {"Dynamic0", "A"},
+                {"Dynamic1", "B"},
+                {"Dynamic2", "C"}
+            }).FilterColumns(new[] { "Capacity", "Count" }).ColumnContentTextJustification(
+                new Dictionary<string, TextJustification>
+                {
+                    {"Dynamic0", TextJustification.Right},
+                    {"Dynamic1", TextJustification.Centered}
+                }).ToConsole();
+        }
+
+        public static void ComplexCsvOutputFilteringForList()
+        {
+            Table<IEnumerable<string>>.Add(GetStringMatrix())
+                .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
+                .FilterColumns(new[] { "Capacity", "Count" }).ToCsv(@"C:\temp\test.csv");
+        }
+
+        public static void ComplexHtmlOutputFilteringForList()
+        {
+            Table<IEnumerable<string>>.Add(GetStringMatrix())
+                .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
+                .FilterColumns(new[] { "Capacity", "Count" }).ToHtml(@"C:\temp\test.html");
+        }
+
+        public static void ComplexMarkDownOutputFilteringForList()
+        {
+            Table<IEnumerable<string>>.Add(GetStringMatrix())
+                .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
+                .FilterColumns(new[] { "Capacity", "Count" })
+                .ColumnContentTextJustification(new Dictionary<string, TextJustification>
+                    {{"Dynamic0", TextJustification.Right}}).ToMarkDown(@"C:\temp\test.md", true);
+        }
+
+        public static void ComplexConsoleMatrix()
+        {
+            Table<IEnumerable<int>>.Add(GetIntMatrix(), "T")
+                .ToConsole();
         }
     }
 }

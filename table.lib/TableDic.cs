@@ -22,19 +22,20 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace table.lib
 {
-    public class TableDic<T, TV> : Base<T>
+    public class TableDic<TV, T> : Base<T>
     {
-        public TableDic(List<T> list, string overrideDynamicName = null)
+        public TableDic(Dictionary<TV, T> dictionary, string overrideDynamicName = null)
         {
-            if (list.Count == 0) return;
+            if (dictionary.Count == 0) return;
             if (!string.IsNullOrEmpty(overrideDynamicName))
                 DynamicName = overrideDynamicName;
             PropertyNames = new List<PropertyName>();
             MaxWidth = new Dictionary<string, int>();
-            Items = list;
+            Items = dictionary.Select(x => x.Value).ToList();
             var properties = typeof(T).GetProperties();
             foreach (var property in properties)
             {
