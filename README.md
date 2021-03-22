@@ -5,7 +5,7 @@ Simple `c# (.NET 5)` table library that renders any `List<T>` into a nicely form
 ## Installation
 
 ```bash
-dotnet add package table.lib --version 1.2.0
+dotnet add package table.lib --version 1.3.0
 ```
 
 ## Markdown format in console output
