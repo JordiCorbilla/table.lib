@@ -54,17 +54,15 @@ namespace table.lib
             //Workout the key length
             foreach (var row in Keys)
             {
-                var subProperties = row.GetType().GetProperty("Key_Id");
-                var subValue = subProperties?.GetValue(subProperties, null);
-                var subValueLength = subValue switch
+                var subValueLength = row switch
                 {
                     string s => s,
-                    int _ => subValue.ToString(),
-                    bool _ => subValue.ToString(),
+                    int _ => row.ToString(),
+                    bool _ => row.ToString(),
                     DateTime time => time.ToString("dd-MMM-yyyy"),
                     decimal value1 => value1.ToString("#,##0.00"),
                     double value1 => value1.ToString("#,##0.00"),
-                    _ => (subValue != null ? subValue.ToString() : "")
+                    _ => (row != null ? row.ToString() : "")
                 };
 
                 if (subValueLength.Length > MaxWidth["Key_Id"])
@@ -166,17 +164,15 @@ namespace table.lib
                 {
                     if (property.Name == "Key_Id")
                     {
-                        var properties = Keys[index].GetType().GetProperty(property.Name);
-                        var keyValue = properties?.GetValue(Keys[index], null);
-                        var keyValueParsed = keyValue switch
+                        var keyValueParsed = Keys[index] switch
                         {
                             string t => t,
-                            int _ => keyValue.ToString(),
-                            bool _ => keyValue.ToString(),
+                            int _ => Keys[index].ToString(),
+                            bool _ => Keys[index].ToString(),
                             DateTime time => time.ToString("dd-MMM-yyyy"),
                             decimal value1 => value1.ToString("#,##0.00"),
                             double value1 => value1.ToString("#,##0.00"),
-                            _ => (keyValue != null ? keyValue.ToString() : "")
+                            _ => (Keys[index] != null ? Keys[index].ToString() : "")
                         };
 
                         var lengthParsed = MaxWidth[property.Name] - keyValueParsed.Length;
