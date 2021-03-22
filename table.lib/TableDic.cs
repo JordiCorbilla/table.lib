@@ -51,6 +51,26 @@ namespace table.lib
                 MaxWidth.Add(property.Name, property.Name.Length);
             }
 
+            //Workout the key length
+            foreach (var row in Keys)
+            {
+                var subProperties = row.GetType().GetProperty("Key_Id");
+                var subValue = subProperties?.GetValue(subProperties, null);
+                var subValueLength = subValue switch
+                {
+                    string s => s,
+                    int _ => subValue.ToString(),
+                    bool _ => subValue.ToString(),
+                    DateTime time => time.ToString("dd-MMM-yyyy"),
+                    decimal value1 => value1.ToString("#,##0.00"),
+                    double value1 => value1.ToString("#,##0.00"),
+                    _ => (subValue != null ? subValue.ToString() : "")
+                };
+
+                if (subValueLength.Length > MaxWidth["Key_Id"])
+                    MaxWidth["Key_Id"] = subValueLength.Length;
+            }
+
             foreach (var row in Items)
                 if (properties.Length != 0)
                 {
