@@ -28,6 +28,8 @@ namespace table.lib
 {
     public class TableDic<TV, T> : Base<T>
     {
+        public List<TV> Keys { get; set; }
+
         public TableDic(Dictionary<TV, T> dictionary, string overrideDynamicName = null)
         {
             if (dictionary.Count == 0) return;
@@ -35,8 +37,14 @@ namespace table.lib
                 DynamicName = overrideDynamicName;
             PropertyNames = new List<PropertyName>();
             MaxWidth = new Dictionary<string, int>();
+            Keys = dictionary.Select(x => x.Key).ToList();
             Items = dictionary.Select(x => x.Value).ToList();
             var properties = typeof(T).GetProperties();
+
+            //Add the additional Key
+            PropertyNames.Add(new PropertyName("Key_Id"));
+            MaxWidth.Add("Key_Id", "Key_Id".Length);
+
             foreach (var property in properties)
             {
                 PropertyNames.Add(new PropertyName(property.Name));
@@ -103,9 +111,77 @@ namespace table.lib
                 }
         }
 
-        public static TableDic<T, TV> Add(Dictionary<T, TV> list)
+        public void ToConsole()
         {
-            return null;
+            if (Items.Count == 0) return;
+            var s = "|";
+
+            var filteredPropertyNames = FilterProperties();
+
+            foreach (var property in filteredPropertyNames)
+            {
+                var headerName = property.Name;
+                if (ColumnNameOverrides.ContainsKey(property.Name))
+                    headerName = ColumnNameOverrides[property.Name];
+
+                var length = MaxWidth[property.Name] - headerName.Length;
+
+                var totalLength = $"{new string(' ', length)}{headerName.ToValidOutput()}".Length;
+                var remaining = totalLength - $"{new string(' ', length / 2)}{headerName.ToValidOutput()}".Length;
+                s += $" {new string(' ', length / 2)}{headerName.ToValidOutput()}{new string(' ', remaining)} |";
+            }
+
+            Console.WriteLine(s);
+
+            s = filteredPropertyNames.Aggregate("|",
+                (current, name) => current + $" {new string('-', MaxWidth[name.Name])} |");
+
+            Console.WriteLine(s);
+
+            foreach (var row in Items)
+            {
+                Console.Write("|");
+                foreach (var property in filteredPropertyNames)
+                {
+                    var value = GetValue(row, property);
+                    var length = MaxWidth[property.Name] - value.Length;
+
+                    if (ColumnTextJustification.ContainsKey(property.Name))
+                        switch (ColumnTextJustification[property.Name])
+                        {
+                            case TextJustification.Centered:
+                                var totalLength = $"{new string(' ', length)}{value.ToValidOutput()}".Length;
+                                var remaining = totalLength -
+                                                $"{new string(' ', length / 2)}{value.ToValidOutput()}".Length;
+                                ConsoleRender(
+                                    $"{new string(' ', length / 2)}{value.ToValidOutput()}{new string(' ', remaining)}",
+                                    property.Name);
+                                break;
+                            case TextJustification.Right:
+                                ConsoleRender($"{new string(' ', length)}{value.ToValidOutput()}", property.Name);
+                                break;
+                            case TextJustification.Left:
+                                ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}", property.Name);
+                                break;
+                            case TextJustification.Justified:
+                                ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}", property.Name);
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                    else
+                        ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}", property.Name);
+                }
+
+                Console.Write("\n");
+            }
+
+            Console.WriteLine();
+        }
+
+        public static TableDic<T, TV> Add(Dictionary<TV, T> dictionary)
+        {
+            return new TableDic<T, TV>(dictionary);
         }
     }
 }

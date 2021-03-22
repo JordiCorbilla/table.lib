@@ -37,6 +37,8 @@ namespace table.runner
             Samples.ComplexHtmlOutputFilteringForList();
             Samples.ComplexMarkDownOutputFilteringForList();
             Samples.ComplexConsoleMatrix();
+
+            Samples.SimpleConsoleForDictionary();
         }
     }
 }

@@ -67,5 +67,90 @@ namespace table.lib
                 _ => (value != null ? value.ToString() : "")
             };
         }
+
+        public List<PropertyName> FilterProperties()
+        {
+            var filteredPropertyNames = new List<PropertyName>();
+
+            foreach (var propertyName in PropertyNames)
+                switch (ColumnAction)
+                {
+                    case FilterAction.Include:
+                    {
+                        if (ColumnFilter.ContainsKey(propertyName.Name))
+                            filteredPropertyNames.Add(propertyName);
+                        break;
+                    }
+                    case FilterAction.Exclude:
+                    {
+                        if (!ColumnFilter.ContainsKey(propertyName.Name))
+                            filteredPropertyNames.Add(propertyName);
+                        break;
+                    }
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+            return filteredPropertyNames;
+        }
+
+        public void ConsoleRender(string value, string column)
+        {
+            Console.Write(" ");
+            Console.BackgroundColor = BackgroundColor;
+            Console.ForegroundColor = ForegroundColor;
+
+            if (Operation != null)
+                if (column == Operation.Field)
+                    switch (Operation.Type)
+                    {
+                        case HighlightType.Decimal:
+                            try
+                            {
+                                var parsed = decimal.Parse(value.Trim());
+                                if (parsed != Operation.DecimalValue)
+                                {
+                                    Console.BackgroundColor = Operation.BackgroundColorIfDifferent;
+                                    Console.ForegroundColor = Operation.ForegroundColorIfDifferent;
+                                }
+                                else
+                                {
+                                    Console.BackgroundColor = Operation.BackgroundColorIfEqual;
+                                    Console.ForegroundColor = Operation.ForegroundColorIfEqual;
+                                }
+                            }
+                            catch
+                            {
+                                // do nothing
+                            }
+
+                            break;
+                        case HighlightType.String:
+                            try
+                            {
+                                if (value.Trim() != Operation.StringValue)
+                                {
+                                    Console.BackgroundColor = Operation.BackgroundColorIfDifferent;
+                                    Console.ForegroundColor = Operation.ForegroundColorIfDifferent;
+                                }
+                                else
+                                {
+                                    Console.BackgroundColor = Operation.BackgroundColorIfEqual;
+                                    Console.ForegroundColor = Operation.ForegroundColorIfEqual;
+                                }
+                            }
+                            catch
+                            {
+                                // do nothing
+                            }
+
+                            break;
+                    }
+
+
+            Console.Write(value);
+            Console.ResetColor();
+            Console.Write(" |");
+        }
     }
 }

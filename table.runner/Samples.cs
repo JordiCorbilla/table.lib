@@ -189,5 +189,48 @@ namespace table.runner
             Table<IEnumerable<int>>.Add(GetIntMatrix(), "T")
                 .ToConsole();
         }
+
+        public static void SimpleConsoleForDictionary()
+        {
+            var dic = new Dictionary<string, TestClass>
+            {
+                {
+                    "1", new TestClass
+                    {
+                        Field1 = 321121,
+                        Field2 = "Hi 312321",
+                        Field3 = 2121.32m,
+                        Field4 = true,
+                        Field5 = new DateTime(1970, 1, 1),
+                        Field6 = 34.43
+                    }
+                },
+                {
+                    "2", new TestClass
+                    {
+                        Field1 = 321121,
+                        Field2 = "Hi 312321",
+                        Field3 = 2121.32m,
+                        Field4 = true,
+                        Field5 = new DateTime(1970, 1, 1),
+                        Field6 = 34.43
+                    }
+                },
+                {
+                    "3", new TestClass
+                    {
+                        Field1 = 321121,
+                        Field2 = "Hi 312321",
+                        Field3 = 2121.32m,
+                        Field4 = true,
+                        Field5 = new DateTime(1970, 1, 1),
+                        Field6 = 34.43
+                    }
+                }
+            };
+
+            TableDic<string, TestClass>.Add(dic)
+                .ToConsole();
+        }
     }
 }
