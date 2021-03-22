@@ -158,39 +158,88 @@ namespace table.lib
 
             Console.WriteLine(s);
 
-            foreach (var row in Items)
+            for (var index = 0; index < Items.Count; index++)
             {
+                var row = Items[index];
                 Console.Write("|");
                 foreach (var property in filteredPropertyNames)
                 {
-                    var value = GetValue(row, property);
-                    var length = MaxWidth[property.Name] - value.Length;
-
-                    if (ColumnTextJustification.ContainsKey(property.Name))
-                        switch (ColumnTextJustification[property.Name])
+                    if (property.Name == "Key_Id")
+                    {
+                        var properties = Keys[index].GetType().GetProperty(property.Name);
+                        var keyValue = properties?.GetValue(Keys[index], null);
+                        var keyValueParsed = keyValue switch
                         {
-                            case TextJustification.Centered:
-                                var totalLength = $"{new string(' ', length)}{value.ToValidOutput()}".Length;
-                                var remaining = totalLength -
-                                                $"{new string(' ', length / 2)}{value.ToValidOutput()}".Length;
-                                ConsoleRender(
-                                    $"{new string(' ', length / 2)}{value.ToValidOutput()}{new string(' ', remaining)}",
-                                    property.Name);
-                                break;
-                            case TextJustification.Right:
-                                ConsoleRender($"{new string(' ', length)}{value.ToValidOutput()}", property.Name);
-                                break;
-                            case TextJustification.Left:
-                                ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}", property.Name);
-                                break;
-                            case TextJustification.Justified:
-                                ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}", property.Name);
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
+                            string t => t,
+                            int _ => keyValue.ToString(),
+                            bool _ => keyValue.ToString(),
+                            DateTime time => time.ToString("dd-MMM-yyyy"),
+                            decimal value1 => value1.ToString("#,##0.00"),
+                            double value1 => value1.ToString("#,##0.00"),
+                            _ => (keyValue != null ? keyValue.ToString() : "")
+                        };
+
+                        var lengthParsed = MaxWidth[property.Name] - keyValueParsed.Length;
+
+                        if (ColumnTextJustification.ContainsKey(property.Name))
+                            switch (ColumnTextJustification[property.Name])
+                            {
+                                case TextJustification.Centered:
+                                    var totalLength = $"{new string(' ', lengthParsed)}{keyValueParsed.ToValidOutput()}".Length;
+                                    var remaining = totalLength -
+                                                    $"{new string(' ', lengthParsed / 2)}{keyValueParsed.ToValidOutput()}".Length;
+                                    ConsoleRender(
+                                        $"{new string(' ', lengthParsed / 2)}{keyValueParsed.ToValidOutput()}{new string(' ', remaining)}",
+                                        property.Name);
+                                    break;
+                                case TextJustification.Right:
+                                    ConsoleRender($"{new string(' ', lengthParsed)}{keyValueParsed.ToValidOutput()}", property.Name);
+                                    break;
+                                case TextJustification.Left:
+                                    ConsoleRender($"{keyValueParsed.ToValidOutput()}{new string(' ', lengthParsed)}", property.Name);
+                                    break;
+                                case TextJustification.Justified:
+                                    ConsoleRender($"{keyValueParsed.ToValidOutput()}{new string(' ', lengthParsed)}", property.Name);
+                                    break;
+                                default:
+                                    throw new ArgumentOutOfRangeException();
+                            }
+                        else
+                            ConsoleRender($"{keyValueParsed.ToValidOutput()}{new string(' ', lengthParsed)}", property.Name);
+                    }
                     else
-                        ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}", property.Name);
+                    {
+
+
+                        var value = GetValue(row, property);
+                        var length = MaxWidth[property.Name] - value.Length;
+
+                        if (ColumnTextJustification.ContainsKey(property.Name))
+                            switch (ColumnTextJustification[property.Name])
+                            {
+                                case TextJustification.Centered:
+                                    var totalLength = $"{new string(' ', length)}{value.ToValidOutput()}".Length;
+                                    var remaining = totalLength -
+                                                    $"{new string(' ', length / 2)}{value.ToValidOutput()}".Length;
+                                    ConsoleRender(
+                                        $"{new string(' ', length / 2)}{value.ToValidOutput()}{new string(' ', remaining)}",
+                                        property.Name);
+                                    break;
+                                case TextJustification.Right:
+                                    ConsoleRender($"{new string(' ', length)}{value.ToValidOutput()}", property.Name);
+                                    break;
+                                case TextJustification.Left:
+                                    ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}", property.Name);
+                                    break;
+                                case TextJustification.Justified:
+                                    ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}", property.Name);
+                                    break;
+                                default:
+                                    throw new ArgumentOutOfRangeException();
+                            }
+                        else
+                            ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}", property.Name);
+                    }
                 }
 
                 Console.Write("\n");
