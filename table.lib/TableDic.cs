@@ -179,9 +179,9 @@ namespace table.lib
             Console.WriteLine();
         }
 
-        public static TableDic<T, TV> Add(Dictionary<TV, T> dictionary)
+        public static TableDic<TV, T> Add(Dictionary<TV, T> dictionary)
         {
-            return new TableDic<T, TV>(dictionary);
+            return new TableDic<TV, T>(dictionary);
         }
     }
 }
