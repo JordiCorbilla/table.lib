@@ -121,15 +121,15 @@ namespace table.runner
         public static void ComplexConsoleOutputFilteringForList()
         {
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .FilterColumns(new[] { "Dynamic0" }, FilterAction.Include)
+                .FilterColumns(new[] {"Dynamic0"}, FilterAction.Include)
                 .ToConsole();
 
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .FilterColumns(new[] { "Dynamic0" }, FilterAction.Include)
+                .FilterColumns(new[] {"Dynamic0"}, FilterAction.Include)
                 .ToConsole();
 
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .FilterColumns(new[] { "Dynamic0", "Dynamic1" }, FilterAction.Include)
+                .FilterColumns(new[] {"Dynamic0", "Dynamic1"}, FilterAction.Include)
                 .HighlightRows(ConsoleColor.Red, ConsoleColor.White)
                 .ToConsole();
         }
@@ -137,23 +137,23 @@ namespace table.runner
         public static void ComplexConsoleOutputOverrideFilteringForList()
         {
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
-                .FilterColumns(new[] { "Dynamic0" }, FilterAction.Include)
+                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
+                .FilterColumns(new[] {"Dynamic0"}, FilterAction.Include)
                 .ToConsole();
 
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).ToConsole();
+                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}}).ToConsole();
 
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
-                .FilterColumns(new[] { "Capacity", "Count" }).ToConsole();
+                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
+                .FilterColumns(new[] {"Capacity", "Count"}).ToConsole();
 
             Table<IEnumerable<string>>.Add(GetStringMatrix()).OverrideColumnsNames(new Dictionary<string, string>
             {
                 {"Dynamic0", "A"},
                 {"Dynamic1", "B"},
                 {"Dynamic2", "C"}
-            }).FilterColumns(new[] { "Capacity", "Count" }).ColumnContentTextJustification(
+            }).FilterColumns(new[] {"Capacity", "Count"}).ColumnContentTextJustification(
                 new Dictionary<string, TextJustification>
                 {
                     {"Dynamic0", TextJustification.Right},
@@ -164,22 +164,22 @@ namespace table.runner
         public static void ComplexCsvOutputFilteringForList()
         {
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
-                .FilterColumns(new[] { "Capacity", "Count" }).ToCsv(@"C:\temp\test.csv");
+                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
+                .FilterColumns(new[] {"Capacity", "Count"}).ToCsv(@"C:\temp\test.csv");
         }
 
         public static void ComplexHtmlOutputFilteringForList()
         {
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
-                .FilterColumns(new[] { "Capacity", "Count" }).ToHtml(@"C:\temp\test.html");
+                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
+                .FilterColumns(new[] {"Capacity", "Count"}).ToHtml(@"C:\temp\test.html");
         }
 
         public static void ComplexMarkDownOutputFilteringForList()
         {
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
-                .FilterColumns(new[] { "Capacity", "Count" })
+                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
+                .FilterColumns(new[] {"Capacity", "Count"})
                 .ColumnContentTextJustification(new Dictionary<string, TextJustification>
                     {{"Dynamic0", TextJustification.Right}}).ToMarkDown(@"C:\temp\test.md", true);
         }

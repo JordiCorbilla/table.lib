@@ -28,8 +28,6 @@ namespace table.lib
 {
     public class TableDic<TV, T> : Base<T>
     {
-        public List<TV> Keys { get; set; }
-
         public TableDic(Dictionary<TV, T> dictionary, string overrideDynamicName = null)
         {
             if (dictionary.Count == 0) return;
@@ -129,6 +127,8 @@ namespace table.lib
                 }
         }
 
+        public List<TV> Keys { get; set; }
+
         public void ToConsole()
         {
             if (Items.Count == 0) return;
@@ -161,7 +161,6 @@ namespace table.lib
                 var row = Items[index];
                 Console.Write("|");
                 foreach (var property in filteredPropertyNames)
-                {
                     if (property.Name == "Key_Id")
                     {
                         var keyValueParsed = Keys[index] switch
@@ -181,32 +180,36 @@ namespace table.lib
                             switch (ColumnTextJustification[property.Name])
                             {
                                 case TextJustification.Centered:
-                                    var totalLength = $"{new string(' ', lengthParsed)}{keyValueParsed.ToValidOutput()}".Length;
+                                    var totalLength = $"{new string(' ', lengthParsed)}{keyValueParsed.ToValidOutput()}"
+                                        .Length;
                                     var remaining = totalLength -
-                                                    $"{new string(' ', lengthParsed / 2)}{keyValueParsed.ToValidOutput()}".Length;
+                                                    $"{new string(' ', lengthParsed / 2)}{keyValueParsed.ToValidOutput()}"
+                                                        .Length;
                                     ConsoleRender(
                                         $"{new string(' ', lengthParsed / 2)}{keyValueParsed.ToValidOutput()}{new string(' ', remaining)}",
                                         property.Name);
                                     break;
                                 case TextJustification.Right:
-                                    ConsoleRender($"{new string(' ', lengthParsed)}{keyValueParsed.ToValidOutput()}", property.Name);
+                                    ConsoleRender($"{new string(' ', lengthParsed)}{keyValueParsed.ToValidOutput()}",
+                                        property.Name);
                                     break;
                                 case TextJustification.Left:
-                                    ConsoleRender($"{keyValueParsed.ToValidOutput()}{new string(' ', lengthParsed)}", property.Name);
+                                    ConsoleRender($"{keyValueParsed.ToValidOutput()}{new string(' ', lengthParsed)}",
+                                        property.Name);
                                     break;
                                 case TextJustification.Justified:
-                                    ConsoleRender($"{keyValueParsed.ToValidOutput()}{new string(' ', lengthParsed)}", property.Name);
+                                    ConsoleRender($"{keyValueParsed.ToValidOutput()}{new string(' ', lengthParsed)}",
+                                        property.Name);
                                     break;
                                 default:
                                     throw new ArgumentOutOfRangeException();
                             }
                         else
-                            ConsoleRender($"{keyValueParsed.ToValidOutput()}{new string(' ', lengthParsed)}", property.Name);
+                            ConsoleRender($"{keyValueParsed.ToValidOutput()}{new string(' ', lengthParsed)}",
+                                property.Name);
                     }
                     else
                     {
-
-
                         var value = GetValue(row, property);
                         var length = MaxWidth[property.Name] - value.Length;
 
@@ -236,7 +239,6 @@ namespace table.lib
                         else
                             ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}", property.Name);
                     }
-                }
 
                 Console.Write("\n");
             }
