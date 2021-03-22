@@ -129,6 +129,14 @@ namespace table.lib
 
         public List<TV> Keys { get; set; }
 
+        public TableDic<TV, T> FilterColumns(string[] columns, FilterAction action = FilterAction.Exclude)
+        {
+            var filter = columns.ToDictionary(column => column, column => false);
+            ColumnFilter = filter;
+            ColumnAction = action;
+            return this;
+        }
+
         public void ToConsole()
         {
             if (Items.Count == 0) return;
