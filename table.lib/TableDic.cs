@@ -56,16 +56,7 @@ namespace table.lib
             //Workout the key length
             foreach (var row in Keys)
             {
-                var subValueLength = row switch
-                {
-                    string s => s,
-                    int _ => row.ToString(),
-                    bool _ => row.ToString(),
-                    DateTime time => time.ToString("dd-MMM-yyyy"),
-                    decimal value1 => value1.ToString("#,##0.00"),
-                    double value1 => value1.ToString("#,##0.00"),
-                    _ => (row != null ? row.ToString() : "")
-                };
+                var subValueLength = ObjectToString(row);
 
                 if (subValueLength.Length > MaxWidth[KeyName])
                     MaxWidth[KeyName] = subValueLength.Length;
@@ -175,16 +166,7 @@ namespace table.lib
                 foreach (var property in filteredPropertyNames)
                     if (property.Name == KeyName)
                     {
-                        var keyValueParsed = Keys[index] switch
-                        {
-                            string t => t,
-                            int _ => Keys[index].ToString(),
-                            bool _ => Keys[index].ToString(),
-                            DateTime time => time.ToString("dd-MMM-yyyy"),
-                            decimal value1 => value1.ToString("#,##0.00"),
-                            double value1 => value1.ToString("#,##0.00"),
-                            _ => (Keys[index] != null ? Keys[index].ToString() : "")
-                        };
+                        var keyValueParsed = ObjectToString(Keys[index]);
 
                         var lengthParsed = MaxWidth[property.Name] - keyValueParsed.Length;
 

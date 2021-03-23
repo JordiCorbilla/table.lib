@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace table.lib
 {
@@ -56,6 +57,11 @@ namespace table.lib
                 value = properties?.GetValue(item, null);
             }
 
+            return ObjectToString(value);
+        }
+
+        public static string ObjectToString(object value)
+        {
             return value switch
             {
                 string s => s,
