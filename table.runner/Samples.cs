@@ -236,6 +236,9 @@ namespace table.runner
             TableDic<string, TestClass>.Add(GetSimpleDictionary())
                 .ToConsole();
 
+            TableDic<string, TestClass>.Add(GetSimpleDictionary(), "D", "Id")
+                .ToConsole();
+
             TableDic<string, TestClass>.Add(GetSimpleDictionary())
                 .FilterColumns(new[] { "Key_Id" })
                 .ToConsole();
