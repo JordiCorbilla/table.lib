@@ -131,6 +131,47 @@ namespace table.runner
             return dic;
         }
 
+        public static Dictionary<decimal, TestClass> GetSimpleDictionaryDecimal()
+        {
+            var dic = new Dictionary<decimal, TestClass>
+            {
+                {
+                    123m, new TestClass
+                    {
+                        Field1 = 321121,
+                        Field2 = "Hi 312321",
+                        Field3 = 2121.32m,
+                        Field4 = true,
+                        Field5 = new DateTime(1970, 1, 1),
+                        Field6 = 34.43
+                    }
+                },
+                {
+                    124m, new TestClass
+                    {
+                        Field1 = 321121,
+                        Field2 = "Hi 312321",
+                        Field3 = 2121.32m,
+                        Field4 = true,
+                        Field5 = new DateTime(1970, 1, 1),
+                        Field6 = 34.43
+                    }
+                },
+                {
+                    125.67m, new TestClass
+                    {
+                        Field1 = 321121,
+                        Field2 = "Hi 312321",
+                        Field3 = 2121.32m,
+                        Field4 = true,
+                        Field5 = new DateTime(1970, 1, 1),
+                        Field6 = 34.43
+                    }
+                }
+            };
+            return dic;
+        }
+
         public static void SimpleConsoleOutputForList()
         {
             Table<TestClass>.Add(GetSampleOutput()).ToConsole();
@@ -241,6 +282,9 @@ namespace table.runner
 
             TableDic<string, TestClass>.Add(GetSimpleDictionary())
                 .FilterColumns(new[] { "Key_Id" })
+                .ToConsole();
+
+            TableDic<decimal, TestClass>.Add(GetSimpleDictionaryDecimal())
                 .ToConsole();
         }
 
