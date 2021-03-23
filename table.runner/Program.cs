@@ -39,6 +39,7 @@ namespace table.runner
             Samples.ComplexConsoleMatrix();
 
             Samples.SimpleConsoleForDictionary();
+            Samples.SimpleConsoleOutputWithHighlighterForDictionary();
         }
     }
 }

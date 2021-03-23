@@ -132,6 +132,34 @@ namespace table.lib
             return this;
         }
 
+        public TableDic<TV, T> HighlightValue(HighlightOperator operation)
+        {
+            Operation = operation;
+            return this;
+        }
+
+        public TableDic<TV, T> OverrideColumnsNames(Dictionary<string, string> columns)
+        {
+            ColumnNameOverrides = columns;
+            foreach (var (key, value) in ColumnNameOverrides)
+                if (value.Length > MaxWidth[key])
+                    MaxWidth[key] = value.Length;
+            return this;
+        }
+
+        public TableDic<TV, T> ColumnContentTextJustification(Dictionary<string, TextJustification> columns)
+        {
+            ColumnTextJustification = columns;
+            return this;
+        }
+
+        public TableDic<TV, T> HighlightRows(ConsoleColor backgroundColor, ConsoleColor foregroundColor)
+        {
+            BackgroundColor = backgroundColor;
+            ForegroundColor = foregroundColor;
+            return this;
+        }
+
         public void ToConsole()
         {
             if (Items.Count == 0) return;
@@ -174,33 +202,24 @@ namespace table.lib
                             switch (ColumnTextJustification[property.Name])
                             {
                                 case TextJustification.Centered:
-                                    var totalLength = $"{new string(' ', lengthParsed)}{keyValueParsed.ToValidOutput()}"
-                                        .Length;
-                                    var remaining = totalLength -
-                                                    $"{new string(' ', lengthParsed / 2)}{keyValueParsed.ToValidOutput()}"
-                                                        .Length;
-                                    ConsoleRender(
-                                        $"{new string(' ', lengthParsed / 2)}{keyValueParsed.ToValidOutput()}{new string(' ', remaining)}",
-                                        property.Name);
+                                    var totalLength = $"{new string(' ', lengthParsed)}{keyValueParsed.ToValidOutput()}".Length;
+                                    var remaining = totalLength - $"{new string(' ', lengthParsed / 2)}{keyValueParsed.ToValidOutput()}".Length;
+                                    ConsoleRender($"{new string(' ', lengthParsed / 2)}{keyValueParsed.ToValidOutput()}{new string(' ', remaining)}", property.Name);
                                     break;
                                 case TextJustification.Right:
-                                    ConsoleRender($"{new string(' ', lengthParsed)}{keyValueParsed.ToValidOutput()}",
-                                        property.Name);
+                                    ConsoleRender($"{new string(' ', lengthParsed)}{keyValueParsed.ToValidOutput()}", property.Name);
                                     break;
                                 case TextJustification.Left:
-                                    ConsoleRender($"{keyValueParsed.ToValidOutput()}{new string(' ', lengthParsed)}",
-                                        property.Name);
+                                    ConsoleRender($"{keyValueParsed.ToValidOutput()}{new string(' ', lengthParsed)}", property.Name);
                                     break;
                                 case TextJustification.Justified:
-                                    ConsoleRender($"{keyValueParsed.ToValidOutput()}{new string(' ', lengthParsed)}",
-                                        property.Name);
+                                    ConsoleRender($"{keyValueParsed.ToValidOutput()}{new string(' ', lengthParsed)}", property.Name);
                                     break;
                                 default:
                                     throw new ArgumentOutOfRangeException();
                             }
                         else
-                            ConsoleRender($"{keyValueParsed.ToValidOutput()}{new string(' ', lengthParsed)}",
-                                property.Name);
+                            ConsoleRender($"{keyValueParsed.ToValidOutput()}{new string(' ', lengthParsed)}", property.Name);
                     }
                     else
                     {
@@ -212,11 +231,8 @@ namespace table.lib
                             {
                                 case TextJustification.Centered:
                                     var totalLength = $"{new string(' ', length)}{value.ToValidOutput()}".Length;
-                                    var remaining = totalLength -
-                                                    $"{new string(' ', length / 2)}{value.ToValidOutput()}".Length;
-                                    ConsoleRender(
-                                        $"{new string(' ', length / 2)}{value.ToValidOutput()}{new string(' ', remaining)}",
-                                        property.Name);
+                                    var remaining = totalLength - $"{new string(' ', length / 2)}{value.ToValidOutput()}".Length;
+                                    ConsoleRender($"{new string(' ', length / 2)}{value.ToValidOutput()}{new string(' ', remaining)}", property.Name);
                                     break;
                                 case TextJustification.Right:
                                     ConsoleRender($"{new string(' ', length)}{value.ToValidOutput()}", property.Name);

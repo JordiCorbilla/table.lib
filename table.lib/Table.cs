@@ -145,7 +145,6 @@ namespace table.lib
             return this;
         }
 
-
         public Table<T> ColumnContentTextJustification(Dictionary<string, TextJustification> columns)
         {
             ColumnTextJustification = columns;

@@ -243,5 +243,13 @@ namespace table.runner
                 .FilterColumns(new[] { "Key_Id" })
                 .ToConsole();
         }
+
+        public static void SimpleConsoleOutputWithHighlighterForDictionary()
+        {
+            TableDic<string, TestClass>.Add(GetSimpleDictionary())
+                .HighlightValue(new HighlightOperator
+                    { Field = "Field3", Type = HighlightType.Decimal, DecimalValue = 2121.32m })
+                .ToConsole();
+        }
     }
 }
