@@ -158,7 +158,6 @@ namespace table.lib
             return this;
         }
 
-
         public void ToConsole()
         {
             if (Items.Count == 0) return;

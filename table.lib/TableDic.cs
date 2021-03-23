@@ -87,16 +87,16 @@ namespace table.lib
                             while (reading)
                                 try
                                 {
+                                    var value = $"{DynamicName}{index}";
                                     var res = propertyInfo.GetValue(row, new object[] {index});
-                                    if (!MaxWidth.ContainsKey($"{DynamicName}{index}"))
+                                    if (!MaxWidth.ContainsKey(value))
                                     {
-                                        PropertyNames.Add(new PropertyName($"{DynamicName}{index}", index,
-                                            propertyIndex));
-                                        MaxWidth.Add($"{DynamicName}{index}", $"{DynamicName}{index}".Length);
+                                        PropertyNames.Add(new PropertyName(value, index, propertyIndex));
+                                        MaxWidth.Add(value, value.Length);
                                     }
 
-                                    if (res.ToString().Length > MaxWidth[$"{DynamicName}{index}"])
-                                        MaxWidth[$"{DynamicName}{index}"] = res.ToString().Length;
+                                    if (res.ToString().Length > MaxWidth[value])
+                                        MaxWidth[value] = res.ToString().Length;
                                     index++;
                                 }
                                 catch (Exception)
