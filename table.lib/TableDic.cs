@@ -28,11 +28,15 @@ namespace table.lib
 {
     public class TableDic<TV, T> : Base<T>
     {
-        public TableDic(Dictionary<TV, T> dictionary, string overrideDynamicName = null)
+        public string KeyName { get; set; } = "Key_Id";
+
+        public TableDic(Dictionary<TV, T> dictionary, string overrideDynamicName = null, string overrideKeyName = null)
         {
             if (dictionary.Count == 0) return;
             if (!string.IsNullOrEmpty(overrideDynamicName))
                 DynamicName = overrideDynamicName;
+            if (!string.IsNullOrEmpty(overrideKeyName))
+                KeyName = overrideKeyName;
             PropertyNames = new List<PropertyName>();
             MaxWidth = new Dictionary<string, int>();
             Keys = dictionary.Select(x => x.Key).ToList();
@@ -40,8 +44,8 @@ namespace table.lib
             var properties = typeof(T).GetProperties();
 
             //Add the additional Key
-            PropertyNames.Add(new PropertyName("Key_Id"));
-            MaxWidth.Add("Key_Id", "Key_Id".Length);
+            PropertyNames.Add(new PropertyName(KeyName));
+            MaxWidth.Add(KeyName, KeyName.Length);
 
             foreach (var property in properties)
             {
@@ -63,8 +67,8 @@ namespace table.lib
                     _ => (row != null ? row.ToString() : "")
                 };
 
-                if (subValueLength.Length > MaxWidth["Key_Id"])
-                    MaxWidth["Key_Id"] = subValueLength.Length;
+                if (subValueLength.Length > MaxWidth[KeyName])
+                    MaxWidth[KeyName] = subValueLength.Length;
             }
 
             foreach (var row in Items)
@@ -169,7 +173,7 @@ namespace table.lib
                 var row = Items[index];
                 Console.Write("|");
                 foreach (var property in filteredPropertyNames)
-                    if (property.Name == "Key_Id")
+                    if (property.Name == KeyName)
                     {
                         var keyValueParsed = Keys[index] switch
                         {
@@ -257,6 +261,16 @@ namespace table.lib
         public static TableDic<TV, T> Add(Dictionary<TV, T> dictionary)
         {
             return new TableDic<TV, T>(dictionary);
+        }
+
+        public static TableDic<TV, T> Add(Dictionary<TV, T> dictionary, string overrideDynamic)
+        {
+            return new TableDic<TV, T>(dictionary, overrideDynamic);
+        }
+
+        public static TableDic<TV, T> Add(Dictionary<TV, T> dictionary, string overrideDynamic, string overrideKey)
+        {
+            return new TableDic<TV, T>(dictionary, overrideDynamic, overrideKey);
         }
     }
 }
