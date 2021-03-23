@@ -76,16 +76,16 @@ namespace table.lib
                             while (reading)
                                 try
                                 {
+                                    var prop = $"{DynamicName}{index}";
                                     var res = propertyInfo.GetValue(row, new object[] {index});
-                                    if (!MaxWidth.ContainsKey($"{DynamicName}{index}"))
+                                    if (!MaxWidth.ContainsKey(prop))
                                     {
-                                        PropertyNames.Add(new PropertyName($"{DynamicName}{index}", index,
-                                            propertyIndex));
-                                        MaxWidth.Add($"{DynamicName}{index}", $"{DynamicName}{index}".Length);
+                                        PropertyNames.Add(new PropertyName(prop, index, propertyIndex));
+                                        MaxWidth.Add(prop, prop.Length);
                                     }
 
-                                    if (res.ToString().Length > MaxWidth[$"{DynamicName}{index}"])
-                                        MaxWidth[$"{DynamicName}{index}"] = res.ToString().Length;
+                                    if (res.ToString().Length > MaxWidth[prop])
+                                        MaxWidth[prop] = res.ToString().Length;
                                     index++;
                                 }
                                 catch (Exception)
@@ -174,9 +174,10 @@ namespace table.lib
 
                 var length = MaxWidth[property.Name] - headerName.Length;
 
-                var totalLength = $"{new string(' ', length)}{headerName.ToValidOutput()}".Length;
-                var remaining = totalLength - $"{new string(' ', length / 2)}{headerName.ToValidOutput()}".Length;
-                s += $" {new string(' ', length / 2)}{headerName.ToValidOutput()}{new string(' ', remaining)} |";
+                var header = headerName.ToValidOutput();
+                var totalLength = $"{new string(' ', length)}{header}".Length;
+                var remaining = totalLength - $"{new string(' ', length / 2)}{header}".Length;
+                s += $" {new string(' ', length / 2)}{header}{new string(' ', remaining)} |";
             }
 
             Console.WriteLine(s);
@@ -193,29 +194,29 @@ namespace table.lib
                 {
                     var value = GetValue(row, property);
                     var length = MaxWidth[property.Name] - value.Length;
-
+                    var output = value.ToValidOutput();
                     if (ColumnTextJustification.ContainsKey(property.Name))
                         switch (ColumnTextJustification[property.Name])
                         {
                             case TextJustification.Centered:
-                                var totalLength = $"{new string(' ', length)}{value.ToValidOutput()}".Length;
-                                var remaining = totalLength - $"{new string(' ', length / 2)}{value.ToValidOutput()}".Length;
-                                ConsoleRender($"{new string(' ', length / 2)}{value.ToValidOutput()}{new string(' ', remaining)}", property.Name);
+                                var totalLength = $"{new string(' ', length)}{output}".Length;
+                                var remaining = totalLength - $"{new string(' ', length / 2)}{output}".Length;
+                                ConsoleRender($"{new string(' ', length / 2)}{output}{new string(' ', remaining)}", property.Name);
                                 break;
                             case TextJustification.Right:
-                                ConsoleRender($"{new string(' ', length)}{value.ToValidOutput()}", property.Name);
+                                ConsoleRender($"{new string(' ', length)}{output}", property.Name);
                                 break;
                             case TextJustification.Left:
-                                ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}", property.Name);
+                                ConsoleRender($"{output}{new string(' ', length)}", property.Name);
                                 break;
                             case TextJustification.Justified:
-                                ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}", property.Name);
+                                ConsoleRender($"{output}{new string(' ', length)}", property.Name);
                                 break;
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
                     else
-                        ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}", property.Name);
+                        ConsoleRender($"{output}{new string(' ', length)}", property.Name);
                 }
 
                 Console.Write("\n");
