@@ -22,7 +22,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace table.lib
 {
@@ -151,6 +150,8 @@ namespace table.lib
                             }
 
                             break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
 
 

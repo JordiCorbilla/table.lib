@@ -200,11 +200,8 @@ namespace table.lib
                         {
                             case TextJustification.Centered:
                                 var totalLength = $"{new string(' ', length)}{value.ToValidOutput()}".Length;
-                                var remaining = totalLength -
-                                                $"{new string(' ', length / 2)}{value.ToValidOutput()}".Length;
-                                ConsoleRender(
-                                    $"{new string(' ', length / 2)}{value.ToValidOutput()}{new string(' ', remaining)}",
-                                    property.Name);
+                                var remaining = totalLength - $"{new string(' ', length / 2)}{value.ToValidOutput()}".Length;
+                                ConsoleRender($"{new string(' ', length / 2)}{value.ToValidOutput()}{new string(' ', remaining)}", property.Name);
                                 break;
                             case TextJustification.Right:
                                 ConsoleRender($"{new string(' ', length)}{value.ToValidOutput()}", property.Name);
