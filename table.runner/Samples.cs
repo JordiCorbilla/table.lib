@@ -175,7 +175,7 @@ namespace table.runner
         public static void SimpleConsoleOutputForList()
         {
             Table<TestClass>.Add(GetSampleOutput()).ToConsole();
-            Table<TestClass>.Add(GetSampleOutput(), new Options()
+            Table<TestClass>.Add(GetSampleOutput(), new Options
                 {
                     DateFormat = "dd-MM-yy",
                     DecimalFormat = "#,##0.########"
@@ -274,7 +274,7 @@ namespace table.runner
 
         public static void ComplexConsoleMatrix()
         {
-            Table<IEnumerable<int>>.Add(GetIntMatrix(), new Options()
+            Table<IEnumerable<int>>.Add(GetIntMatrix(), new Options
                 {
                     DynamicName = "T"
                 })
@@ -286,7 +286,7 @@ namespace table.runner
             TableDic<string, TestClass>.Add(GetSimpleDictionary())
                 .ToConsole();
 
-            TableDic<string, TestClass>.Add(GetSimpleDictionary(), new Options()
+            TableDic<string, TestClass>.Add(GetSimpleDictionary(), new Options
                 {
                     DynamicName = "D",
                     KeyName = "Id"
@@ -294,7 +294,7 @@ namespace table.runner
                 .ToConsole();
 
             TableDic<string, TestClass>.Add(GetSimpleDictionary())
-                .FilterColumns(new[] { "Key_Id" })
+                .FilterColumns(new[] {"Key_Id"})
                 .ToConsole();
 
             TableDic<decimal, TestClass>.Add(GetSimpleDictionaryDecimal())
@@ -305,7 +305,7 @@ namespace table.runner
         {
             TableDic<string, TestClass>.Add(GetSimpleDictionary())
                 .HighlightValue(new HighlightOperator
-                    { Field = "Field3", Type = HighlightType.Decimal, DecimalValue = 2121.32m })
+                    {Field = "Field3", Type = HighlightType.Decimal, DecimalValue = 2121.32m})
                 .ToConsole();
         }
     }

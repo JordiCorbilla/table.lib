@@ -39,10 +39,7 @@ namespace table.lib
         public Table(List<T> list, Options options = null)
         {
             if (list.Count == 0) return;
-            if (options != null)
-            {
-                Options = options;
-            }
+            if (options != null) Options = options;
 
             PropertyNames = new List<PropertyName>();
             MaxWidth = new Dictionary<string, int>();
@@ -203,7 +200,8 @@ namespace table.lib
                             case TextJustification.Centered:
                                 var totalLength = $"{new string(' ', length)}{output}".Length;
                                 var remaining = totalLength - $"{new string(' ', length / 2)}{output}".Length;
-                                ConsoleRender($"{new string(' ', length / 2)}{output}{new string(' ', remaining)}", property.Name);
+                                ConsoleRender($"{new string(' ', length / 2)}{output}{new string(' ', remaining)}",
+                                    property.Name);
                                 break;
                             case TextJustification.Right:
                                 ConsoleRender($"{new string(' ', length)}{output}", property.Name);
