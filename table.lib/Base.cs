@@ -32,16 +32,16 @@ namespace table.lib
         public Dictionary<string, string> ColumnNameOverrides { get; set; } = new Dictionary<string, string>();
         public Dictionary<string, bool> ColumnFilter { get; set; } = new Dictionary<string, bool>();
         public FilterAction ColumnAction { get; set; } = FilterAction.Exclude;
-        public string DynamicName { get; set; } = "Dynamic";
         public ConsoleColor BackgroundColor { get; set; } = ConsoleColor.Black;
         public ConsoleColor ForegroundColor { get; set; } = ConsoleColor.Green;
         public List<T> Items { get; set; }
         public HighlightOperator Operation { get; set; }
+        public Options Options { get; set; } = new Options();
 
         public Dictionary<string, TextJustification> ColumnTextJustification { get; set; } =
             new Dictionary<string, TextJustification>();
 
-        public static string GetValue(T item, PropertyName property)
+        public string GetValue(T item, PropertyName property)
         {
             if (string.IsNullOrEmpty(property.Name)) return null;
             object value;
@@ -59,16 +59,16 @@ namespace table.lib
             return ObjectToString(value);
         }
 
-        public static string ObjectToString(object value)
+        public string ObjectToString(object value)
         {
             return value switch
             {
                 string s => s,
                 int _ => value.ToString(),
                 bool _ => value.ToString(),
-                DateTime time => time.ToString("dd-MMM-yyyy"),
-                decimal value1 => value1.ToString("#,##0.00"),
-                double value1 => value1.ToString("#,##0.00"),
+                DateTime time => time.ToString(Options.DateFormat),
+                decimal value1 => value1.ToString(Options.DecimalFormat),
+                double value1 => value1.ToString(Options.DecimalFormat),
                 _ => (value != null ? value.ToString() : "")
             };
         }

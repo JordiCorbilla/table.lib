@@ -60,7 +60,7 @@ namespace table.runner
                 new TestClass
                 {
                     Field1 = 13, Field2 = "Hi \"very\" long\n text", Field3 = 21111121.32m, Field4 = true,
-                    Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
+                    Field5 = new DateTime(1970, 1, 1), Field6 = 34.4300001
                 }
             };
             return list;
@@ -175,6 +175,12 @@ namespace table.runner
         public static void SimpleConsoleOutputForList()
         {
             Table<TestClass>.Add(GetSampleOutput()).ToConsole();
+            Table<TestClass>.Add(GetSampleOutput(), new Options()
+                {
+                    DateFormat = "dd-MM-yy",
+                    DecimalFormat = "#,##0.########"
+                })
+                .ToConsole();
         }
 
         public static void SimpleConsoleOutputWithHighlighterForList()
@@ -268,7 +274,10 @@ namespace table.runner
 
         public static void ComplexConsoleMatrix()
         {
-            Table<IEnumerable<int>>.Add(GetIntMatrix(), "T")
+            Table<IEnumerable<int>>.Add(GetIntMatrix(), new Options()
+                {
+                    DynamicName = "T"
+                })
                 .ToConsole();
         }
 
@@ -277,7 +286,11 @@ namespace table.runner
             TableDic<string, TestClass>.Add(GetSimpleDictionary())
                 .ToConsole();
 
-            TableDic<string, TestClass>.Add(GetSimpleDictionary(), "D", "Id")
+            TableDic<string, TestClass>.Add(GetSimpleDictionary(), new Options()
+                {
+                    DynamicName = "D",
+                    KeyName = "Id"
+                })
                 .ToConsole();
 
             TableDic<string, TestClass>.Add(GetSimpleDictionary())

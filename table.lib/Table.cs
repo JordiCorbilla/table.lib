@@ -35,12 +35,15 @@ namespace table.lib
         ///     Retrieve the entire content of the collection using reflection
         /// </summary>
         /// <param name="list"></param>
-        /// <param name="overrideDynamicName"></param>
-        public Table(List<T> list, string overrideDynamicName = null)
+        /// <param name="options"></param>
+        public Table(List<T> list, Options options = null)
         {
             if (list.Count == 0) return;
-            if (!string.IsNullOrEmpty(overrideDynamicName))
-                DynamicName = overrideDynamicName;
+            if (options != null)
+            {
+                Options = options;
+            }
+
             PropertyNames = new List<PropertyName>();
             MaxWidth = new Dictionary<string, int>();
             Items = list;
@@ -76,7 +79,7 @@ namespace table.lib
                             while (reading)
                                 try
                                 {
-                                    var prop = $"{DynamicName}{index}";
+                                    var prop = $"{Options.DynamicName}{index}";
                                     var res = propertyInfo.GetValue(row, new object[] {index});
                                     if (!MaxWidth.ContainsKey(prop))
                                     {
@@ -117,9 +120,9 @@ namespace table.lib
             return new Table<T>(list);
         }
 
-        public static Table<T> Add(List<T> list, string overrideDynamic)
+        public static Table<T> Add(List<T> list, Options options)
         {
-            return new Table<T>(list, overrideDynamic);
+            return new Table<T>(list, options);
         }
 
         public Table<T> HighlightValue(HighlightOperator operation)

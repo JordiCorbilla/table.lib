@@ -28,15 +28,11 @@ namespace table.lib
 {
     public class TableDic<TV, T> : Base<T>
     {
-        public string KeyName { get; set; } = "Key_Id";
-
-        public TableDic(Dictionary<TV, T> dictionary, string overrideDynamicName = null, string overrideKeyName = null)
+        public TableDic(Dictionary<TV, T> dictionary, Options options = null)
         {
             if (dictionary.Count == 0) return;
-            if (!string.IsNullOrEmpty(overrideDynamicName))
-                DynamicName = overrideDynamicName;
-            if (!string.IsNullOrEmpty(overrideKeyName))
-                KeyName = overrideKeyName;
+            if (options != null)
+                Options = options;
             PropertyNames = new List<PropertyName>();
             MaxWidth = new Dictionary<string, int>();
             Keys = dictionary.Select(x => x.Key).ToList();
@@ -44,8 +40,8 @@ namespace table.lib
             var properties = typeof(T).GetProperties();
 
             //Add the additional Key
-            PropertyNames.Add(new PropertyName(KeyName));
-            MaxWidth.Add(KeyName, KeyName.Length);
+            PropertyNames.Add(new PropertyName(Options.KeyName));
+            MaxWidth.Add(Options.KeyName, Options.KeyName.Length);
 
             foreach (var property in properties)
             {
@@ -58,8 +54,8 @@ namespace table.lib
             {
                 var subValueLength = ObjectToString(row);
 
-                if (subValueLength.Length > MaxWidth[KeyName])
-                    MaxWidth[KeyName] = subValueLength.Length;
+                if (subValueLength.Length > MaxWidth[Options.KeyName])
+                    MaxWidth[Options.KeyName] = subValueLength.Length;
             }
 
             foreach (var row in Items)
@@ -87,7 +83,7 @@ namespace table.lib
                             while (reading)
                                 try
                                 {
-                                    var value = $"{DynamicName}{index}";
+                                    var value = $"{Options.DynamicName}{index}";
                                     var res = propertyInfo.GetValue(row, new object[] {index});
                                     if (!MaxWidth.ContainsKey(value))
                                     {
@@ -192,7 +188,7 @@ namespace table.lib
                 var row = Items[index];
                 Console.Write("|");
                 foreach (var property in filteredPropertyNames)
-                    if (property.Name == KeyName)
+                    if (property.Name == Options.KeyName)
                     {
                         var keyValueParsed = ObjectToString(Keys[index]);
 
@@ -261,14 +257,9 @@ namespace table.lib
             return new TableDic<TV, T>(dictionary);
         }
 
-        public static TableDic<TV, T> Add(Dictionary<TV, T> dictionary, string overrideDynamic)
+        public static TableDic<TV, T> Add(Dictionary<TV, T> dictionary, Options options)
         {
-            return new TableDic<TV, T>(dictionary, overrideDynamic);
-        }
-
-        public static TableDic<TV, T> Add(Dictionary<TV, T> dictionary, string overrideDynamic, string overrideKey)
-        {
-            return new TableDic<TV, T>(dictionary, overrideDynamic, overrideKey);
+            return new TableDic<TV, T>(dictionary, options);
         }
     }
 }
