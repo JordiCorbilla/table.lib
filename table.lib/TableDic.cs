@@ -22,7 +22,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace table.lib
 {
@@ -262,6 +264,49 @@ namespace table.lib
             }
 
             Console.WriteLine();
+        }
+
+        public void ToCsv(string fileName)
+        {
+            var stringBuilder = new StringBuilder();
+            if (Items.Count == 0) return;
+            var s = "";
+            var filteredPropertyNames = FilterProperties();
+            foreach (var property in filteredPropertyNames)
+            {
+                var headerName = property.Name;
+                if (ColumnNameOverrides.ContainsKey(property.Name))
+                    headerName = ColumnNameOverrides[property.Name];
+
+                s += $"{headerName.ToCsv()},";
+            }
+
+            s = s.Remove(s.Length - 1);
+            stringBuilder.AppendLine(s);
+
+            for (var i = 0; i < Items.Count; i++)
+            {
+                var row = Items[i];
+                s = "";
+                foreach (var t in filteredPropertyNames)
+                    if (t.Name == Options.KeyName)
+                    {
+                        var keyValueParsed = ObjectToString(Keys[i]);
+                        s += $"{keyValueParsed.ToCsv()},";
+                    }
+                    else
+                    {
+                        var property = t;
+                        var s1 = GetValue(row, property);
+                        s += $"{s1.ToCsv()},";
+                    }
+
+                s = s.Remove(s.Length - 1);
+                stringBuilder.AppendLine(s);
+            }
+
+            using var file = new StreamWriter(fileName);
+            file.WriteLine(stringBuilder.ToString());
         }
 
         public static TableDic<TV, T> Add(Dictionary<TV, T> dictionary)

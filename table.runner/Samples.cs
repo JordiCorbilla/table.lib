@@ -102,7 +102,7 @@ namespace table.runner
                         Field3 = 2121.32m,
                         Field4 = true,
                         Field5 = new DateTime(1970, 1, 1),
-                        Field6 = 34.43
+                        Field6 = 34.432
                     }
                 },
                 {
@@ -113,7 +113,7 @@ namespace table.runner
                         Field3 = 2121.32m,
                         Field4 = true,
                         Field5 = new DateTime(1970, 1, 1),
-                        Field6 = 34.43
+                        Field6 = 134.43
                     }
                 },
                 {
@@ -124,7 +124,7 @@ namespace table.runner
                         Field3 = 2121.32m,
                         Field4 = true,
                         Field5 = new DateTime(1970, 1, 1),
-                        Field6 = 34.43
+                        Field6 = 354.43
                     }
                 }
             };
@@ -307,6 +307,10 @@ namespace table.runner
                 .HighlightValue(new HighlightOperator
                     {Field = "Field3", Type = HighlightType.Decimal, DecimalValue = 2121.32m})
                 .ToConsole();
+
+            TableDic<string, TestClass>.Add(GetSimpleDictionary())
+                .ToCsv(@"C:\temp\testDic.csv");
+
         }
     }
 }
