@@ -13,8 +13,8 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Description>Simple c# (.NET 5) table library that renders any List&lt;T&gt; and Dictionary&lt;TV,T&gt; into a nicely formatted markdown, csv, html or console table, allowing for extra formats.</Description>
-    <AssemblyVersion>1.2.0.0</AssemblyVersion>
-    <FileVersion>1.2.0.0</FileVersion>
+    <AssemblyVersion>1.4.0.0</AssemblyVersion>
+    <FileVersion>1.4.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
