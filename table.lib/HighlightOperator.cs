@@ -56,5 +56,6 @@ namespace table.lib
         public ConsoleColor ForegroundColorIfDifferent { get; set; } = ConsoleColor.White;
         public ConsoleColor BackgroundColorIfDifferent { get; set; } = ConsoleColor.DarkRed;
         public HighlightType Type { get; set; } = HighlightType.String;
+        public HighlightOperation Operation { get; set; } = HighlightOperation.Differences;
     }
 }

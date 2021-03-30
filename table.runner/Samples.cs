@@ -305,12 +305,13 @@ namespace table.runner
         {
             TableDic<string, TestClass>.Add(GetSimpleDictionary())
                 .HighlightValue(new HighlightOperator
-                    {Field = "Field3", Type = HighlightType.Decimal, DecimalValue = 2121.32m})
+                    {Field = "Field3", Type = HighlightType.Decimal, DecimalValue = 2121.32m, Operation = HighlightOperation.Equality})
+                .HighlightValue(new HighlightOperator
+                    { Field = "Field6", Type = HighlightType.Decimal, DecimalValue = 34.43m, Operation = HighlightOperation.Equality })
                 .ToConsole();
 
             TableDic<string, TestClass>.Add(GetSimpleDictionary())
                 .ToCsv(@"C:\temp\testDic.csv");
-
         }
     }
 }

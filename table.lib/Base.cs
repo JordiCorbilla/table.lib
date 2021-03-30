@@ -35,7 +35,10 @@ namespace table.lib
         public ConsoleColor BackgroundColor { get; set; } = ConsoleColor.Black;
         public ConsoleColor ForegroundColor { get; set; } = ConsoleColor.Green;
         public List<T> Items { get; set; }
-        public Dictionary<string, HighlightOperator> Operation { get; set; } = new Dictionary<string, HighlightOperator>();
+
+        public Dictionary<string, HighlightOperator> Operation { get; set; } =
+            new Dictionary<string, HighlightOperator>();
+
         public Options Options { get; set; } = new Options();
 
         public Dictionary<string, TextJustification> ColumnTextJustification { get; set; } =
@@ -106,7 +109,6 @@ namespace table.lib
             Console.ForegroundColor = ForegroundColor;
 
             if (Operation != null)
-            {
                 if (Operation.ContainsKey(column))
                     switch (Operation[column].Type)
                     {
@@ -114,15 +116,28 @@ namespace table.lib
                             try
                             {
                                 var parsed = decimal.Parse(value.Trim());
-                                if (parsed != Operation[column].DecimalValue)
+                                switch (Operation[column].Operation)
                                 {
-                                    Console.BackgroundColor = Operation[column].BackgroundColorIfDifferent;
-                                    Console.ForegroundColor = Operation[column].ForegroundColorIfDifferent;
-                                }
-                                else
-                                {
-                                    Console.BackgroundColor = Operation[column].BackgroundColorIfEqual;
-                                    Console.ForegroundColor = Operation[column].ForegroundColorIfEqual;
+                                    case HighlightOperation.Differences when parsed != Operation[column].DecimalValue:
+                                        Console.BackgroundColor = Operation[column].BackgroundColorIfDifferent;
+                                        Console.ForegroundColor = Operation[column].ForegroundColorIfDifferent;
+                                        break;
+                                    case HighlightOperation.Differences:
+                                        Console.BackgroundColor = Operation[column].BackgroundColorIfEqual;
+                                        Console.ForegroundColor = Operation[column].ForegroundColorIfEqual;
+                                        break;
+                                    case HighlightOperation.Equality:
+                                    {
+                                        if (parsed == Operation[column].DecimalValue)
+                                        {
+                                            Console.BackgroundColor = Operation[column].BackgroundColorIfEqual;
+                                            Console.ForegroundColor = Operation[column].ForegroundColorIfEqual;
+                                        }
+
+                                        break;
+                                    }
+                                    default:
+                                        throw new ArgumentOutOfRangeException();
                                 }
                             }
                             catch
@@ -134,15 +149,28 @@ namespace table.lib
                         case HighlightType.String:
                             try
                             {
-                                if (value.Trim() != Operation[column].StringValue)
+                                switch (Operation[column].Operation)
                                 {
-                                    Console.BackgroundColor = Operation[column].BackgroundColorIfDifferent;
-                                    Console.ForegroundColor = Operation[column].ForegroundColorIfDifferent;
-                                }
-                                else
-                                {
-                                    Console.BackgroundColor = Operation[column].BackgroundColorIfEqual;
-                                    Console.ForegroundColor = Operation[column].ForegroundColorIfEqual;
+                                    case HighlightOperation.Differences when value.Trim() != Operation[column].StringValue:
+                                        Console.BackgroundColor = Operation[column].BackgroundColorIfDifferent;
+                                        Console.ForegroundColor = Operation[column].ForegroundColorIfDifferent;
+                                        break;
+                                    case HighlightOperation.Differences:
+                                        Console.BackgroundColor = Operation[column].BackgroundColorIfEqual;
+                                        Console.ForegroundColor = Operation[column].ForegroundColorIfEqual;
+                                        break;
+                                    case HighlightOperation.Equality:
+                                    {
+                                        if (value.Trim() == Operation[column].StringValue)
+                                        {
+                                            Console.BackgroundColor = Operation[column].BackgroundColorIfEqual;
+                                            Console.ForegroundColor = Operation[column].ForegroundColorIfEqual;
+                                        }
+
+                                        break;
+                                    }
+                                    default:
+                                        throw new ArgumentOutOfRangeException();
                                 }
                             }
                             catch
@@ -154,7 +182,6 @@ namespace table.lib
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
-            }
 
             Console.Write(value);
             Console.ResetColor();
