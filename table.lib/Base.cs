@@ -151,7 +151,8 @@ namespace table.lib
                             {
                                 switch (Operation[column].Operation)
                                 {
-                                    case HighlightOperation.Differences when value.Trim() != Operation[column].StringValue:
+                                    case HighlightOperation.Differences
+                                        when value.Trim() != Operation[column].StringValue:
                                         Console.BackgroundColor = Operation[column].BackgroundColorIfDifferent;
                                         Console.ForegroundColor = Operation[column].ForegroundColorIfDifferent;
                                         break;

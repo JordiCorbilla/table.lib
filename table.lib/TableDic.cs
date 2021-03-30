@@ -310,6 +310,86 @@ namespace table.lib
             file.WriteLine(stringBuilder.ToString());
         }
 
+        public void ToMarkDown(string fileName, bool consoleVerbose = false)
+        {
+            if (Items.Count == 0) return;
+            var stringBuilder = new StringBuilder();
+            var s = "|";
+
+            var filteredPropertyNames = FilterProperties();
+
+            foreach (var property in filteredPropertyNames)
+            {
+                var headerName = property.Name;
+                if (ColumnNameOverrides.ContainsKey(property.Name))
+                    headerName = ColumnNameOverrides[property.Name];
+
+                var length = MaxWidth[property.Name] - headerName.Length;
+                s += $" {headerName.ToValidOutput()}{new string(' ', length)} |";
+            }
+
+            stringBuilder.AppendLine(s);
+
+            s = "|";
+            foreach (var property in filteredPropertyNames)
+            {
+                var columnSeparator = $" {new string('-', MaxWidth[property.Name])} |";
+                if (ColumnTextJustification.ContainsKey(property.Name))
+                    switch (ColumnTextJustification[property.Name])
+                    {
+                        case TextJustification.Centered:
+                            columnSeparator = columnSeparator.Replace("- ", ": ");
+                            columnSeparator = columnSeparator.Replace(" -", " :");
+                            break;
+                        case TextJustification.Right:
+                            columnSeparator = columnSeparator.Replace("- ", ": ");
+                            break;
+                        case TextJustification.Left:
+                            columnSeparator = columnSeparator.Replace(" -", " :");
+                            break;
+                        case TextJustification.Justified:
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+
+                s += columnSeparator;
+            }
+
+            stringBuilder.AppendLine(s);
+
+            for (var i = 0; i < Items.Count; i++)
+            {
+                var row = Items[i];
+                s = "|";
+                foreach (var property in filteredPropertyNames)
+                {
+                    if (property.Name == Options.KeyName)
+                    {
+                        var keyValueParsed = ObjectToString(Keys[i]);
+                        var length = MaxWidth[property.Name] - keyValueParsed.Length;
+                        s += $" {keyValueParsed.ToValidOutput()}{new string(' ', length)} |";
+                    }
+                    else
+                    {
+                        var value = GetValue(row, property);
+                        var length = MaxWidth[property.Name] - value.Length;
+                        s += $" {value.ToValidOutput()}{new string(' ', length)} |";
+                    }
+                }
+
+                stringBuilder.AppendLine(s);
+            }
+
+            stringBuilder.AppendLine();
+
+            using var file = new StreamWriter(fileName);
+            file.WriteLine(stringBuilder.ToString());
+
+            if (consoleVerbose)
+                Console.WriteLine(stringBuilder.ToString());
+        }
+
         public static TableDic<TV, T> Add(Dictionary<TV, T> dictionary)
         {
             return new TableDic<TV, T>(dictionary);

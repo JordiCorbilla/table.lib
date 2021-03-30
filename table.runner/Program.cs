@@ -40,6 +40,8 @@ namespace table.runner
 
             Samples.SimpleConsoleForDictionary();
             Samples.SimpleConsoleOutputWithHighlighterForDictionary();
+            Samples.ComplexMarkDownOutputFilteringForDictionary();
+            Samples.SimpleCsvOutputForDictionary();
         }
     }
 }
