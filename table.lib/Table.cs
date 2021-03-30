@@ -124,7 +124,8 @@ namespace table.lib
 
         public Table<T> HighlightValue(HighlightOperator operation)
         {
-            Operation = operation;
+            if (!Operation.ContainsKey(operation.Field))
+                Operation.Add(operation.Field, operation);
             return this;
         }
 

@@ -35,7 +35,7 @@ namespace table.lib
         public ConsoleColor BackgroundColor { get; set; } = ConsoleColor.Black;
         public ConsoleColor ForegroundColor { get; set; } = ConsoleColor.Green;
         public List<T> Items { get; set; }
-        public HighlightOperator Operation { get; set; }
+        public Dictionary<string, HighlightOperator> Operation { get; set; } = new Dictionary<string, HighlightOperator>();
         public Options Options { get; set; } = new Options();
 
         public Dictionary<string, TextJustification> ColumnTextJustification { get; set; } =
@@ -106,22 +106,23 @@ namespace table.lib
             Console.ForegroundColor = ForegroundColor;
 
             if (Operation != null)
-                if (column == Operation.Field)
-                    switch (Operation.Type)
+            {
+                if (Operation.ContainsKey(column))
+                    switch (Operation[column].Type)
                     {
                         case HighlightType.Decimal:
                             try
                             {
                                 var parsed = decimal.Parse(value.Trim());
-                                if (parsed != Operation.DecimalValue)
+                                if (parsed != Operation[column].DecimalValue)
                                 {
-                                    Console.BackgroundColor = Operation.BackgroundColorIfDifferent;
-                                    Console.ForegroundColor = Operation.ForegroundColorIfDifferent;
+                                    Console.BackgroundColor = Operation[column].BackgroundColorIfDifferent;
+                                    Console.ForegroundColor = Operation[column].ForegroundColorIfDifferent;
                                 }
                                 else
                                 {
-                                    Console.BackgroundColor = Operation.BackgroundColorIfEqual;
-                                    Console.ForegroundColor = Operation.ForegroundColorIfEqual;
+                                    Console.BackgroundColor = Operation[column].BackgroundColorIfEqual;
+                                    Console.ForegroundColor = Operation[column].ForegroundColorIfEqual;
                                 }
                             }
                             catch
@@ -133,15 +134,15 @@ namespace table.lib
                         case HighlightType.String:
                             try
                             {
-                                if (value.Trim() != Operation.StringValue)
+                                if (value.Trim() != Operation[column].StringValue)
                                 {
-                                    Console.BackgroundColor = Operation.BackgroundColorIfDifferent;
-                                    Console.ForegroundColor = Operation.ForegroundColorIfDifferent;
+                                    Console.BackgroundColor = Operation[column].BackgroundColorIfDifferent;
+                                    Console.ForegroundColor = Operation[column].ForegroundColorIfDifferent;
                                 }
                                 else
                                 {
-                                    Console.BackgroundColor = Operation.BackgroundColorIfEqual;
-                                    Console.ForegroundColor = Operation.ForegroundColorIfEqual;
+                                    Console.BackgroundColor = Operation[column].BackgroundColorIfEqual;
+                                    Console.ForegroundColor = Operation[column].ForegroundColorIfEqual;
                                 }
                             }
                             catch
@@ -153,7 +154,7 @@ namespace table.lib
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
-
+            }
 
             Console.Write(value);
             Console.ResetColor();
