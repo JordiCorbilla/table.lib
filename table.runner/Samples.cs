@@ -329,5 +329,10 @@ namespace table.runner
                 .ColumnContentTextJustification(new Dictionary<string, TextJustification>
                     {{"Field3", TextJustification.Right}}).ToMarkDown(@"C:\temp\testDic.md", true);
         }
+
+        public static void SimpleHtmlOutputForDictionary()
+        {
+            TableDic<string, TestClass>.Add(GetSimpleDictionary()).ToHtml(@"C:\temp\test-list-dic.html");
+        }
     }
 }

@@ -390,6 +390,50 @@ namespace table.lib
                 Console.WriteLine(stringBuilder.ToString());
         }
 
+        public void ToHtml(string fileName)
+        {
+            var stringBuilder = new StringBuilder();
+            if (Items.Count == 0) return;
+            stringBuilder.AppendLine("<table style=\"border-collapse: collapse; width: 100%;\">");
+            stringBuilder.AppendLine("<tr>");
+
+            var filteredPropertyNames = FilterProperties();
+            foreach (var property in filteredPropertyNames)
+            {
+                var headerName = property.Name;
+                if (ColumnNameOverrides.ContainsKey(property.Name))
+                    headerName = ColumnNameOverrides[property.Name];
+
+                stringBuilder.AppendLine(
+                    $"<th style=\"text-align: center; background-color: #052a3d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">{headerName.ToHtml()}</th>");
+            }
+
+            stringBuilder.AppendLine("</tr>");
+
+            var rowNumber = 1;
+            for (var index = 0; index < Items.Count; index++)
+            {
+                var row = Items[index];
+                stringBuilder.AppendLine("<tr>");
+                foreach (var property in filteredPropertyNames)
+                {
+                    var color = rowNumber % 2 == 0 ? "#f2f2f2" : "white";
+                    var value = "";
+                    value = property.Name == Options.KeyName ? ObjectToString(Keys[index]) : GetValue(row, property);
+
+                    stringBuilder.AppendLine($"<td style=\"text-align: right; color: black; background-color: {color};padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">{value.ToHtml()}</td>");
+                }
+
+                rowNumber++;
+                stringBuilder.AppendLine("</tr>");
+            }
+
+            stringBuilder.AppendLine("</table>");
+
+            using var file = new StreamWriter(fileName);
+            file.WriteLine(stringBuilder.ToString());
+        }
+
         public static TableDic<TV, T> Add(Dictionary<TV, T> dictionary)
         {
             return new TableDic<TV, T>(dictionary);

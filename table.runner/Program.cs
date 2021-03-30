@@ -42,6 +42,7 @@ namespace table.runner
             Samples.SimpleConsoleOutputWithHighlighterForDictionary();
             Samples.ComplexMarkDownOutputFilteringForDictionary();
             Samples.SimpleCsvOutputForDictionary();
+            Samples.SimpleHtmlOutputForDictionary();
         }
     }
 }
