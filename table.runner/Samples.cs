@@ -314,6 +314,14 @@ namespace table.runner
                     Field = "Field6", Type = HighlightType.Decimal, DecimalValue = 34.43m,
                     Operation = HighlightOperation.Equality
                 })
+                .HighlightValue(new HighlightOperator
+                {
+                    Field = "Field6",
+                    Type = HighlightType.Decimal,
+                    DecimalValue = 134.43m,
+                    Operation = HighlightOperation.Equality,
+                    BackgroundColorIfEqual = ConsoleColor.DarkBlue
+                })
                 .ToConsole();
         }
 

@@ -36,8 +36,8 @@ namespace table.lib
         public ConsoleColor ForegroundColor { get; set; } = ConsoleColor.Green;
         public List<T> Items { get; set; }
 
-        public Dictionary<string, HighlightOperator> Operation { get; set; } =
-            new Dictionary<string, HighlightOperator>();
+        public Dictionary<string, List<HighlightOperator>> Operation { get; set; } =
+            new Dictionary<string, List<HighlightOperator>>();
 
         public Options Options { get; set; } = new Options();
 
@@ -110,79 +110,85 @@ namespace table.lib
 
             if (Operation != null)
                 if (Operation.ContainsKey(column))
-                    switch (Operation[column].Type)
+                {
+                    foreach (var item in Operation[column])
                     {
-                        case HighlightType.Decimal:
-                            try
-                            {
-                                var parsed = decimal.Parse(value.Trim());
-                                switch (Operation[column].Operation)
+                        switch (item.Type)
+                        {
+                            case HighlightType.Decimal:
+                                try
                                 {
-                                    case HighlightOperation.Differences when parsed != Operation[column].DecimalValue:
-                                        Console.BackgroundColor = Operation[column].BackgroundColorIfDifferent;
-                                        Console.ForegroundColor = Operation[column].ForegroundColorIfDifferent;
-                                        break;
-                                    case HighlightOperation.Differences:
-                                        Console.BackgroundColor = Operation[column].BackgroundColorIfEqual;
-                                        Console.ForegroundColor = Operation[column].ForegroundColorIfEqual;
-                                        break;
-                                    case HighlightOperation.Equality:
+                                    var parsed = decimal.Parse(value.Trim());
+                                    switch (item.Operation)
                                     {
-                                        if (parsed == Operation[column].DecimalValue)
+                                        case HighlightOperation.Differences
+                                            when parsed != item.DecimalValue:
+                                            Console.BackgroundColor = item.BackgroundColorIfDifferent;
+                                            Console.ForegroundColor = item.ForegroundColorIfDifferent;
+                                            break;
+                                        case HighlightOperation.Differences:
+                                            Console.BackgroundColor = item.BackgroundColorIfEqual;
+                                            Console.ForegroundColor = item.ForegroundColorIfEqual;
+                                            break;
+                                        case HighlightOperation.Equality:
                                         {
-                                            Console.BackgroundColor = Operation[column].BackgroundColorIfEqual;
-                                            Console.ForegroundColor = Operation[column].ForegroundColorIfEqual;
+                                            if (parsed == item.DecimalValue)
+                                            {
+                                                Console.BackgroundColor = item.BackgroundColorIfEqual;
+                                                Console.ForegroundColor = item.ForegroundColorIfEqual;
+                                            }
+
+                                            break;
                                         }
-
-                                        break;
+                                        default:
+                                            throw new ArgumentOutOfRangeException();
                                     }
-                                    default:
-                                        throw new ArgumentOutOfRangeException();
                                 }
-                            }
-                            catch
-                            {
-                                // do nothing
-                            }
-
-                            break;
-                        case HighlightType.String:
-                            try
-                            {
-                                switch (Operation[column].Operation)
+                                catch
                                 {
-                                    case HighlightOperation.Differences
-                                        when value.Trim() != Operation[column].StringValue:
-                                        Console.BackgroundColor = Operation[column].BackgroundColorIfDifferent;
-                                        Console.ForegroundColor = Operation[column].ForegroundColorIfDifferent;
-                                        break;
-                                    case HighlightOperation.Differences:
-                                        Console.BackgroundColor = Operation[column].BackgroundColorIfEqual;
-                                        Console.ForegroundColor = Operation[column].ForegroundColorIfEqual;
-                                        break;
-                                    case HighlightOperation.Equality:
-                                    {
-                                        if (value.Trim() == Operation[column].StringValue)
-                                        {
-                                            Console.BackgroundColor = Operation[column].BackgroundColorIfEqual;
-                                            Console.ForegroundColor = Operation[column].ForegroundColorIfEqual;
-                                        }
-
-                                        break;
-                                    }
-                                    default:
-                                        throw new ArgumentOutOfRangeException();
+                                    // do nothing
                                 }
-                            }
-                            catch
-                            {
-                                // do nothing
-                            }
 
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
+                                break;
+                            case HighlightType.String:
+                                try
+                                {
+                                    switch (item.Operation)
+                                    {
+                                        case HighlightOperation.Differences
+                                            when value.Trim() != item.StringValue:
+                                            Console.BackgroundColor = item.BackgroundColorIfDifferent;
+                                            Console.ForegroundColor = item.ForegroundColorIfDifferent;
+                                            break;
+                                        case HighlightOperation.Differences:
+                                            Console.BackgroundColor = item.BackgroundColorIfEqual;
+                                            Console.ForegroundColor = item.ForegroundColorIfEqual;
+                                            break;
+                                        case HighlightOperation.Equality:
+                                        {
+                                            if (value.Trim() == item.StringValue)
+                                            {
+                                                Console.BackgroundColor = item.BackgroundColorIfEqual;
+                                                Console.ForegroundColor = item.ForegroundColorIfEqual;
+                                            }
+
+                                            break;
+                                        }
+                                        default:
+                                            throw new ArgumentOutOfRangeException();
+                                    }
+                                }
+                                catch
+                                {
+                                    // do nothing
+                                }
+
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
                     }
+                }
 
             Console.Write(value);
             Console.ResetColor();

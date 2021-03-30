@@ -133,7 +133,11 @@ namespace table.lib
         public TableDic<TV, T> HighlightValue(HighlightOperator operation)
         {
             if (!Operation.ContainsKey(operation.Field))
-                Operation.Add(operation.Field, operation);
+                Operation.Add(operation.Field, new List<HighlightOperator> { operation });
+            else
+            {
+                Operation[operation.Field].Add(operation);
+            }
             return this;
         }
 
