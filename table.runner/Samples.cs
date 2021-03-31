@@ -336,6 +336,13 @@ namespace table.runner
                 .ToCsv(@"C:\temp\testDic.csv");
         }
 
+        public static void SimpleConsoleOutputForDictionary()
+        {
+            var dic = new Dictionary<string, string> {{"1", "1"}, {"2", "2"}};
+            TableDic<string, string>.Add(dic)
+                .ToConsole();
+        }
+
         public static void ComplexMarkDownOutputFilteringForDictionary()
         {
             TableDic<string, TestClass>.Add(GetSimpleDictionary())

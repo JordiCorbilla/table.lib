@@ -28,7 +28,7 @@ using System.Text;
 
 namespace table.lib
 {
-    public class Table<T> : Base<T>
+    public class Table<T> : Base<T> where T: class
     {
         /// <summary>
         ///     Where the magic happens.

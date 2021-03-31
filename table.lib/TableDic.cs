@@ -24,11 +24,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace table.lib
 {
-    public class TableDic<TV, T> : Base<T>
+    public class TableDic<TV, T> : Base<T> where T: class
     {
         public TableDic(Dictionary<TV, T> dictionary, Options options = null)
         {
@@ -39,6 +40,7 @@ namespace table.lib
             MaxWidth = new Dictionary<string, int>();
             Keys = dictionary.Select(x => x.Key).ToList();
             Items = dictionary.Select(x => x.Value).ToList();
+
             var properties = typeof(T).GetProperties();
 
             //Add the additional Key
