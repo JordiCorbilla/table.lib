@@ -34,7 +34,7 @@ namespace table.lib
         public FilterAction ColumnAction { get; set; } = FilterAction.Exclude;
         public ConsoleColor BackgroundColor { get; set; } = ConsoleColor.Black;
         public ConsoleColor ForegroundColor { get; set; } = ConsoleColor.Green;
-        public List<T> Items { get; set; }
+        public List<T> Items { get; set; } = new List<T>();
 
         public Dictionary<string, List<HighlightOperator>> Operation { get; set; } =
             new Dictionary<string, List<HighlightOperator>>();

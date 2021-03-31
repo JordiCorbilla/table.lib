@@ -183,6 +183,11 @@ namespace table.runner
                 .ToConsole();
         }
 
+        public static void SimpleConsoleOutputForListNoException()
+        {
+            Table<TestClass>.Add(new List<TestClass>()).ToConsole();
+        }
+
         public static void SimpleConsoleOutputWithHighlighterForList()
         {
             Table<TestClass>.Add(GetSampleOutput())
