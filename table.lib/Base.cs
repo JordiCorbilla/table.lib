@@ -119,29 +119,32 @@ namespace table.lib
                                 try
                                 {
                                     var parsed = decimal.Parse(value.Trim());
-                                    switch (item.Operation)
+                                    foreach (var num in item.DecimalValue)
                                     {
-                                        case HighlightOperation.Differences
-                                            when parsed != item.DecimalValue:
-                                            Console.BackgroundColor = item.BackgroundColorIfDifferent;
-                                            Console.ForegroundColor = item.ForegroundColorIfDifferent;
-                                            break;
-                                        case HighlightOperation.Differences:
-                                            Console.BackgroundColor = item.BackgroundColorIfEqual;
-                                            Console.ForegroundColor = item.ForegroundColorIfEqual;
-                                            break;
-                                        case HighlightOperation.Equality:
+                                        switch (item.Operation)
                                         {
-                                            if (parsed == item.DecimalValue)
-                                            {
+                                            case HighlightOperation.Differences
+                                                when parsed != num:
+                                                Console.BackgroundColor = item.BackgroundColorIfDifferent;
+                                                Console.ForegroundColor = item.ForegroundColorIfDifferent;
+                                                break;
+                                            case HighlightOperation.Differences:
                                                 Console.BackgroundColor = item.BackgroundColorIfEqual;
                                                 Console.ForegroundColor = item.ForegroundColorIfEqual;
-                                            }
+                                                break;
+                                            case HighlightOperation.Equality:
+                                            {
+                                                if (parsed == num)
+                                                {
+                                                    Console.BackgroundColor = item.BackgroundColorIfEqual;
+                                                    Console.ForegroundColor = item.ForegroundColorIfEqual;
+                                                }
 
-                                            break;
+                                                break;
+                                            }
+                                            default:
+                                                throw new ArgumentOutOfRangeException();
                                         }
-                                        default:
-                                            throw new ArgumentOutOfRangeException();
                                     }
                                 }
                                 catch
@@ -153,29 +156,32 @@ namespace table.lib
                             case HighlightType.String:
                                 try
                                 {
-                                    switch (item.Operation)
+                                    foreach (var str in item.StringValue)
                                     {
-                                        case HighlightOperation.Differences
-                                            when value.Trim() != item.StringValue:
-                                            Console.BackgroundColor = item.BackgroundColorIfDifferent;
-                                            Console.ForegroundColor = item.ForegroundColorIfDifferent;
-                                            break;
-                                        case HighlightOperation.Differences:
-                                            Console.BackgroundColor = item.BackgroundColorIfEqual;
-                                            Console.ForegroundColor = item.ForegroundColorIfEqual;
-                                            break;
-                                        case HighlightOperation.Equality:
+                                        switch (item.Operation)
                                         {
-                                            if (value.Trim() == item.StringValue)
-                                            {
+                                            case HighlightOperation.Differences
+                                                when value.Trim() != str:
+                                                Console.BackgroundColor = item.BackgroundColorIfDifferent;
+                                                Console.ForegroundColor = item.ForegroundColorIfDifferent;
+                                                break;
+                                            case HighlightOperation.Differences:
                                                 Console.BackgroundColor = item.BackgroundColorIfEqual;
                                                 Console.ForegroundColor = item.ForegroundColorIfEqual;
-                                            }
+                                                break;
+                                            case HighlightOperation.Equality:
+                                            {
+                                                if (value.Trim() == str)
+                                                {
+                                                    Console.BackgroundColor = item.BackgroundColorIfEqual;
+                                                    Console.ForegroundColor = item.ForegroundColorIfEqual;
+                                                }
 
-                                            break;
+                                                break;
+                                            }
+                                            default:
+                                                throw new ArgumentOutOfRangeException();
                                         }
-                                        default:
-                                            throw new ArgumentOutOfRangeException();
                                     }
                                 }
                                 catch

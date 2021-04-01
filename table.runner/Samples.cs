@@ -192,7 +192,7 @@ namespace table.runner
         {
             Table<TestClass>.Add(GetSampleOutput())
                 .HighlightValue(new HighlightOperator
-                    {Field = "Field3", Type = HighlightType.Decimal, DecimalValue = 2121.32m})
+                    {Field = "Field3", Type = HighlightType.Decimal, DecimalValue = new List<decimal> { 2121.32m }})
                 .ToConsole();
         }
 
@@ -311,21 +311,13 @@ namespace table.runner
             TableDic<string, TestClass>.Add(GetSimpleDictionary())
                 .HighlightValue(new HighlightOperator
                 {
-                    Field = "Field3", Type = HighlightType.Decimal, DecimalValue = 2121.32m,
+                    Field = "Field3", Type = HighlightType.Decimal, DecimalValue = new List<decimal>{ 2121.32m },
                     Operation = HighlightOperation.Equality
                 })
                 .HighlightValue(new HighlightOperator
                 {
-                    Field = "Field6", Type = HighlightType.Decimal, DecimalValue = 34.43m,
+                    Field = "Field6", Type = HighlightType.Decimal, DecimalValue = new List<decimal>(){34.43m, 134.43m},
                     Operation = HighlightOperation.Equality
-                })
-                .HighlightValue(new HighlightOperator
-                {
-                    Field = "Field6",
-                    Type = HighlightType.Decimal,
-                    DecimalValue = 134.43m,
-                    Operation = HighlightOperation.Equality,
-                    BackgroundColorIfEqual = ConsoleColor.DarkBlue
                 })
                 .ToConsole();
         }
@@ -338,9 +330,9 @@ namespace table.runner
 
         public static void SimpleConsoleOutputForDictionary()
         {
-            var dic = new Dictionary<string, string> {{"1", "1"}, {"2", "2"}};
-            TableDic<string, string>.Add(dic)
-                .ToConsole();
+            //var dic = new Dictionary<string, string> {{"1", "1"}, {"2", "2"}};
+            //TableDic<string, string>.Add(dic)
+            //    .ToConsole();
         }
 
         public static void ComplexMarkDownOutputFilteringForDictionary()

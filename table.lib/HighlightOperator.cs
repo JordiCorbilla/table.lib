@@ -43,14 +43,15 @@
 //SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 
 namespace table.lib
 {
     public class HighlightOperator
     {
         public string Field { get; set; }
-        public string StringValue { get; set; }
-        public decimal DecimalValue { get; set; }
+        public List<string> StringValue { get; set; }
+        public List<decimal> DecimalValue { get; set; }
         public ConsoleColor ForegroundColorIfEqual { get; set; } = ConsoleColor.White;
         public ConsoleColor BackgroundColorIfEqual { get; set; } = ConsoleColor.DarkGreen;
         public ConsoleColor ForegroundColorIfDifferent { get; set; } = ConsoleColor.White;

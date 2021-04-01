@@ -3,13 +3,14 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>table.lib</RootNamespace>
-    <Version>1.6.1</Version>
+    <Version>1.6.2</Version>
     <Copyright>Jordi Corbilla</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/JordiCorbilla/table.lib</RepositoryUrl>
     <PackageReleaseNotes>v1.6
 - Allow multiple cell highlights for the same column
-- Fix bug when dealing with empty records</PackageReleaseNotes>
+- Fix bug when dealing with empty records
+- Allow multiple cell selection</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Description>Simple c# (.NET 5) table library that renders any List&lt;T&gt; and Dictionary&lt;TV,T&gt; into a nicely formatted markdown, csv, html or console table, allowing for extra formats.</Description>
