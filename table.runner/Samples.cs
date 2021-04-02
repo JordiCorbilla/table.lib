@@ -308,7 +308,10 @@ namespace table.runner
 
         public static void SimpleConsoleOutputWithHighlighterForDictionary()
         {
-            TableDic<string, TestClass>.Add(GetSimpleDictionary())
+            TableDic<string, TestClass>.Add(GetSimpleDictionary(), new Options
+                {
+                    NumberDecimals = 0
+                })
                 .HighlightValue(new HighlightOperator
                 {
                     Field = "Field3", Type = HighlightType.Decimal, DecimalValue = new List<decimal>{ 2121.32m },

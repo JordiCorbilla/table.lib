@@ -28,5 +28,6 @@ namespace table.lib
         public string DecimalFormat { get; set; } = "#,##0.00";
         public string DynamicName { get; set; } = "Dynamic";
         public string KeyName { get; set; } = "Key_Id";
+        public int NumberDecimals { get; set; } = 8;
     }
 }

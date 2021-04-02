@@ -124,7 +124,7 @@ namespace table.lib
                                         switch (item.Operation)
                                         {
                                             case HighlightOperation.Differences
-                                                when decimal.Compare(Math.Round(parsed, 5), Math.Round(num, 5)) != 0:
+                                                when decimal.Compare(Math.Round(parsed, Options.NumberDecimals), Math.Round(num, Options.NumberDecimals)) != 0:
                                                 Console.BackgroundColor = item.BackgroundColorIfDifferent;
                                                 Console.ForegroundColor = item.ForegroundColorIfDifferent;
                                                 break;
@@ -134,7 +134,7 @@ namespace table.lib
                                                 break;
                                             case HighlightOperation.Equality:
                                             {
-                                                if (decimal.Compare(Math.Round(parsed, 5), Math.Round(num, 5))==0)
+                                                if (decimal.Compare(Math.Round(parsed, Options.NumberDecimals), Math.Round(num, Options.NumberDecimals))==0)
                                                 {
                                                     Console.BackgroundColor = item.BackgroundColorIfEqual;
                                                     Console.ForegroundColor = item.ForegroundColorIfEqual;
