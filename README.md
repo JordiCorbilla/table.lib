@@ -384,3 +384,7 @@ Field1,Field2,Field3,Field4,Field5,Field6
 Note that we use the [CSV standard](https://tools.ietf.org/html/rfc4180) when processing `CRLF`, `"` or `,` characters surrouding the value with double quotes. 
 
 ![csvoutput](csvoutput.png)
+
+# Known Issues
+
+- Simple dictionaries `Dictionary<int, string>` will not work. The second argument needs to be a class.
