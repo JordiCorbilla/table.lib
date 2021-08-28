@@ -230,6 +230,161 @@ namespace table.lib
             Console.WriteLine();
         }
 
+        public override string ToString()
+        {
+            if (Items.Count == 0) return string.Empty;
+            var s = "|";
+            var sb = new StringBuilder();
+
+            var filteredPropertyNames = FilterProperties();
+
+            foreach (var property in filteredPropertyNames)
+            {
+                var headerName = property.Name;
+                if (ColumnNameOverrides.ContainsKey(property.Name))
+                    headerName = ColumnNameOverrides[property.Name];
+
+                var length = MaxWidth[property.Name] - headerName.Length;
+
+                var header = headerName.ToValidOutput();
+                var totalLength = $"{new string(' ', length)}{header}".Length;
+                var remaining = totalLength - $"{new string(' ', length / 2)}{header}".Length;
+                s += $" {new string(' ', length / 2)}{header}{new string(' ', remaining)} |";
+            }
+
+            sb.AppendLine(s);
+
+            s = filteredPropertyNames.Aggregate("|",
+                (current, name) => current + $" {new string('-', MaxWidth[name.Name])} |");
+
+            sb.AppendLine(s);
+
+            foreach (var row in Items)
+            {
+                sb.Append('|');
+                foreach (var property in filteredPropertyNames)
+                {
+                    var value = GetValue(row, property);
+                    var length = MaxWidth[property.Name] - value.Length;
+                    var output = value.ToValidOutput();
+                    if (ColumnTextJustification.ContainsKey(property.Name))
+                        switch (ColumnTextJustification[property.Name])
+                        {
+                            case TextJustification.Centered:
+                                var totalLength = $"{new string(' ', length)}{output}".Length;
+                                var remaining = totalLength - $"{new string(' ', length / 2)}{output}".Length;
+                                sb.Append(' ');
+                                sb.Append($"{new string(' ', length / 2)}{output}{new string(' ', remaining)}");
+                                sb.Append(" |");
+                                break;
+                            case TextJustification.Right:
+                                sb.Append(' ');
+                                sb.Append($"{new string(' ', length)}{output}");
+                                sb.Append(" |");
+                                break;
+                            case TextJustification.Left:
+                                sb.Append(' ');
+                                sb.Append($"{output}{new string(' ', length)}");
+                                sb.Append(" |");
+                                break;
+                            case TextJustification.Justified:
+                                sb.Append(' ');
+                                sb.Append($"{output}{new string(' ', length)}");
+                                sb.Append(" |");
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                    else
+                    {
+                        sb.Append(' ');
+                        sb.Append($"{output}{new string(' ', length)}");
+                        sb.Append(" |");
+                    }
+                }
+
+                sb.Append('\n');
+            }
+
+            sb.AppendLine("");
+            return sb.ToString();
+        }
+
+        public string ToSpecFlowString()
+        {
+            if (Items.Count == 0) return string.Empty;
+            var s = "|";
+            var sb = new StringBuilder();
+
+            var filteredPropertyNames = FilterProperties();
+
+            foreach (var property in filteredPropertyNames)
+            {
+                var headerName = property.Name;
+                if (ColumnNameOverrides.ContainsKey(property.Name))
+                    headerName = ColumnNameOverrides[property.Name];
+
+                var length = MaxWidth[property.Name] - headerName.Length;
+
+                var header = headerName.ToValidOutput();
+                var totalLength = $"{new string(' ', length)}{header}".Length;
+                var remaining = totalLength - $"{new string(' ', length / 2)}{header}".Length;
+                s += $" {new string(' ', length / 2)}{header}{new string(' ', remaining)} |";
+            }
+
+            sb.AppendLine(s);
+
+            foreach (var row in Items)
+            {
+                sb.Append('|');
+                foreach (var property in filteredPropertyNames)
+                {
+                    var value = GetValue(row, property);
+                    var length = MaxWidth[property.Name] - value.Length;
+                    var output = value.ToValidOutput();
+                    if (ColumnTextJustification.ContainsKey(property.Name))
+                        switch (ColumnTextJustification[property.Name])
+                        {
+                            case TextJustification.Centered:
+                                var totalLength = $"{new string(' ', length)}{output}".Length;
+                                var remaining = totalLength - $"{new string(' ', length / 2)}{output}".Length;
+                                sb.Append(' ');
+                                sb.Append($"{new string(' ', length / 2)}{output}{new string(' ', remaining)}");
+                                sb.Append(" |");
+                                break;
+                            case TextJustification.Right:
+                                sb.Append(' ');
+                                sb.Append($"{new string(' ', length)}{output}");
+                                sb.Append(" |");
+                                break;
+                            case TextJustification.Left:
+                                sb.Append(' ');
+                                sb.Append($"{output}{new string(' ', length)}");
+                                sb.Append(" |");
+                                break;
+                            case TextJustification.Justified:
+                                sb.Append(' ');
+                                sb.Append($"{output}{new string(' ', length)}");
+                                sb.Append(" |");
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                    else
+                    {
+                        sb.Append(' ');
+                        sb.Append($"{output}{new string(' ', length)}");
+                        sb.Append(" |");
+                    }
+                }
+
+                sb.Append('\n');
+            }
+
+            sb.AppendLine("");
+            return sb.ToString();
+        }
+
         public void ToMarkDown(string fileName, bool consoleVerbose = false)
         {
             if (Items.Count == 0) return;

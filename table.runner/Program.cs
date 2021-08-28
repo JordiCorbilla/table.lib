@@ -38,6 +38,8 @@ namespace table.runner
             Samples.ComplexMarkDownOutputFilteringForList();
             Samples.ComplexConsoleMatrix();
             Samples.SimpleConsoleOutputForListNoException();
+            Samples.SimpleToString();
+            Samples.SimpleToSpecFlowString();
 
             Samples.SimpleConsoleForDictionary();
             Samples.SimpleConsoleOutputWithHighlighterForDictionary();

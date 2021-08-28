@@ -66,6 +66,18 @@ namespace table.runner
             return list;
         }
 
+        public static void SimpleToSpecFlowString()
+        {
+            var s = Table<TestClass>.Add(GetSampleOutput()).ToSpecFlowString();
+            Console.Write(s);
+        }
+
+        public static void SimpleToString()
+        {
+            var s = Table<TestClass>.Add(GetSampleOutput()).ToString();
+            Console.Write(s);
+        }
+
         public static List<IEnumerable<string>> GetStringMatrix()
         {
             var test = new List<IEnumerable<string>>
