@@ -42,7 +42,7 @@ Considerations:
 
 ## Dynamic Fields
 
-If the List contains another collection of <strings>, the library is able to scan those and build the resultant dataset giving them a column name called `DynamicX`:
+If the List contains another collection of <strings>, the library is able to scan those and build the resultant dataset giving them a column name called `DynamicN`:
 
 ```c#
 var test = new List<IEnumerable<string>>
