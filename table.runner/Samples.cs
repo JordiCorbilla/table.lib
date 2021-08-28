@@ -22,6 +22,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using Dapper;
 using table.lib;
 
 namespace table.runner
@@ -360,6 +363,36 @@ namespace table.runner
         public static void SimpleHtmlOutputForDictionary()
         {
             TableDic<string, TestClass>.Add(GetSimpleDictionary()).ToHtml(@"C:\temp\test-list-dic.html");
+        }
+
+        public static void SimpleDbRecord()
+        {
+            IEnumerable<IDictionary<string, object>> table;
+            using (var connection = new SqlConnection("Data Source=localhost;Initial Catalog=DatingApp;Integrated Security=True"))
+            {
+                connection.Open();
+                const string data = @"
+SELECT [Id]
+      ,[SenderId]
+      ,[SenderUsername]
+      ,[RecipientId]
+      ,[RecipientUsername]
+      ,[Content]
+      ,[DateRead]
+      ,[MessageSent]
+      ,[SenderDeleted]
+      ,[RecipientDeleted]
+  FROM [DatingApp].[dbo].[Messages]
+";
+                table = connection.Query(data) as IEnumerable<IDictionary<string, object>>;
+            }
+
+            var enumerable = table as IDictionary<string, object>[] ?? (table ?? throw new InvalidOperationException()).ToArray();
+            var s = DbTable.Add(enumerable).ToString();
+            Console.WriteLine(s);
+
+            s = DbTable.Add(enumerable).ToSpecFlowString();
+            Console.WriteLine(s);
         }
     }
 }

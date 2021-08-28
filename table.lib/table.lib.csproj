@@ -3,19 +3,17 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>table.lib</RootNamespace>
-    <Version>1.6.5</Version>
+    <Version>1.7.0</Version>
     <Copyright>Jordi Corbilla</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/JordiCorbilla/table.lib</RepositoryUrl>
-    <PackageReleaseNotes>v1.6
-- Allow multiple cell highlights for the same column
-- Fix bug when dealing with empty records
-- Allow multiple cell selection</PackageReleaseNotes>
+    <PackageReleaseNotes>v1.7
+- Incorporate new DBTable object that is able to consume a dynamic response from Dapper and translate that into a table</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Description>Simple c# (.NET 5) table library that renders any List&lt;T&gt; and Dictionary&lt;TV,T&gt; into a nicely formatted markdown, csv, html or console table, allowing for extra formats.</Description>
-    <AssemblyVersion>1.6.5.0</AssemblyVersion>
-    <FileVersion>1.6.5.0</FileVersion>
+    <AssemblyVersion>1.7.0.0</AssemblyVersion>
+    <FileVersion>1.7.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

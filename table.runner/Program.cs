@@ -40,6 +40,7 @@ namespace table.runner
             Samples.SimpleConsoleOutputForListNoException();
             Samples.SimpleToString();
             Samples.SimpleToSpecFlowString();
+            Samples.SimpleDbRecord();
 
             Samples.SimpleConsoleForDictionary();
             Samples.SimpleConsoleOutputWithHighlighterForDictionary();
