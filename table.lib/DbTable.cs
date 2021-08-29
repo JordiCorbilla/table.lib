@@ -1,4 +1,26 @@
-﻿using System;
+﻿//MIT License
+
+//Copyright (c) 2020-2021 Jordi Corbilla
+
+//Permission is hereby granted, free of charge, to any person obtaining a copy
+//of this software and associated documentation files (the "Software"), to deal
+//in the Software without restriction, including without limitation the rights
+//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//copies of the Software, and to permit persons to whom the Software is
+//furnished to do so, subject to the following conditions:
+
+//The above copyright notice and this permission notice shall be included in all
+//copies or substantial portions of the Software.
+
+//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//SOFTWARE.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,12 +32,15 @@ namespace table.lib
         public IEnumerable<IDictionary<string, object>> Items { get; set; }
         public List<PropertyName> PropertyNames { get; set; }
         public Dictionary<string, int> MaxWidth { get; set; }
+        public Options Options { get; set; } = new Options();
 
-        public DbTable(IEnumerable<IDictionary<string, object>> list)
+        public DbTable(IEnumerable<IDictionary<string, object>> list, Options options = null)
         {
             PropertyNames = new List<PropertyName>();
             MaxWidth = new Dictionary<string, int>();
             Items = list;
+            if (options != null)
+                Options = options;
             var addedProperties = false;
             foreach (var row in Items)
             {
@@ -36,9 +61,23 @@ namespace table.lib
             }
         }
 
-        public static DbTable Add(IEnumerable<IDictionary<string, object>> list)
+        public static DbTable Add(IEnumerable<IDictionary<string, object>> list, Options options = null)
         {
-            return new DbTable(list);
+            return new DbTable(list, options);
+        }
+
+        public string ObjectToString(object value)
+        {
+            return value switch
+            {
+                string s => s,
+                int _ => value.ToString(),
+                bool _ => value.ToString(),
+                DateTime time => time.ToString(Options.DateFormat),
+                decimal value1 => value1.ToString(Options.DecimalFormat),
+                double value1 => value1.ToString(Options.DecimalFormat),
+                _ => (value != null ? value.ToString() : "")
+            };
         }
 
         public override string ToString()
@@ -72,8 +111,9 @@ namespace table.lib
                 foreach (var (key, value) in row)
                 {
                     var text = value ?? "";
-                    var length = MaxWidth[key] - text.ToString().Length;
-                    var output = text.ToString().ToValidOutput();
+                    var obj = ObjectToString(text);
+                    var length = MaxWidth[key] - obj.Length;
+                    var output = obj.ToValidOutput();
                     sb.Append(' ');
                     sb.Append($"{output}{new string(' ', length)}");
                     sb.Append(" |");
@@ -112,8 +152,9 @@ namespace table.lib
                 foreach (var (key, value) in row)
                 {
                     var text = value ?? "";
-                    var length = MaxWidth[key] - text.ToString().Length;
-                    var output = text.ToString().ToValidOutput();
+                    var obj = ObjectToString(text);
+                    var length = MaxWidth[key] - obj.Length;
+                    var output = obj.ToValidOutput();
                     sb.Append(' ');
                     sb.Append($"{output}{new string(' ', length)}");
                     sb.Append(" |");

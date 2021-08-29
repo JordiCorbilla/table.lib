@@ -41,6 +41,7 @@ namespace table.runner
             Samples.SimpleToString();
             Samples.SimpleToSpecFlowString();
             Samples.SimpleDbRecord();
+            Samples.SimpleDbRecordWithOptions();
 
             Samples.SimpleConsoleForDictionary();
             Samples.SimpleConsoleOutputWithHighlighterForDictionary();

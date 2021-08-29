@@ -142,7 +142,7 @@ namespace table.lib
                                                 break;
                                             }
                                             default:
-                                                throw new ArgumentOutOfRangeException();
+                                                throw new ArgumentOutOfRangeException($"Unrecognized operation {item.Operation}");
                                         }
                                 }
                                 catch
@@ -177,7 +177,7 @@ namespace table.lib
                                                 break;
                                             }
                                             default:
-                                                throw new ArgumentOutOfRangeException();
+                                                throw new ArgumentOutOfRangeException($"Unrecognized operation {item.Operation}");
                                         }
                                 }
                                 catch
@@ -187,7 +187,7 @@ namespace table.lib
 
                                 break;
                             default:
-                                throw new ArgumentOutOfRangeException();
+                                throw new ArgumentOutOfRangeException($"Unrecognized type {item.Type}");
                         }
 
             Console.Write(value);

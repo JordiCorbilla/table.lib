@@ -427,7 +427,7 @@ namespace table.lib
                         case TextJustification.Justified:
                             break;
                         default:
-                            throw new ArgumentOutOfRangeException();
+                            throw new ArgumentOutOfRangeException($"Unrecognized TextJustification {ColumnTextJustification[property.Name]}");
                     }
 
                 s += columnSeparator;
