@@ -50,11 +50,13 @@ namespace table.lib
                     {
                         PropertyNames.Add(new PropertyName(key, columnIndex++, columnIndex));
                         MaxWidth.Add(key, key.Length);
+                        if (value != null && ObjectToString(value).Length > MaxWidth[key])
+                            MaxWidth[key] = ObjectToString(value).Length;
                     }
                     else
                     {
-                        if (value != null && value.ToString().Length > MaxWidth[key])
-                            MaxWidth[key] = value.ToString().Length;
+                        if (value != null && ObjectToString(value).Length > MaxWidth[key])
+                            MaxWidth[key] = ObjectToString(value).Length;
                     }
 
                 addedProperties = true;

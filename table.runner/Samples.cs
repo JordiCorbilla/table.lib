@@ -416,7 +416,37 @@ SELECT [Id]
       ,[MessageSent]
       ,[SenderDeleted]
       ,[RecipientDeleted]
-  FROM [DatingApp].[dbo].[Messages]
+  FROM [DatingApp].[dbo].[Messages] where id = 1
+";
+                table = connection.Query(data) as IEnumerable<IDictionary<string, object>>;
+            }
+
+            var enumerable = table as IDictionary<string, object>[] ??
+                             (table ?? throw new InvalidOperationException()).ToArray();
+            var s = DbTable.Add(enumerable, new Options
+            {
+                DateFormat = "dd-MM-yy",
+                DecimalFormat = "#,##0.########"
+            }).ToString();
+            Console.WriteLine(s);
+
+            s = DbTable.Add(enumerable, new Options
+            {
+                DateFormat = "dd-MM-yy",
+                DecimalFormat = "#,##0.########"
+            }).ToSpecFlowString();
+            Console.WriteLine(s);
+        }
+
+        public static void SimpleDbRecordWithOptionsAndMultipleColumns()
+        {
+            IEnumerable<IDictionary<string, object>> table;
+            using (var connection =
+                new SqlConnection("Data Source=localhost;Initial Catalog=DatingApp;Integrated Security=True"))
+            {
+                connection.Open();
+                const string data = @"
+SELECT * from test
 ";
                 table = connection.Query(data) as IEnumerable<IDictionary<string, object>>;
             }
