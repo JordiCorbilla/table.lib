@@ -110,9 +110,7 @@ namespace table.lib
 
             if (Operation != null)
                 if (Operation.ContainsKey(column))
-                {
                     foreach (var item in Operation[column])
-                    {
                         switch (item.Type)
                         {
                             case HighlightType.Decimal:
@@ -120,11 +118,11 @@ namespace table.lib
                                 {
                                     var parsed = decimal.Parse(value.Trim());
                                     foreach (var num in item.DecimalValue)
-                                    {
                                         switch (item.Operation)
                                         {
                                             case HighlightOperation.Differences
-                                                when decimal.Compare(Math.Round(parsed, Options.NumberDecimals), Math.Round(num, Options.NumberDecimals)) != 0:
+                                                when decimal.Compare(Math.Round(parsed, Options.NumberDecimals),
+                                                    Math.Round(num, Options.NumberDecimals)) != 0:
                                                 Console.BackgroundColor = item.BackgroundColorIfDifferent;
                                                 Console.ForegroundColor = item.ForegroundColorIfDifferent;
                                                 break;
@@ -134,7 +132,8 @@ namespace table.lib
                                                 break;
                                             case HighlightOperation.Equality:
                                             {
-                                                if (decimal.Compare(Math.Round(parsed, Options.NumberDecimals), Math.Round(num, Options.NumberDecimals))==0)
+                                                if (decimal.Compare(Math.Round(parsed, Options.NumberDecimals),
+                                                    Math.Round(num, Options.NumberDecimals)) == 0)
                                                 {
                                                     Console.BackgroundColor = item.BackgroundColorIfEqual;
                                                     Console.ForegroundColor = item.ForegroundColorIfEqual;
@@ -145,7 +144,6 @@ namespace table.lib
                                             default:
                                                 throw new ArgumentOutOfRangeException();
                                         }
-                                    }
                                 }
                                 catch
                                 {
@@ -157,7 +155,6 @@ namespace table.lib
                                 try
                                 {
                                     foreach (var str in item.StringValue)
-                                    {
                                         switch (item.Operation)
                                         {
                                             case HighlightOperation.Differences
@@ -182,7 +179,6 @@ namespace table.lib
                                             default:
                                                 throw new ArgumentOutOfRangeException();
                                         }
-                                    }
                                 }
                                 catch
                                 {
@@ -193,8 +189,6 @@ namespace table.lib
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
-                    }
-                }
 
             Console.Write(value);
             Console.ResetColor();

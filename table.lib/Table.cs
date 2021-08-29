@@ -28,7 +28,7 @@ using System.Text;
 
 namespace table.lib
 {
-    public class Table<T> : Base<T> where T: class
+    public class Table<T> : Base<T> where T : class
     {
         /// <summary>
         ///     Where the magic happens.
@@ -125,11 +125,9 @@ namespace table.lib
         public Table<T> HighlightValue(HighlightOperator operation)
         {
             if (!Operation.ContainsKey(operation.Field))
-                Operation.Add(operation.Field, new List<HighlightOperator> { operation });
+                Operation.Add(operation.Field, new List<HighlightOperator> {operation});
             else
-            {
                 Operation[operation.Field].Add(operation);
-            }
             return this;
         }
 
@@ -224,7 +222,7 @@ namespace table.lib
                         ConsoleRender($"{output}{new string(' ', length)}", property.Name);
                 }
 
-                Console.Write("\n");
+                Console.Write(Environment.NewLine);
             }
 
             Console.WriteLine();
@@ -268,6 +266,7 @@ namespace table.lib
                     var length = MaxWidth[property.Name] - value.Length;
                     var output = value.ToValidOutput();
                     if (ColumnTextJustification.ContainsKey(property.Name))
+                    {
                         switch (ColumnTextJustification[property.Name])
                         {
                             case TextJustification.Centered:
@@ -295,6 +294,7 @@ namespace table.lib
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
+                    }
                     else
                     {
                         sb.Append(' ');
@@ -303,7 +303,7 @@ namespace table.lib
                     }
                 }
 
-                sb.Append('\n');
+                sb.Append(Environment.NewLine);
             }
 
             sb.AppendLine("");
@@ -343,6 +343,7 @@ namespace table.lib
                     var length = MaxWidth[property.Name] - value.Length;
                     var output = value.ToValidOutput();
                     if (ColumnTextJustification.ContainsKey(property.Name))
+                    {
                         switch (ColumnTextJustification[property.Name])
                         {
                             case TextJustification.Centered:
@@ -370,6 +371,7 @@ namespace table.lib
                             default:
                                 throw new ArgumentOutOfRangeException();
                         }
+                    }
                     else
                     {
                         sb.Append(' ');
@@ -378,7 +380,7 @@ namespace table.lib
                     }
                 }
 
-                sb.Append('\n');
+                sb.Append(Environment.NewLine);
             }
 
             sb.AppendLine("");

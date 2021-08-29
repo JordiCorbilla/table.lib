@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -20,7 +21,6 @@ namespace table.lib
             {
                 var columnIndex = 0;
                 foreach (var (key, value) in row)
-                {
                     if (!addedProperties)
                     {
                         PropertyNames.Add(new PropertyName(key, columnIndex++, columnIndex));
@@ -29,11 +29,8 @@ namespace table.lib
                     else
                     {
                         if (value != null && value.ToString().Length > MaxWidth[key])
-                        {
                             MaxWidth[key] = value.ToString().Length;
-                        }
                     }
-                }
 
                 addedProperties = true;
             }
@@ -82,7 +79,7 @@ namespace table.lib
                     sb.Append(" |");
                 }
 
-                sb.Append('\n');
+                sb.Append(Environment.NewLine);
             }
 
             sb.AppendLine("");
@@ -122,7 +119,7 @@ namespace table.lib
                     sb.Append(" |");
                 }
 
-                sb.Append('\n');
+                sb.Append(Environment.NewLine);
             }
 
             sb.AppendLine("");

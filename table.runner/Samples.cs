@@ -207,7 +207,7 @@ namespace table.runner
         {
             Table<TestClass>.Add(GetSampleOutput())
                 .HighlightValue(new HighlightOperator
-                    {Field = "Field3", Type = HighlightType.Decimal, DecimalValue = new List<decimal> { 2121.32m }})
+                    {Field = "Field3", Type = HighlightType.Decimal, DecimalValue = new List<decimal> {2121.32m}})
                 .ToConsole();
         }
 
@@ -329,12 +329,13 @@ namespace table.runner
                 })
                 .HighlightValue(new HighlightOperator
                 {
-                    Field = "Field3", Type = HighlightType.Decimal, DecimalValue = new List<decimal>{ 2121.32m },
+                    Field = "Field3", Type = HighlightType.Decimal, DecimalValue = new List<decimal> {2121.32m},
                     Operation = HighlightOperation.Equality
                 })
                 .HighlightValue(new HighlightOperator
                 {
-                    Field = "Field6", Type = HighlightType.Decimal, DecimalValue = new List<decimal>(){34.43m, 134.43m},
+                    Field = "Field6", Type = HighlightType.Decimal,
+                    DecimalValue = new List<decimal>() {34.43m, 134.43m},
                     Operation = HighlightOperation.Equality
                 })
                 .ToConsole();
@@ -368,7 +369,8 @@ namespace table.runner
         public static void SimpleDbRecord()
         {
             IEnumerable<IDictionary<string, object>> table;
-            using (var connection = new SqlConnection("Data Source=localhost;Initial Catalog=DatingApp;Integrated Security=True"))
+            using (var connection =
+                new SqlConnection("Data Source=localhost;Initial Catalog=DatingApp;Integrated Security=True"))
             {
                 connection.Open();
                 const string data = @"
@@ -387,7 +389,8 @@ SELECT [Id]
                 table = connection.Query(data) as IEnumerable<IDictionary<string, object>>;
             }
 
-            var enumerable = table as IDictionary<string, object>[] ?? (table ?? throw new InvalidOperationException()).ToArray();
+            var enumerable = table as IDictionary<string, object>[] ??
+                             (table ?? throw new InvalidOperationException()).ToArray();
             var s = DbTable.Add(enumerable).ToString();
             Console.WriteLine(s);
 

@@ -29,7 +29,7 @@ using System.Text;
 
 namespace table.lib
 {
-    public class TableDic<TV, T> : Base<T> where T: class
+    public class TableDic<TV, T> : Base<T> where T : class
     {
         public TableDic(Dictionary<TV, T> dictionary, Options options = null)
         {
@@ -135,11 +135,9 @@ namespace table.lib
         public TableDic<TV, T> HighlightValue(HighlightOperator operation)
         {
             if (!Operation.ContainsKey(operation.Field))
-                Operation.Add(operation.Field, new List<HighlightOperator> { operation });
+                Operation.Add(operation.Field, new List<HighlightOperator> {operation});
             else
-            {
                 Operation[operation.Field].Add(operation);
-            }
             return this;
         }
 
@@ -267,7 +265,7 @@ namespace table.lib
                             ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}", property.Name);
                     }
 
-                Console.Write("\n");
+                Console.Write(Environment.NewLine);
             }
 
             Console.WriteLine();
@@ -369,7 +367,6 @@ namespace table.lib
                 var row = Items[i];
                 s = "|";
                 foreach (var property in filteredPropertyNames)
-                {
                     if (property.Name == Options.KeyName)
                     {
                         var keyValueParsed = ObjectToString(Keys[i]);
@@ -382,7 +379,6 @@ namespace table.lib
                         var length = MaxWidth[property.Name] - value.Length;
                         s += $" {value.ToValidOutput()}{new string(' ', length)} |";
                     }
-                }
 
                 stringBuilder.AppendLine(s);
             }
@@ -427,7 +423,8 @@ namespace table.lib
                     var value = "";
                     value = property.Name == Options.KeyName ? ObjectToString(Keys[index]) : GetValue(row, property);
 
-                    stringBuilder.AppendLine($"<td style=\"text-align: right; color: black; background-color: {color};padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">{value.ToHtml()}</td>");
+                    stringBuilder.AppendLine(
+                        $"<td style=\"text-align: right; color: black; background-color: {color};padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">{value.ToHtml()}</td>");
                 }
 
                 rowNumber++;
