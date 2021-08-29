@@ -8,7 +8,7 @@ Simple `c# (.NET 5)` table library that renders any `List<T>` or `Dictionary<TV,
 dotnet add package table.lib --version 1.7.1
 ```
 
-## Markdown format in console output
+## Markdown format in the `console` output
 
 To make it easier to share, `table.lib` outputs the console output as markdown friendly. Note that there is a specific `markdown` output so the text justification can happen as per markdown specification.
 
@@ -385,6 +385,27 @@ Note that we use the [CSV standard](https://tools.ietf.org/html/rfc4180) when pr
 
 ![csvoutput](csvoutput.png)
 
+## SpecFlow output
+
+Do you deal a lot with SpecFlow tests and want to have something that will generate the output nicely from Dapper? Here it's a simple output:
+    
+```c#
+    var s = Table<TestClass>.Add(GetSampleOutput()).ToSpecFlowString();
+    Console.Write(s);
+```    
+    
+and it becomes:
+    
+```bash
+| Id | SenderId | SenderUsername | RecipientId | RecipientUsername | Content | DateRead |     MessageSent     | SenderDeleted | RecipientDeleted |
+| 1  | 5        | lilly          | 8           | ruiz              | hi      |          | 08/02/2021 10:07:07 | False         | False            |
+| 2  | 5        | lilly          | 8           | ruiz              | hello   |          | 21/02/2021 20:40:08 | False         | False            |    
+```    
+    
+## ToString output
+
+Do you want to render the table somewhere else? Then just use the ToString method and bring the table anywhere with you. This will only produce the `console` output and return it as string.
+    
 # Known Issues
 
 - Simple dictionaries `Dictionary<int, string>` will not work. The second argument needs to be a class.
