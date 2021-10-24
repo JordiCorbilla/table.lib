@@ -69,6 +69,36 @@ namespace table.runner
             return list;
         }
 
+        public static void SimpleDbRecordWithOptionsAndMultipleColumnsAndFilter()
+        {
+            IEnumerable<IDictionary<string, object>> table;
+            using (var connection =
+                new SqlConnection("Data Source=localhost;Initial Catalog=DatingApp;Integrated Security=True"))
+            {
+                connection.Open();
+                const string data = @"
+SELECT * from test
+";
+                table = connection.Query(data) as IEnumerable<IDictionary<string, object>>;
+            }
+
+            var enumerable = table as IDictionary<string, object>[] ??
+                             (table ?? throw new InvalidOperationException()).ToArray();
+            var s = DbTable.Add(enumerable, new Options
+            {
+                DateFormat = "dd-MM-yy",
+                DecimalFormat = "#,##0.########"
+            }).FilterColumns(new[] {"AssetClass"}, FilterAction.Exclude).ToString();
+            Console.WriteLine(s);
+
+            s = DbTable.Add(enumerable, new Options
+            {
+                DateFormat = "dd-MM-yy",
+                DecimalFormat = "#,##0.########"
+            }).FilterColumns(new[] {"AssetClass"}, FilterAction.Exclude).ToSpecFlowString();
+            Console.WriteLine(s);
+        }
+
         public static void SimpleToSpecFlowString()
         {
             var s = Table<TestClass>.Add(GetSampleOutput()).ToSpecFlowString();

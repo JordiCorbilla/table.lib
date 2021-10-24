@@ -142,7 +142,8 @@ namespace table.lib
                                                 break;
                                             }
                                             default:
-                                                throw new ArgumentOutOfRangeException($"Unrecognized operation {item.Operation}");
+                                                throw new ArgumentOutOfRangeException(
+                                                    $"Unrecognized operation {item.Operation}");
                                         }
                                 }
                                 catch
@@ -177,7 +178,8 @@ namespace table.lib
                                                 break;
                                             }
                                             default:
-                                                throw new ArgumentOutOfRangeException($"Unrecognized operation {item.Operation}");
+                                                throw new ArgumentOutOfRangeException(
+                                                    $"Unrecognized operation {item.Operation}");
                                         }
                                 }
                                 catch

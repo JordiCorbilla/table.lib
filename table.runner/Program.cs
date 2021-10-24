@@ -43,6 +43,7 @@ namespace table.runner
             Samples.SimpleDbRecord();
             Samples.SimpleDbRecordWithOptions();
             Samples.SimpleDbRecordWithOptionsAndMultipleColumns();
+            Samples.SimpleDbRecordWithOptionsAndMultipleColumnsAndFilter();
 
             Samples.SimpleConsoleForDictionary();
             Samples.SimpleConsoleOutputWithHighlighterForDictionary();

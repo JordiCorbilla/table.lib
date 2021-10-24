@@ -33,6 +33,8 @@ namespace table.lib
         public List<PropertyName> PropertyNames { get; set; }
         public Dictionary<string, int> MaxWidth { get; set; }
         public Options Options { get; set; } = new Options();
+        public Dictionary<string, bool> ColumnFilter { get; set; } = new Dictionary<string, bool>();
+        public FilterAction ColumnAction { get; set; } = FilterAction.Exclude;
 
         public DbTable(IEnumerable<IDictionary<string, object>> list, Options options = null)
         {
@@ -68,6 +70,14 @@ namespace table.lib
             return new DbTable(list, options);
         }
 
+        public DbTable FilterColumns(string[] columns, FilterAction action = FilterAction.Exclude)
+        {
+            var filter = columns.ToDictionary(column => column, column => false);
+            ColumnFilter = filter;
+            ColumnAction = action;
+            return this;
+        }
+
         public string ObjectToString(object value)
         {
             return value switch
@@ -82,13 +92,39 @@ namespace table.lib
             };
         }
 
+        public List<PropertyName> FilterProperties()
+        {
+            var filteredPropertyNames = new List<PropertyName>();
+
+            foreach (var propertyName in PropertyNames)
+                switch (ColumnAction)
+                {
+                    case FilterAction.Include:
+                    {
+                        if (ColumnFilter.ContainsKey(propertyName.Name))
+                            filteredPropertyNames.Add(propertyName);
+                        break;
+                    }
+                    case FilterAction.Exclude:
+                    {
+                        if (!ColumnFilter.ContainsKey(propertyName.Name))
+                            filteredPropertyNames.Add(propertyName);
+                        break;
+                    }
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+            return filteredPropertyNames;
+        }
+
         public override string ToString()
         {
             if (!Items.Any()) return string.Empty;
             var s = "|";
             var sb = new StringBuilder();
 
-            var filteredPropertyNames = PropertyNames;
+            var filteredPropertyNames = FilterProperties();
 
             foreach (var property in filteredPropertyNames)
             {
@@ -134,7 +170,7 @@ namespace table.lib
             var s = "|";
             var sb = new StringBuilder();
 
-            var filteredPropertyNames = PropertyNames;
+            var filteredPropertyNames = FilterProperties();
 
             foreach (var property in filteredPropertyNames)
             {
