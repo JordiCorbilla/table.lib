@@ -84,6 +84,7 @@ namespace table.lib
             {
                 string s => s,
                 int _ => value.ToString(),
+                long _ => value.ToString(),
                 bool _ => value.ToString(),
                 DateTime time => time.ToString(Options.DateFormat),
                 decimal value1 => value1.ToString(Options.DecimalFormat),
