@@ -22,8 +22,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using Dapper;
 
 namespace table.lib
 {
@@ -64,6 +66,23 @@ namespace table.lib
                 addedProperties = true;
             }
         }
+
+        public static DbTable RunQuery(string connectionString, string selectQuery)
+        {
+            IEnumerable<IDictionary<string, object>> table;
+            using (var connection =
+                new SqlConnection(connectionString))
+            {
+                connection.Open();
+                var data = selectQuery;
+                table = connection.Query(data) as IEnumerable<IDictionary<string, object>>;
+            }
+
+            var enumerable = table as IDictionary<string, object>[] ??
+                             (table ?? throw new InvalidOperationException()).ToArray();
+            return DbTable.Add(enumerable);
+        }
+
 
         public static DbTable Add(IEnumerable<IDictionary<string, object>> list, Options options = null)
         {
