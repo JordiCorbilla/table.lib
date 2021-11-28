@@ -389,7 +389,16 @@ namespace table.lib
 
         public void ToMarkDown(string fileName, bool consoleVerbose = false)
         {
-            if (Items.Count == 0) return;
+            using var file = new StreamWriter(fileName);
+            file.WriteLine(ToMarkDown());
+
+            if (consoleVerbose)
+                Console.WriteLine(ToMarkDown());
+        }
+
+        public string ToMarkDown()
+        {
+            if (Items.Count == 0) return "";
             var stringBuilder = new StringBuilder();
             var s = "|";
 
@@ -451,17 +460,19 @@ namespace table.lib
 
             stringBuilder.AppendLine();
 
-            using var file = new StreamWriter(fileName);
-            file.WriteLine(stringBuilder.ToString());
-
-            if (consoleVerbose)
-                Console.WriteLine(stringBuilder.ToString());
+            return stringBuilder.ToString();
         }
 
         public void ToHtml(string fileName)
         {
+            using var file = new StreamWriter(fileName);
+            file.WriteLine(ToHtml());
+        }
+
+        public string ToHtml()
+        {
             var stringBuilder = new StringBuilder();
-            if (Items.Count == 0) return;
+            if (Items.Count == 0) return "";
             stringBuilder.AppendLine("<table style=\"border-collapse: collapse; width: 100%;\">");
             stringBuilder.AppendLine("<tr>");
 
@@ -496,14 +507,19 @@ namespace table.lib
 
             stringBuilder.AppendLine("</table>");
 
-            using var file = new StreamWriter(fileName);
-            file.WriteLine(stringBuilder.ToString());
+            return stringBuilder.ToString();
         }
 
         public void ToCsv(string fileName)
         {
+            using var file = new StreamWriter(fileName);
+            file.WriteLine(ToCsv());
+        }
+
+        public string ToCsv()
+        {
             var stringBuilder = new StringBuilder();
-            if (Items.Count == 0) return;
+            if (Items.Count == 0) return "";
             var s = "";
             var filteredPropertyNames = FilterProperties();
             foreach (var property in filteredPropertyNames)
@@ -526,8 +542,7 @@ namespace table.lib
                 stringBuilder.AppendLine(s);
             }
 
-            using var file = new StreamWriter(fileName);
-            file.WriteLine(stringBuilder.ToString());
+            return stringBuilder.ToString();
         }
     }
 }
