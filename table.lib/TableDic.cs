@@ -547,7 +547,7 @@ namespace table.lib
                     headerName = ColumnNameOverrides[property.Name];
 
                 stringBuilder.AppendLine(
-                    $"<th style=\"text-align: center; background-color: #052a3d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">{headerName.ToHtml()}</th>");
+                    $"<th style=\"text-align: center; background-color: #04163d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">{headerName.ToHtml()}</th>");
             }
 
             stringBuilder.AppendLine("</tr>");
