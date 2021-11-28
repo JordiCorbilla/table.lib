@@ -24,7 +24,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 
 namespace table.lib
@@ -271,10 +270,141 @@ namespace table.lib
             Console.WriteLine();
         }
 
+        public override string ToString()
+        {
+            if (Items.Count == 0) return "";
+            var s = "|";
+            var stringBuilder = new StringBuilder();
+
+            var filteredPropertyNames = FilterProperties();
+
+            foreach (var property in filteredPropertyNames)
+            {
+                var headerName = property.Name;
+                if (ColumnNameOverrides.ContainsKey(property.Name))
+                    headerName = ColumnNameOverrides[property.Name];
+
+                var length = MaxWidth[property.Name] - headerName.Length;
+
+                var totalLength = $"{new string(' ', length)}{headerName.ToValidOutput()}".Length;
+                var remaining = totalLength - $"{new string(' ', length / 2)}{headerName.ToValidOutput()}".Length;
+                s += $" {new string(' ', length / 2)}{headerName.ToValidOutput()}{new string(' ', remaining)} |";
+            }
+
+            stringBuilder.AppendLine(s);
+
+            s = filteredPropertyNames.Aggregate("|",
+                (current, name) => current + $" {new string('-', MaxWidth[name.Name])} |");
+
+            stringBuilder.AppendLine(s);
+
+            for (var index = 0; index < Items.Count; index++)
+            {
+                var row = Items[index];
+                stringBuilder.Append("|");
+                foreach (var property in filteredPropertyNames)
+                    if (property.Name == Options.KeyName)
+                    {
+                        var keyValueParsed = ObjectToString(Keys[index]);
+
+                        var lengthParsed = MaxWidth[property.Name] - keyValueParsed.Length;
+
+                        if (ColumnTextJustification.ContainsKey(property.Name))
+                            switch (ColumnTextJustification[property.Name])
+                            {
+                                case TextJustification.Centered:
+                                    var totalLength = $"{new string(' ', lengthParsed)}{keyValueParsed.ToValidOutput()}"
+                                        .Length;
+                                    var remaining =
+                                        totalLength -
+                                        $"{new string(' ', lengthParsed / 2)}{keyValueParsed.ToValidOutput()}".Length;
+                                    stringBuilder.Append(' ');
+                                    stringBuilder.Append($"{new string(' ', lengthParsed / 2)}{keyValueParsed.ToValidOutput()}{new string(' ', remaining)}");
+                                    stringBuilder.Append(" |");
+                                    break;
+                                case TextJustification.Right:
+                                    stringBuilder.Append(' ');
+                                    stringBuilder.Append($"{new string(' ', lengthParsed)}{keyValueParsed.ToValidOutput()}");
+                                    stringBuilder.Append(" |");
+                                    break;
+                                case TextJustification.Left:
+                                    stringBuilder.Append(' ');
+                                    stringBuilder.Append($"{keyValueParsed.ToValidOutput()}{new string(' ', lengthParsed)}");
+                                    stringBuilder.Append(" |");
+                                    break;
+                                case TextJustification.Justified:
+                                    stringBuilder.Append(' ');
+                                    stringBuilder.Append($"{keyValueParsed.ToValidOutput()}{new string(' ', lengthParsed)}");
+                                    stringBuilder.Append(" |");
+                                    break;
+                                default:
+                                    throw new ArgumentOutOfRangeException();
+                            }
+                        else
+                        {
+                            stringBuilder.Append(' ');
+                            stringBuilder.Append($"{keyValueParsed.ToValidOutput()}{new string(' ', lengthParsed)}");
+                            stringBuilder.Append(" |");
+                        }
+                    }
+                    else
+                    {
+                        var value = GetValue(row, property);
+                        var length = MaxWidth[property.Name] - value.Length;
+
+                        if (ColumnTextJustification.ContainsKey(property.Name))
+                            switch (ColumnTextJustification[property.Name])
+                            {
+                                case TextJustification.Centered:
+                                    var totalLength = $"{new string(' ', length)}{value.ToValidOutput()}".Length;
+                                    var remaining = totalLength - $"{new string(' ', length / 2)}{value.ToValidOutput()}".Length;
+                                    stringBuilder.Append(' ');
+                                    stringBuilder.Append($"{new string(' ', length / 2)}{value.ToValidOutput()}{new string(' ', remaining)}");
+                                    stringBuilder.Append(" |");
+                                    break;
+                                case TextJustification.Right:
+                                    stringBuilder.Append(' ');
+                                    stringBuilder.Append($"{new string(' ', length)}{value.ToValidOutput()}");
+                                    stringBuilder.Append(" |");
+                                    break;
+                                case TextJustification.Left:
+                                    stringBuilder.Append(' ');
+                                    stringBuilder.Append($"{value.ToValidOutput()}{new string(' ', length)}");
+                                    stringBuilder.Append(" |");
+                                    break;
+                                case TextJustification.Justified:
+                                    stringBuilder.Append(' ');
+                                    stringBuilder.Append($"{value.ToValidOutput()}{new string(' ', length)}");
+                                    stringBuilder.Append(" |");
+                                    break;
+                                default:
+                                    throw new ArgumentOutOfRangeException();
+                            }
+                        else
+                        {
+                            stringBuilder.Append(' ');
+                            stringBuilder.Append($"{value.ToValidOutput()}{new string(' ', length)}");
+                            stringBuilder.Append(" |");
+                        }
+                    }
+
+                stringBuilder.Append(Environment.NewLine);
+            }
+
+            stringBuilder.AppendLine();
+            return stringBuilder.ToString();
+        }
+
         public void ToCsv(string fileName)
         {
+            using var file = new StreamWriter(fileName);
+            file.WriteLine(ToCsv());
+        }
+
+        public string ToCsv()
+        {
             var stringBuilder = new StringBuilder();
-            if (Items.Count == 0) return;
+            if (Items.Count == 0) return "";
             var s = "";
             var filteredPropertyNames = FilterProperties();
             foreach (var property in filteredPropertyNames)
@@ -310,13 +440,21 @@ namespace table.lib
                 stringBuilder.AppendLine(s);
             }
 
-            using var file = new StreamWriter(fileName);
-            file.WriteLine(stringBuilder.ToString());
+            return stringBuilder.ToString();
         }
 
         public void ToMarkDown(string fileName, bool consoleVerbose = false)
         {
-            if (Items.Count == 0) return;
+            using var file = new StreamWriter(fileName);
+            file.WriteLine(ToMarkDown());
+
+            if (consoleVerbose)
+                Console.WriteLine(ToMarkDown());
+        }
+
+        public string ToMarkDown()
+        {
+            if (Items.Count == 0) return "";
             var stringBuilder = new StringBuilder();
             var s = "|";
 
@@ -385,17 +523,19 @@ namespace table.lib
 
             stringBuilder.AppendLine();
 
-            using var file = new StreamWriter(fileName);
-            file.WriteLine(stringBuilder.ToString());
-
-            if (consoleVerbose)
-                Console.WriteLine(stringBuilder.ToString());
+            return stringBuilder.ToString();
         }
 
         public void ToHtml(string fileName)
         {
+            using var file = new StreamWriter(fileName);
+            file.WriteLine(ToHtml());
+        }
+
+        public string ToHtml()
+        {
             var stringBuilder = new StringBuilder();
-            if (Items.Count == 0) return;
+            if (Items.Count == 0) return "";
             stringBuilder.AppendLine("<table style=\"border-collapse: collapse; width: 100%;\">");
             stringBuilder.AppendLine("<tr>");
 
@@ -420,8 +560,7 @@ namespace table.lib
                 foreach (var property in filteredPropertyNames)
                 {
                     var color = rowNumber % 2 == 0 ? "#f2f2f2" : "white";
-                    var value = "";
-                    value = property.Name == Options.KeyName ? ObjectToString(Keys[index]) : GetValue(row, property);
+                    var value = property.Name == Options.KeyName ? ObjectToString(Keys[index]) : GetValue(row, property);
 
                     stringBuilder.AppendLine(
                         $"<td style=\"text-align: right; color: black; background-color: {color};padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">{value.ToHtml()}</td>");
@@ -433,8 +572,7 @@ namespace table.lib
 
             stringBuilder.AppendLine("</table>");
 
-            using var file = new StreamWriter(fileName);
-            file.WriteLine(stringBuilder.ToString());
+            return stringBuilder.ToString();
         }
 
         public static TableDic<TV, T> Add(Dictionary<TV, T> dictionary)
