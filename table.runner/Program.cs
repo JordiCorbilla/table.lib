@@ -30,6 +30,7 @@ namespace table.runner
             Samples.SimpleConsoleOutputWithHighlighterForList();
             Samples.SimpleCsvOutputForList();
             Samples.SimpleHtmlOutputForList();
+            Samples.SimpleHtmlOutputWithHighlighterForList();
             Samples.ComplexConsoleOutputForList();
             Samples.ComplexConsoleOutputFilteringForList();
             Samples.ComplexConsoleOutputOverrideFilteringForList();

@@ -495,8 +495,89 @@ namespace table.lib
                 stringBuilder.AppendLine("<tr>");
                 foreach (var property in filteredPropertyNames)
                 {
-                    var color = rowNumber % 2 == 0 ? "#f2f2f2" : "white";
                     var value = GetValue(row, property);
+                    var color = rowNumber % 2 == 0 ? "#f2f2f2" : "white";
+
+                    if (Operation != null && Operation.ContainsKey(property.Name))
+                    {
+                        foreach (var item in Operation[property.Name])
+                            switch (item.Type)
+                            {
+                                case HighlightType.Decimal:
+                                    try
+                                    {
+                                        var parsed = decimal.Parse(value.Trim());
+                                        foreach (var num in item.DecimalValue)
+                                            switch (item.Operation)
+                                            {
+                                                case HighlightOperation.Differences
+                                                    when decimal.Compare(Math.Round(parsed, Options.NumberDecimals),
+                                                        Math.Round(num, Options.NumberDecimals)) != 0:
+                                                    color = "#f9f948";
+                                                    break;
+                                                case HighlightOperation.Differences:
+                                                    color = "#f9f948";
+                                                    break;
+                                                case HighlightOperation.Equality:
+                                                {
+                                                    if (decimal.Compare(Math.Round(parsed, Options.NumberDecimals),
+                                                        Math.Round(num, Options.NumberDecimals)) == 0)
+                                                    {
+                                                        color = "#f9f948";
+                                                    }
+
+                                                    break;
+                                                }
+                                                default:
+                                                    throw new ArgumentOutOfRangeException(
+                                                        $"Unrecognized operation {item.Operation}");
+                                            }
+                                    }
+                                    catch
+                                    {
+                                        // do nothing
+                                    }
+
+                                    break;
+                                case HighlightType.String:
+                                    try
+                                    {
+                                        foreach (var str in item.StringValue)
+                                            switch (item.Operation)
+                                            {
+                                                case HighlightOperation.Differences
+                                                    when value.Trim() != str:
+                                                    color = "#f9f948";
+                                                    break;
+                                                case HighlightOperation.Differences:
+                                                    color = "#f9f948";
+                                                    break;
+                                                case HighlightOperation.Equality:
+                                                {
+                                                    if (value.Trim() == str)
+                                                    {
+                                                        color = "#f9f948";
+                                                    }
+
+                                                    break;
+                                                }
+                                                default:
+                                                    throw new ArgumentOutOfRangeException(
+                                                        $"Unrecognized operation {item.Operation}");
+                                            }
+                                    }
+                                    catch
+                                    {
+                                        // do nothing
+                                    }
+
+                                    break;
+                                default:
+                                    throw new ArgumentOutOfRangeException($"Unrecognized type {item.Type}");
+                            }
+
+                    }
+
                     stringBuilder.AppendLine(
                         $"<td style=\"text-align: right; color: black; background-color: {color};padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">{value.ToHtml()}</td>");
                 }

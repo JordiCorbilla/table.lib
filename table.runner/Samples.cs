@@ -251,6 +251,14 @@ SELECT * from test
             Table<TestClass>.Add(GetSampleOutput()).ToHtml(@"C:\temp\test-list.html");
         }
 
+        public static void SimpleHtmlOutputWithHighlighterForList()
+        {
+            Table<TestClass>.Add(GetSampleOutput())
+                .HighlightValue(new HighlightOperator
+                    { Field = "Field3", Type = HighlightType.Decimal, DecimalValue = new List<decimal> { 2121.32m }, Operation = HighlightOperation.Equality})
+                .ToHtml(@"C:\temp\test-list-highlight.html");
+        }
+
         public static void ComplexConsoleOutputForList()
         {
             Table<IEnumerable<string>>.Add(GetStringMatrix()).ToConsole();
