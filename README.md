@@ -1,6 +1,6 @@
 # table.lib
 
-Simple `c# (.NET 5)` table library that renders any `List<T>` or `Dictionary<TV, T>` into a nicely formatted `markdown`, `csv`, `html`, `specflow` or `console` table, allowing for extra formats. It also supports `dynamic` returns from Dapper as `IEnumerable<IDictionary<string, object>>` via `DBTable` object.
+Simple `c# (.NET 6)` table library that renders any `List<T>` or `Dictionary<TV, T>` into a nicely formatted `markdown`, `csv`, `html`, `specflow` or `console` table, allowing for extra formats. It also supports `dynamic` returns from Dapper as `IEnumerable<IDictionary<string, object>>` via `DBTable` object.
 
 ## Installation
 
