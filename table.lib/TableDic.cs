@@ -1,6 +1,6 @@
 ﻿//MIT License
 
-//Copyright (c) 2020-2021 Jordi Corbilla
+//Copyright (c) 2020-2022 Jordi Corbilla
 
 //Permission is hereby granted, free of charge, to any person obtaining a copy
 //of this software and associated documentation files (the "Software"), to deal
@@ -301,7 +301,7 @@ namespace table.lib
             for (var index = 0; index < Items.Count; index++)
             {
                 var row = Items[index];
-                stringBuilder.Append("|");
+                stringBuilder.Append('|');
                 foreach (var property in filteredPropertyNames)
                     if (property.Name == Options.KeyName)
                     {

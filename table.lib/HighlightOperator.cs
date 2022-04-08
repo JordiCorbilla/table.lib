@@ -1,6 +1,6 @@
 ﻿//MIT License
 
-//Copyright (c) 2020-2021 Jordi Corbilla
+//Copyright (c) 2020-2022 Jordi Corbilla
 
 //Permission is hereby granted, free of charge, to any person obtaining a copy
 //of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@
 
 //MIT License
 
-//Copyright (c) 2020-2021 Jordi Corbilla
+//Copyright (c) 2020-2022 Jordi Corbilla
 
 //Permission is hereby granted, free of charge, to any person obtaining a copy
 //of this software and associated documentation files (the "Software"), to deal

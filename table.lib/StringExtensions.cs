@@ -1,6 +1,6 @@
 ﻿//MIT License
 
-//Copyright (c) 2020-2021 Jordi Corbilla
+//Copyright (c) 2020-2022 Jordi Corbilla
 
 //Permission is hereby granted, free of charge, to any person obtaining a copy
 //of this software and associated documentation files (the "Software"), to deal
@@ -29,13 +29,13 @@ namespace table.lib
         public static string ToCsv(this string value)
         {
             var enclose = false;
-            if (value.Contains("\""))
+            if (value.Contains('"'))
             {
                 value = value.Replace("\"", "\"\"");
                 enclose = true;
             }
 
-            if (value.Contains(Environment.NewLine) || value.Contains(",")) enclose = true;
+            if (value.Contains(Environment.NewLine) || value.Contains(',')) enclose = true;
 
             return enclose ? $"\"{value}\"" : value;
         }
@@ -44,7 +44,7 @@ namespace table.lib
         {
             if (value.Contains(Environment.NewLine)) value = value.Replace(Environment.NewLine, " ");
 
-            if (value.Contains("\n")) value = value.Replace("\n", " ");
+            if (value.Contains('\n')) value = value.Replace("\n", " ");
 
             return value;
         }
@@ -53,7 +53,7 @@ namespace table.lib
         {
             if (value.Contains(Environment.NewLine)) value = value.Replace(Environment.NewLine, "<br>");
 
-            if (value.Contains("\n")) value = value.Replace("\n", "<br>");
+            if (value.Contains('\n')) value = value.Replace("\n", "<br>");
 
             return value;
         }

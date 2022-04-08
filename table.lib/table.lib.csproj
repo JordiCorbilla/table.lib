@@ -1,19 +1,19 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>table.lib</RootNamespace>
-    <Version>1.8.3</Version>
+    <Version>1.9.0</Version>
     <Copyright>Jordi Corbilla</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/JordiCorbilla/table.lib</RepositoryUrl>
-    <PackageReleaseNotes>v1.8
-- Incorporate new DBTable object that is able to consume a dynamic response from Dapper and translate that into a table</PackageReleaseNotes>
+    <PackageReleaseNotes>v1.9
+- Upgrade to .net 6</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Description>Simple c# (.NET 5) table library that renders any List&lt;T&gt; or Dictionary&lt;TV, T&gt; into a nicely formatted markdown, csv, html, specflow or console table, allowing for extra formats. It also supports dynamic returns from Dapper as IEnumerable&lt;IDictionary&lt;string, object&gt;&gt; via DBTable object.</Description>
-    <AssemblyVersion>1.8.3.0</AssemblyVersion>
-    <FileVersion>1.8.3.0</FileVersion>
+    <Description>Simple c# (.NET 6) table library that renders any List&lt;T&gt; or Dictionary&lt;TV, T&gt; into a nicely formatted markdown, csv, html, specflow or console table, allowing for extra formats. It also supports dynamic returns from Dapper as IEnumerable&lt;IDictionary&lt;string, object&gt;&gt; via DBTable object.</Description>
+    <AssemblyVersion>1.9.0.0</AssemblyVersion>
+    <FileVersion>1.9.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
