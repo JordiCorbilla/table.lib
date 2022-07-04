@@ -653,14 +653,14 @@ namespace table.lib
 
                     var p = obj switch
                     {
-                        string z => "'" + z + "'",
-                        int _ => obj.ToString(),
-                        long _ => obj.ToString(),
-                        bool _ => obj.ToString() == "True" ? "1": "0",
+                        string z => "'" + z.ToSql() + "'",
+                        int _ => obj.ToString().ToSql(),
+                        long _ => obj.ToString().ToSql(),
+                        bool _ => obj.ToString().ToSql() == "True" ? "1": "0",
                         DateTime time => "'" + time.ToString("yyyy-MM-dd") + "'",
                         decimal value1 => value1.ToString("#0.0###"),
                         double value1 => value1.ToString("#0.0###"),
-                        _ => (obj != null ? obj.ToString() : "")
+                        _ => (obj != null ? obj.ToString().ToSql() : "")
                     };
                     s += $"{p},";
                 }
