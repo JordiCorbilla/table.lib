@@ -625,5 +625,52 @@ namespace table.lib
 
             return stringBuilder.ToString();
         }
+
+        public string ToSqlInsertString()
+        {
+            var stringBuilder = new StringBuilder();
+            if (Items.Count == 0) return "";
+            var header = "INSERT INTO Table1 (";
+            var filteredPropertyNames = FilterProperties();
+            foreach (var property in filteredPropertyNames)
+            {
+                var headerName = property.Name;
+                if (ColumnNameOverrides.ContainsKey(property.Name))
+                    headerName = ColumnNameOverrides[property.Name];
+
+                header += $"{headerName.ToCsv()},";
+            }
+
+            header = header.Remove(header.Length - 1);
+            header += ") VALUES (";
+
+            foreach (var row in Items)
+            {
+                var s = "";
+                foreach (var property in filteredPropertyNames)
+                {
+                    var obj = GetOriginalValue(row, property);
+
+                    var p = obj switch
+                    {
+                        string z => "'" + z + "'",
+                        int _ => obj.ToString(),
+                        long _ => obj.ToString(),
+                        bool _ => obj.ToString() == "True" ? "1": "0",
+                        DateTime time => "'" + time.ToString("yyyy-MM-dd") + "'",
+                        decimal value1 => value1.ToString("#0.0###"),
+                        double value1 => value1.ToString("#0.0###"),
+                        _ => (obj != null ? obj.ToString() : "")
+                    };
+                    s += $"{p},";
+                }
+
+                s = s.Remove(s.Length - 1);
+                s += ");";
+                stringBuilder.AppendLine($"{header}{s}");
+            }
+
+            return stringBuilder.ToString();
+        }
     }
 }

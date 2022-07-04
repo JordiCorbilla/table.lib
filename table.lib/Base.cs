@@ -62,6 +62,24 @@ namespace table.lib
             return ObjectToString(value);
         }
 
+        public object GetOriginalValue(T item, PropertyName property)
+        {
+            if (string.IsNullOrEmpty(property.Name)) return null;
+            object value;
+            if (property.IsCollection)
+            {
+                var prop = item.GetType().GetProperties()[property.PropertyIndex];
+                value = prop.GetValue(item, new object[] { property.Index });
+            }
+            else
+            {
+                var properties = item.GetType().GetProperty(property.Name);
+                value = properties?.GetValue(item, null);
+            }
+
+            return value;
+        }
+
         public string ObjectToString(object value)
         {
             return value switch
