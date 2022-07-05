@@ -27,6 +27,7 @@ namespace table.lib
 {
     public class Base<T>
     {
+        public string ClassName { get; set; }
         public List<PropertyName> PropertyNames { get; set; }
         public Dictionary<string, int> MaxWidth { get; set; }
         public Dictionary<string, string> ColumnNameOverrides { get; set; } = new Dictionary<string, string>();

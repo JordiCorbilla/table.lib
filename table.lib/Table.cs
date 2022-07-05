@@ -45,6 +45,7 @@ namespace table.lib
             MaxWidth = new Dictionary<string, int>();
             Items = list;
             var properties = typeof(T).GetProperties();
+            ClassName = typeof(T).Name;
             foreach (var property in properties)
             {
                 PropertyNames.Add(new PropertyName(property.Name));
@@ -626,11 +627,17 @@ namespace table.lib
             return stringBuilder.ToString();
         }
 
+        public void ToSqlInsertString(string fileName)
+        {
+            using var file = new StreamWriter(fileName);
+            file.WriteLine(ToSqlInsertString());
+        }
+
         public string ToSqlInsertString()
         {
             var stringBuilder = new StringBuilder();
             if (Items.Count == 0) return "";
-            var header = "INSERT INTO Table1 (";
+            var header = $"INSERT INTO {ClassName} (";
             var filteredPropertyNames = FilterProperties();
             foreach (var property in filteredPropertyNames)
             {
