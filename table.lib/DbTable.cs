@@ -205,5 +205,50 @@ namespace table.lib
             sb.AppendLine("");
             return sb.ToString();
         }
+
+        public string ToSqlInsertString()
+        {
+            var stringBuilder = new StringBuilder();
+            if (!Items.Any()) return "";
+            var header = $"INSERT INTO Table1 (";
+            var filteredPropertyNames = FilterProperties();
+            foreach (var property in filteredPropertyNames)
+            {
+                var headerName = property.Name;
+
+                header += $"{headerName.ToSqlColumn()},";
+            }
+
+            header = header.Remove(header.Length - 1);
+            header += ") VALUES (";
+
+            foreach (var row in Items)
+            {
+                var s = "";
+
+                foreach (var (key, value) in row)
+                {
+                    var obj = value;
+                    var p = obj switch
+                    {
+                        string z => "'" + z.ToSql() + "'",
+                        int _ => obj.ToString().ToSql(),
+                        long _ => obj.ToString().ToSql(),
+                        bool _ => obj.ToString().ToSql() == "True" ? "1" : "0",
+                        DateTime time => "'" + time.ToString("yyyy-MM-dd") + "'",
+                        decimal value1 => value1.ToString("#0.0###"),
+                        double value1 => value1.ToString("#0.0###"),
+                        _ => (obj != null ? obj.ToString().ToSql() : "")
+                    };
+                    s += $"{p},";
+                }
+
+                s = s.Remove(s.Length - 1);
+                s += ");";
+                stringBuilder.AppendLine($"{header}{s}");
+            }
+
+            return stringBuilder.ToString();
+        }
     }
 }

@@ -645,7 +645,7 @@ namespace table.lib
                 if (ColumnNameOverrides.ContainsKey(property.Name))
                     headerName = ColumnNameOverrides[property.Name];
 
-                header += $"{headerName.ToCsv()},";
+                header += $"{headerName.ToSqlColumn()},";
             }
 
             header = header.Remove(header.Length - 1);

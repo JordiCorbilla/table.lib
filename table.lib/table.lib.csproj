@@ -12,8 +12,8 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Description>Simple c# (.NET 6) table library that renders any List&lt;T&gt; or Dictionary&lt;TV, T&gt; into a nicely formatted markdown, csv, html, specflow or console table, allowing for extra formats. It also supports dynamic returns from Dapper as IEnumerable&lt;IDictionary&lt;string, object&gt;&gt; via DBTable object.</Description>
-    <AssemblyVersion>1.10.0.0</AssemblyVersion>
-    <FileVersion>1.10.0.0</FileVersion>
+    <AssemblyVersion>1.11.0.0</AssemblyVersion>
+    <FileVersion>1.11.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

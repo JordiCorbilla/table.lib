@@ -40,6 +40,16 @@ namespace table.lib
             return enclose ? $"\"{value}\"" : value;
         }
 
+        public static string ToSqlColumn(this string value)
+        {
+            if (value.Contains(' '))
+            {
+                value = $"[{value}]";
+            }
+
+            return value;
+        }
+
         public static string ToSql(this string value)
         {
             if (value.Contains('\''))
