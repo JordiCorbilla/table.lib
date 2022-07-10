@@ -45,6 +45,7 @@ namespace table.lib
             MaxWidth = new Dictionary<string, int>();
             Items = list;
             var properties = typeof(T).GetProperties();
+            ClassName = typeof(T).Name;
             foreach (var property in properties)
             {
                 PropertyNames.Add(new PropertyName(property.Name));
@@ -621,6 +622,59 @@ namespace table.lib
                     select GetValue(row, property)).Aggregate("", (current, value) => current + $"{value.ToCsv()},");
                 s = s.Remove(s.Length - 1);
                 stringBuilder.AppendLine(s);
+            }
+
+            return stringBuilder.ToString();
+        }
+
+        public void ToSqlInsertString(string fileName)
+        {
+            using var file = new StreamWriter(fileName);
+            file.WriteLine(ToSqlInsertString());
+        }
+
+        public string ToSqlInsertString()
+        {
+            var stringBuilder = new StringBuilder();
+            if (Items.Count == 0) return "";
+            var header = $"INSERT INTO {ClassName} (";
+            var filteredPropertyNames = FilterProperties();
+            foreach (var property in filteredPropertyNames)
+            {
+                var headerName = property.Name;
+                if (ColumnNameOverrides.ContainsKey(property.Name))
+                    headerName = ColumnNameOverrides[property.Name];
+
+                header += $"{headerName.ToCsv()},";
+            }
+
+            header = header.Remove(header.Length - 1);
+            header += ") VALUES (";
+
+            foreach (var row in Items)
+            {
+                var s = "";
+                foreach (var property in filteredPropertyNames)
+                {
+                    var obj = GetOriginalValue(row, property);
+
+                    var p = obj switch
+                    {
+                        string z => "'" + z.ToSql() + "'",
+                        int _ => obj.ToString().ToSql(),
+                        long _ => obj.ToString().ToSql(),
+                        bool _ => obj.ToString().ToSql() == "True" ? "1": "0",
+                        DateTime time => "'" + time.ToString("yyyy-MM-dd") + "'",
+                        decimal value1 => value1.ToString("#0.0###"),
+                        double value1 => value1.ToString("#0.0###"),
+                        _ => (obj != null ? obj.ToString().ToSql() : "")
+                    };
+                    s += $"{p},";
+                }
+
+                s = s.Remove(s.Length - 1);
+                s += ");";
+                stringBuilder.AppendLine($"{header}{s}");
             }
 
             return stringBuilder.ToString();

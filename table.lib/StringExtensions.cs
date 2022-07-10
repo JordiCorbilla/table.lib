@@ -40,6 +40,26 @@ namespace table.lib
             return enclose ? $"\"{value}\"" : value;
         }
 
+        public static string ToSql(this string value)
+        {
+            if (value.Contains('\''))
+            {
+                value = value.Replace("\'", "\"");
+            }
+
+            if (value.Contains(Environment.NewLine))
+            {
+                value = value.Replace(Environment.NewLine, " ");
+            }
+                
+            if (value.Contains(','))
+            {
+                value = value.Replace(",", "-");
+            }
+
+            return value;
+        }
+
         public static string ToValidOutput(this string value)
         {
             if (value.Contains(Environment.NewLine)) value = value.Replace(Environment.NewLine, " ");
