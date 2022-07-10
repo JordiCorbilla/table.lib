@@ -1,6 +1,6 @@
 # table.lib
 
-Simple `c# (.NET 6)` table library that renders any `List<T>` or `Dictionary<TV, T>` into a nicely formatted `markdown`, `csv`, `html`, `specflow` or `console` table, allowing for extra formats. It also supports `dynamic` returns from Dapper as `IEnumerable<IDictionary<string, object>>` via `DBTable` object.
+Simple `c# (.NET 6)` table library that renders any `List<T>` or `Dictionary<TV, T>` into a nicely formatted `markdown`, `csv`, `html`, `specflow`, `sql-insert` or `console` table, allowing for extra formats. It also supports `dynamic` returns from Dapper as `IEnumerable<IDictionary<string, object>>` via `DBTable` object.
 
 ## Installation
 
@@ -405,6 +405,22 @@ and it becomes:
 ## ToString output
 
 Do you want to render the table somewhere else? Then just use the ToString method and bring the table anywhere with you. This will only produce the `console` output and return it as string.
+    
+## ToSqlInsertString    
+
+This format will allow you to output a sql string from a specific object like below:
+
+```c#
+var s = Table<TestClass>.Add(Samples.GetSampleOutput()).ToSqlInsertString();
+            var lines = s.Split(Environment.NewLine);
+            Assert.Multiple(() =>
+            {
+                Assert.That(lines[0], Is.EqualTo("INSERT INTO TestClass (Field1,Field2,Field3,Field4,Field5,Field6) VALUES (321121,'Hi 312321',2121.32,1,'1970-01-01',34.43);"));
+                Assert.That(lines[1], Is.EqualTo("INSERT INTO TestClass (Field1,Field2,Field3,Field4,Field5,Field6) VALUES (32321,'Hi long text',21111111.32,1,'1970-01-01',34.43);"));
+                Assert.That(lines[2], Is.EqualTo("INSERT INTO TestClass (Field1,Field2,Field3,Field4,Field5,Field6) VALUES (321,'Hi longer text',2121.32,1,'1970-01-01',34.43);"));
+                Assert.That(lines[3], Is.EqualTo("INSERT INTO TestClass (Field1,Field2,Field3,Field4,Field5,Field6) VALUES (13,'Hi very long text',21111121.32,1,'1970-01-01',34.43);"));
+            });
+```
     
 # Known Issues
 
