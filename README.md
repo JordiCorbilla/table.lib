@@ -425,3 +425,8 @@ var s = Table<TestClass>.Add(Samples.GetSampleOutput()).ToSqlInsertString();
 # Known Issues
 
 - Simple dictionaries `Dictionary<int, string>` will not work. The second argument needs to be a class.
+
+## Sponsors
+No sponsors yet! Will you be the first?
+
+[![PayPayl donate button](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.com/paypalme/jordicorbilla)
