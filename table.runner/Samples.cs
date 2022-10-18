@@ -64,6 +64,24 @@ namespace table.runner
                 {
                     Field1 = 13, Field2 = "Hi \"very\" long\n text", Field3 = 21111121.32m, Field4 = true,
                     Field5 = new DateTime(1970, 1, 1), Field6 = 34.4300001
+                },
+                new TestClass
+                {
+                    Field1 = 13, Field2 = null, Field3 = 21111121.32m, Field4 = true,
+                    Field5 = new DateTime(1970, 1, 1), Field6 = 34.4300001
+                }
+            };
+            return list;
+        }
+
+        public static List<TestClass> GetNullOutput()
+        {
+            var list = new List<TestClass>
+            {
+                new TestClass
+                {
+                    Field1 = 321121, Field2 = null, Field3 = 2121.32m, Field4 = true,
+                    Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
                 }
             };
             return list;
