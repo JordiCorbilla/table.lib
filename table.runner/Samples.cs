@@ -80,8 +80,8 @@ namespace table.runner
             {
                 new TestClass
                 {
-                    Field1 = 321121, Field2 = null, Field3 = 2121.32m, Field4 = true,
-                    Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
+                    Field1 = null, Field2 = null, Field3 = null, Field4 = null,
+                    Field5 = null, Field6 = null
                 }
             };
             return list;
