@@ -667,7 +667,7 @@ namespace table.lib
                         DateTime time => "'" + time.ToString("yyyy-MM-dd") + "'",
                         decimal value1 => value1.ToString("#0.0###"),
                         double value1 => value1.ToString("#0.0###"),
-                        _ => (obj != null ? obj.ToString().ToSql() : "")
+                        _ => (obj != null ? obj.ToString().ToSql() : "NULL")
                     };
                     s += $"{p},";
                 }

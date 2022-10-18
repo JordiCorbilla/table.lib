@@ -23,5 +23,16 @@ namespace table.lib.tests
                 Assert.That(lines[3], Is.EqualTo("INSERT INTO TestClass (Field1,Field2,Field3,Field4,Field5,Field6) VALUES (13,'Hi very long text',21111121.32,1,'1970-01-01',34.43);"));
             });
         }
+
+        [Test]
+        public void TestNullGeneration()
+        {
+            var s = Table<TestClass>.Add(Samples.GetNullOutput()).ToSqlInsertString();
+            var lines = s.Split(Environment.NewLine);
+            Assert.Multiple(() =>
+            {
+                Assert.That(lines[0], Is.EqualTo("INSERT INTO TestClass (Field1,Field2,Field3,Field4,Field5,Field6) VALUES (321121,NULL,2121.32,1,'1970-01-01',34.43);"));
+            });
+        }
     }
 }
