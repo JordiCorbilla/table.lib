@@ -5,7 +5,7 @@ Simple `c# (.NET 6)` table library that renders any `List<T>` or `Dictionary<TV,
 ## Installation
 
 ```bash
-dotnet add package table.lib --version 1.8.1
+dotnet add package table.lib --version 1.13.0
 ```
 
 ## Markdown format in the `console` output
