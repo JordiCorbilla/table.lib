@@ -38,8 +38,13 @@ namespace table.lib
         /// <param name="options"></param>
         public Table(List<T> list, Options options = null)
         {
-            if (list.Count == 0) return;
             if (options != null) Options = options;
+
+            if (list.Count == 0)
+            {
+                if (Options != null && Options.DiscardEmptyList)
+                    return;
+            }
 
             PropertyNames = new List<PropertyName>();
             MaxWidth = new Dictionary<string, int>();
@@ -601,7 +606,11 @@ namespace table.lib
         public string ToCsv()
         {
             var stringBuilder = new StringBuilder();
-            if (Items.Count == 0) return "";
+            if (Items.Count == 0)
+            {
+                if (Options != null && Options.DiscardEmptyList)
+                    return "";
+            }
             var s = "";
             var filteredPropertyNames = FilterProperties();
             foreach (var property in filteredPropertyNames)
