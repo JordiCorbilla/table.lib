@@ -264,6 +264,11 @@ SELECT * from test
             Table<TestClass>.Add(GetSampleOutput()).ToCsv(@"C:\temp\test-list.csv");
         }
 
+        public static void SimpleCsvEmptyOutputForList()
+        {
+            Table<TestClass>.Add(new List<TestClass>(), new Options { DiscardEmptyList = false}).ToCsv(@"C:\temp\test-list-empty.csv");
+        }
+
         public static void SimpleHtmlOutputForList()
         {
             Table<TestClass>.Add(GetSampleOutput()).ToHtml(@"C:\temp\test-list.html");

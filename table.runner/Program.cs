@@ -29,6 +29,7 @@ namespace table.runner
             Samples.SimpleConsoleOutputForList();
             Samples.SimpleConsoleOutputWithHighlighterForList();
             Samples.SimpleCsvOutputForList();
+            Samples.SimpleCsvEmptyOutputForList();
             Samples.SimpleHtmlOutputForList();
             Samples.SimpleHtmlOutputWithHighlighterForList();
             Samples.ComplexConsoleOutputForList();

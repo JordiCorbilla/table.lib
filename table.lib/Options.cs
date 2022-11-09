@@ -29,5 +29,6 @@ namespace table.lib
         public string DynamicName { get; set; } = "Dynamic";
         public string KeyName { get; set; } = "Key_Id";
         public int NumberDecimals { get; set; } = 8;
+        public bool DiscardEmptyList = false;
     }
 }
