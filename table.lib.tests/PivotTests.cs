@@ -1,0 +1,48 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using table.runner;
+
+namespace table.lib.tests
+{
+    public class PivotTests
+    {
+        public static List<TestClass> GetSampleOutput()
+        {
+            var list = new List<TestClass>
+            {
+                new TestClass
+                {
+                    Field1 = 321121, Field2 = "AA", Field3 = 2121.32m, Field4 = true,
+                    Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
+                },
+                new TestClass
+                {
+                    Field1 = 32321, Field2 = "BB", Field3 = 21111111.32m, Field4 = true,
+                    Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
+                },
+                new TestClass
+                {
+                    Field1 = 321, Field2 = "CC", Field3 = 2121.32m, Field4 = true,
+                    Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
+                }
+            };
+            return list;
+        }
+
+        [Test]
+        public void TestPivot()
+        {
+            var s = Pivot<TestClass>.Add(GetSampleOutput()).ToString();
+            Console.Write(s);
+        }
+
+        [Test]
+        public void TestPivot2()
+        {
+            Pivot<TestClass>.Add(GetSampleOutput()).ToConsole();
+        }
+    }
+}
