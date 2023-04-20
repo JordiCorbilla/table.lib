@@ -264,6 +264,14 @@ SELECT * from test
             Table<TestClass>.Add(GetSampleOutput()).ToCsv(@"C:\temp\test-list.csv");
         }
 
+        public static void SimpleCsvOutputForListMultiple()
+        {
+            var cache = new List<string>();
+            Table<TestClass>.Add(GetSampleOutput()).ToCsv(@"C:\temp\test-list-m.csv", CsvOptionType.StartFile, cache);
+            Table<TestClass>.Add(GetSampleOutput()).ToCsv(@"C:\temp\test-list-m.csv", CsvOptionType.AddToFile, cache);
+            Table<TestClass>.Add(GetSampleOutput()).ToCsv(@"C:\temp\test-list-m.csv", CsvOptionType.EndFile, cache);
+        }
+
         public static void SimpleCsvEmptyOutputForList()
         {
             Table<TestClass>.Add(new List<TestClass>(), new Options { DiscardEmptyList = false}).ToCsv(@"C:\temp\test-list-empty.csv");
