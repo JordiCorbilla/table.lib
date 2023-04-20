@@ -37,7 +37,7 @@ SELECT [Id]
 
             var enumerable = table as IDictionary<string, object>[] ??
                              (table ?? throw new InvalidOperationException()).ToArray();
-           
+
             var s = DbTable.Add(enumerable, new Options
             {
                 DateFormat = "dd-MM-yy",

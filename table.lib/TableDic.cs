@@ -87,7 +87,7 @@ namespace table.lib
                                 try
                                 {
                                     var value = $"{Options.DynamicName}{index}";
-                                    var res = propertyInfo.GetValue(row, new object[] {index});
+                                    var res = propertyInfo.GetValue(row, new object[] { index });
                                     if (!MaxWidth.ContainsKey(value))
                                     {
                                         PropertyNames.Add(new PropertyName(value, index, propertyIndex));
@@ -134,7 +134,7 @@ namespace table.lib
         public TableDic<TV, T> HighlightValue(HighlightOperator operation)
         {
             if (!Operation.ContainsKey(operation.Field))
-                Operation.Add(operation.Field, new List<HighlightOperator> {operation});
+                Operation.Add(operation.Field, new List<HighlightOperator> { operation });
             else
                 Operation[operation.Field].Add(operation);
             return this;

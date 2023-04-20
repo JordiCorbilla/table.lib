@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System;
-using table.lib.Entities;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
+using table.lib.Entities;
 
 namespace table.lib
 {
@@ -89,7 +89,7 @@ namespace table.lib
             var remaining = totalLength - $"{new string(' ', length / 2)}{header}".Length;
             s += $" {new string(' ', length / 2)}{header}{new string(' ', remaining)} |";
 
-            foreach(var col in MaxWidthData)
+            foreach (var col in MaxWidthData)
             {
                 header = $"T{col.Key}";
                 length = MaxWidthData[col.Key] - header.Length;
@@ -120,7 +120,7 @@ namespace table.lib
                 s += $" {new string(' ', length / 2)}{header}{new string(' ', remaining)} |";
 
                 var index = 0;
-                foreach(var q in p.Value)
+                foreach (var q in p.Value)
                 {
                     header = q.Value;
                     length = MaxWidthData[index++] - header.Length;
