@@ -3,17 +3,17 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>table.lib</RootNamespace>
-    <Version>1.14.0</Version>
+    <Version>1.16.0</Version>
     <Copyright>Jordi Corbilla</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/JordiCorbilla/table.lib</RepositoryUrl>
-    <PackageReleaseNotes>v1.14
-- Upgrade to .net 6</PackageReleaseNotes>
+    <PackageReleaseNotes>v1.16
+- Include Pivot table class</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Description>Simple c# (.NET 6) table library that renders any List&lt;T&gt; or Dictionary&lt;TV, T&gt; into a nicely formatted markdown, csv, html, specflow or console table, allowing for extra formats. It also supports dynamic returns from Dapper as IEnumerable&lt;IDictionary&lt;string, object&gt;&gt; via DBTable object.</Description>
-    <AssemblyVersion>1.14.0.0</AssemblyVersion>
-    <FileVersion>1.14.0.0</FileVersion>
+    <Description>This is a versatile and user-friendly C# (.NET 6) table library that can quickly render any List&lt;T&gt; or Dictionary&lt;TV, T&gt; into a visually appealing markdown, CSV, HTML, SpecFlow, SQL-insert, or console table format, while providing flexibility for other formats as well. In addition, it also supports dynamic returns from Dapper as IEnumerable&lt;IDictionary&lt;string, object&gt;&gt; via DBTable object. Whether you need to format data for documentation, testing, or display purposes, this library makes it easy to do so in a variety of formats, with just a few lines of code.</Description>
+    <AssemblyVersion>1.16.0.0</AssemblyVersion>
+    <FileVersion>1.16.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

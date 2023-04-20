@@ -1,6 +1,6 @@
 ﻿//MIT License
 
-//Copyright (c) 2020-2022 Jordi Corbilla
+//Copyright (c) 2020-2023 Jordi Corbilla
 
 //Permission is hereby granted, free of charge, to any person obtaining a copy
 //of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,7 @@ namespace table.runner
             Samples.SimpleConsoleOutputForList();
             Samples.SimpleConsoleOutputWithHighlighterForList();
             Samples.SimpleCsvOutputForList();
+            Samples.SimpleCsvOutputForListMultiple();
             Samples.SimpleCsvEmptyOutputForList();
             Samples.SimpleHtmlOutputForList();
             Samples.SimpleHtmlOutputWithHighlighterForList();

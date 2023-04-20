@@ -1,6 +1,6 @@
 ﻿//MIT License
 
-//Copyright (c) 2020-2022 Jordi Corbilla
+//Copyright (c) 2020-2023 Jordi Corbilla
 
 //Permission is hereby granted, free of charge, to any person obtaining a copy
 //of this software and associated documentation files (the "Software"), to deal
@@ -262,6 +262,14 @@ SELECT * from test
         public static void SimpleCsvOutputForList()
         {
             Table<TestClass>.Add(GetSampleOutput()).ToCsv(@"C:\temp\test-list.csv");
+        }
+
+        public static void SimpleCsvOutputForListMultiple()
+        {
+            var cache = new List<string>();
+            Table<TestClass>.Add(GetSampleOutput()).ToCsv(@"C:\temp\test-list-m.csv", CsvOptionType.StartFile, cache);
+            Table<TestClass>.Add(GetSampleOutput()).ToCsv(@"C:\temp\test-list-m.csv", CsvOptionType.AddToFile, cache);
+            Table<TestClass>.Add(GetSampleOutput()).ToCsv(@"C:\temp\test-list-m.csv", CsvOptionType.EndFile, cache);
         }
 
         public static void SimpleCsvEmptyOutputForList()

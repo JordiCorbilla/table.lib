@@ -1,6 +1,6 @@
 ﻿//MIT License
 
-//Copyright (c) 2020-2022 Jordi Corbilla
+//Copyright (c) 2020-2023 Jordi Corbilla
 
 //Permission is hereby granted, free of charge, to any person obtaining a copy
 //of this software and associated documentation files (the "Software"), to deal
@@ -601,6 +601,19 @@ namespace table.lib
         {
             using var file = new StreamWriter(fileName);
             file.WriteLine(ToCsv());
+        }
+
+        public void ToCsv(string fileName, CsvOptionType option, List<string> cache)
+        {
+            if (option == CsvOptionType.StartFile || option == CsvOptionType.AddToFile)
+                cache.Add(ToCsv());
+            if (option == CsvOptionType.EndFile)
+            {
+                using var file = new StreamWriter(fileName);
+                cache.Add(ToCsv());
+                foreach(var item in cache)
+                    file.WriteLine(item);
+            }
         }
 
         public string ToCsv()
