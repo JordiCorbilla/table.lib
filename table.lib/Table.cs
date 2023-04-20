@@ -83,7 +83,7 @@ namespace table.lib
                                 try
                                 {
                                     var prop = $"{Options.DynamicName}{index}";
-                                    var res = propertyInfo.GetValue(row, new object[] {index});
+                                    var res = propertyInfo.GetValue(row, new object[] { index });
                                     if (!MaxWidth.ContainsKey(prop))
                                     {
                                         PropertyNames.Add(new PropertyName(prop, index, propertyIndex));
@@ -131,7 +131,7 @@ namespace table.lib
         public Table<T> HighlightValue(HighlightOperator operation)
         {
             if (!Operation.ContainsKey(operation.Field))
-                Operation.Add(operation.Field, new List<HighlightOperator> {operation});
+                Operation.Add(operation.Field, new List<HighlightOperator> { operation });
             else
                 Operation[operation.Field].Add(operation);
             return this;
@@ -525,15 +525,15 @@ namespace table.lib
                                                     color = "#f9f948";
                                                     break;
                                                 case HighlightOperation.Equality:
-                                                {
-                                                    if (decimal.Compare(Math.Round(parsed, Options.NumberDecimals),
-                                                        Math.Round(num, Options.NumberDecimals)) == 0)
                                                     {
-                                                        color = "#f9f948";
-                                                    }
+                                                        if (decimal.Compare(Math.Round(parsed, Options.NumberDecimals),
+                                                            Math.Round(num, Options.NumberDecimals)) == 0)
+                                                        {
+                                                            color = "#f9f948";
+                                                        }
 
-                                                    break;
-                                                }
+                                                        break;
+                                                    }
                                                 default:
                                                     throw new ArgumentOutOfRangeException(
                                                         $"Unrecognized operation {item.Operation}");
@@ -559,14 +559,14 @@ namespace table.lib
                                                     color = "#f9f948";
                                                     break;
                                                 case HighlightOperation.Equality:
-                                                {
-                                                    if (value.Trim() == str)
                                                     {
-                                                        color = "#f9f948";
-                                                    }
+                                                        if (value.Trim() == str)
+                                                        {
+                                                            color = "#f9f948";
+                                                        }
 
-                                                    break;
-                                                }
+                                                        break;
+                                                    }
                                                 default:
                                                     throw new ArgumentOutOfRangeException(
                                                         $"Unrecognized operation {item.Operation}");
@@ -611,7 +611,7 @@ namespace table.lib
             {
                 using var file = new StreamWriter(fileName);
                 cache.Add(ToCsv());
-                foreach(var item in cache)
+                foreach (var item in cache)
                     file.WriteLine(item);
             }
         }
@@ -641,7 +641,7 @@ namespace table.lib
             foreach (var row in Items)
             {
                 s = (from property in filteredPropertyNames
-                    select GetValue(row, property)).Aggregate("", (current, value) => current + $"{value.ToCsv()},");
+                     select GetValue(row, property)).Aggregate("", (current, value) => current + $"{value.ToCsv()},");
                 s = s.Remove(s.Length - 1);
                 stringBuilder.AppendLine(s);
             }
@@ -685,7 +685,7 @@ namespace table.lib
                         string z => "'" + z.ToSql() + "'",
                         int _ => obj.ToString().ToSql(),
                         long _ => obj.ToString().ToSql(),
-                        bool _ => obj.ToString().ToSql() == "True" ? "1": "0",
+                        bool _ => obj.ToString().ToSql() == "True" ? "1" : "0",
                         DateTime time => "'" + time.ToString("yyyy-MM-dd") + "'",
                         decimal value1 => value1.ToString("#0.0###"),
                         double value1 => value1.ToString("#0.0###"),

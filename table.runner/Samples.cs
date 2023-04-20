@@ -20,11 +20,11 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
+using Dapper;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using Dapper;
 using table.lib;
 
 namespace table.runner
@@ -106,14 +106,14 @@ SELECT * from test
             {
                 DateFormat = "dd-MM-yy",
                 DecimalFormat = "#,##0.########"
-            }).FilterColumns(new[] {"AssetClass"}, FilterAction.Exclude).ToString();
+            }).FilterColumns(new[] { "AssetClass" }, FilterAction.Exclude).ToString();
             Console.WriteLine(s);
 
             s = DbTable.Add(enumerable, new Options
             {
                 DateFormat = "dd-MM-yy",
                 DecimalFormat = "#,##0.########"
-            }).FilterColumns(new[] {"AssetClass"}, FilterAction.Exclude).ToSpecFlowString();
+            }).FilterColumns(new[] { "AssetClass" }, FilterAction.Exclude).ToSpecFlowString();
             Console.WriteLine(s);
         }
 
@@ -239,10 +239,10 @@ SELECT * from test
         {
             Table<TestClass>.Add(GetSampleOutput()).ToConsole();
             Table<TestClass>.Add(GetSampleOutput(), new Options
-                {
-                    DateFormat = "dd-MM-yy",
-                    DecimalFormat = "#,##0.########"
-                })
+            {
+                DateFormat = "dd-MM-yy",
+                DecimalFormat = "#,##0.########"
+            })
                 .ToConsole();
         }
 
@@ -255,7 +255,7 @@ SELECT * from test
         {
             Table<TestClass>.Add(GetSampleOutput())
                 .HighlightValue(new HighlightOperator
-                    {Field = "Field3", Type = HighlightType.Decimal, DecimalValue = new List<decimal> {2121.32m}})
+                { Field = "Field3", Type = HighlightType.Decimal, DecimalValue = new List<decimal> { 2121.32m } })
                 .ToConsole();
         }
 
@@ -274,7 +274,7 @@ SELECT * from test
 
         public static void SimpleCsvEmptyOutputForList()
         {
-            Table<TestClass>.Add(new List<TestClass>(), new Options { DiscardEmptyList = false}).ToCsv(@"C:\temp\test-list-empty.csv");
+            Table<TestClass>.Add(new List<TestClass>(), new Options { DiscardEmptyList = false }).ToCsv(@"C:\temp\test-list-empty.csv");
         }
 
         public static void SimpleHtmlOutputForList()
@@ -286,7 +286,7 @@ SELECT * from test
         {
             Table<TestClass>.Add(GetSampleOutput())
                 .HighlightValue(new HighlightOperator
-                    { Field = "Field3", Type = HighlightType.Decimal, DecimalValue = new List<decimal> { 2121.32m }, Operation = HighlightOperation.Equality})
+                { Field = "Field3", Type = HighlightType.Decimal, DecimalValue = new List<decimal> { 2121.32m }, Operation = HighlightOperation.Equality })
                 .ToHtml(@"C:\temp\test-list-highlight.html");
         }
 
@@ -298,15 +298,15 @@ SELECT * from test
         public static void ComplexConsoleOutputFilteringForList()
         {
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .FilterColumns(new[] {"Dynamic0"}, FilterAction.Include)
+                .FilterColumns(new[] { "Dynamic0" }, FilterAction.Include)
                 .ToConsole();
 
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .FilterColumns(new[] {"Dynamic0"}, FilterAction.Include)
+                .FilterColumns(new[] { "Dynamic0" }, FilterAction.Include)
                 .ToConsole();
 
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .FilterColumns(new[] {"Dynamic0", "Dynamic1"}, FilterAction.Include)
+                .FilterColumns(new[] { "Dynamic0", "Dynamic1" }, FilterAction.Include)
                 .HighlightRows(ConsoleColor.Red, ConsoleColor.White)
                 .ToConsole();
         }
@@ -314,23 +314,23 @@ SELECT * from test
         public static void ComplexConsoleOutputOverrideFilteringForList()
         {
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
-                .FilterColumns(new[] {"Dynamic0"}, FilterAction.Include)
+                .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
+                .FilterColumns(new[] { "Dynamic0" }, FilterAction.Include)
                 .ToConsole();
 
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}}).ToConsole();
+                .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } }).ToConsole();
 
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
-                .FilterColumns(new[] {"Capacity", "Count"}).ToConsole();
+                .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
+                .FilterColumns(new[] { "Capacity", "Count" }).ToConsole();
 
             Table<IEnumerable<string>>.Add(GetStringMatrix()).OverrideColumnsNames(new Dictionary<string, string>
             {
                 {"Dynamic0", "A"},
                 {"Dynamic1", "B"},
                 {"Dynamic2", "C"}
-            }).FilterColumns(new[] {"Capacity", "Count"}).ColumnContentTextJustification(
+            }).FilterColumns(new[] { "Capacity", "Count" }).ColumnContentTextJustification(
                 new Dictionary<string, TextJustification>
                 {
                     {"Dynamic0", TextJustification.Right},
@@ -341,22 +341,22 @@ SELECT * from test
         public static void ComplexCsvOutputFilteringForList()
         {
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
-                .FilterColumns(new[] {"Capacity", "Count"}).ToCsv(@"C:\temp\test.csv");
+                .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
+                .FilterColumns(new[] { "Capacity", "Count" }).ToCsv(@"C:\temp\test.csv");
         }
 
         public static void ComplexHtmlOutputFilteringForList()
         {
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
-                .FilterColumns(new[] {"Capacity", "Count"}).ToHtml(@"C:\temp\test.html");
+                .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
+                .FilterColumns(new[] { "Capacity", "Count" }).ToHtml(@"C:\temp\test.html");
         }
 
         public static void ComplexMarkDownOutputFilteringForList()
         {
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .OverrideColumnsNames(new Dictionary<string, string> {{"Dynamic0", "ColumnA"}})
-                .FilterColumns(new[] {"Capacity", "Count"})
+                .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
+                .FilterColumns(new[] { "Capacity", "Count" })
                 .ColumnContentTextJustification(new Dictionary<string, TextJustification>
                     {{"Dynamic0", TextJustification.Right}}).ToMarkDown(@"C:\temp\test.md", true);
         }
@@ -364,9 +364,9 @@ SELECT * from test
         public static void ComplexConsoleMatrix()
         {
             Table<IEnumerable<int>>.Add(GetIntMatrix(), new Options
-                {
-                    DynamicName = "T"
-                })
+            {
+                DynamicName = "T"
+            })
                 .ToConsole();
         }
 
@@ -376,14 +376,14 @@ SELECT * from test
                 .ToConsole();
 
             TableDic<string, TestClass>.Add(GetSimpleDictionary(), new Options
-                {
-                    DynamicName = "D",
-                    KeyName = "Id"
-                })
+            {
+                DynamicName = "D",
+                KeyName = "Id"
+            })
                 .ToConsole();
 
             TableDic<string, TestClass>.Add(GetSimpleDictionary())
-                .FilterColumns(new[] {"Key_Id"})
+                .FilterColumns(new[] { "Key_Id" })
                 .ToConsole();
 
             TableDic<decimal, TestClass>.Add(GetSimpleDictionaryDecimal())
@@ -393,18 +393,21 @@ SELECT * from test
         public static void SimpleConsoleOutputWithHighlighterForDictionary()
         {
             TableDic<string, TestClass>.Add(GetSimpleDictionary(), new Options
-                {
-                    NumberDecimals = 0
-                })
+            {
+                NumberDecimals = 0
+            })
                 .HighlightValue(new HighlightOperator
                 {
-                    Field = "Field3", Type = HighlightType.Decimal, DecimalValue = new List<decimal> {2121.32m},
+                    Field = "Field3",
+                    Type = HighlightType.Decimal,
+                    DecimalValue = new List<decimal> { 2121.32m },
                     Operation = HighlightOperation.Equality
                 })
                 .HighlightValue(new HighlightOperator
                 {
-                    Field = "Field6", Type = HighlightType.Decimal,
-                    DecimalValue = new List<decimal>() {34.43m, 134.43m},
+                    Field = "Field6",
+                    Type = HighlightType.Decimal,
+                    DecimalValue = new List<decimal>() { 34.43m, 134.43m },
                     Operation = HighlightOperation.Equality
                 })
                 .ToConsole();

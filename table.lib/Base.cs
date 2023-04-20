@@ -52,7 +52,7 @@ namespace table.lib
             if (property.IsCollection)
             {
                 var prop = item.GetType().GetProperties()[property.PropertyIndex];
-                value = prop.GetValue(item, new object[] {property.Index});
+                value = prop.GetValue(item, new object[] { property.Index });
             }
             else
             {
@@ -104,17 +104,17 @@ namespace table.lib
                 switch (ColumnAction)
                 {
                     case FilterAction.Include:
-                    {
-                        if (ColumnFilter.ContainsKey(propertyName.Name))
-                            filteredPropertyNames.Add(propertyName);
-                        break;
-                    }
+                        {
+                            if (ColumnFilter.ContainsKey(propertyName.Name))
+                                filteredPropertyNames.Add(propertyName);
+                            break;
+                        }
                     case FilterAction.Exclude:
-                    {
-                        if (!ColumnFilter.ContainsKey(propertyName.Name))
-                            filteredPropertyNames.Add(propertyName);
-                        break;
-                    }
+                        {
+                            if (!ColumnFilter.ContainsKey(propertyName.Name))
+                                filteredPropertyNames.Add(propertyName);
+                            break;
+                        }
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -151,16 +151,16 @@ namespace table.lib
                                                 Console.ForegroundColor = item.ForegroundColorIfEqual;
                                                 break;
                                             case HighlightOperation.Equality:
-                                            {
-                                                if (decimal.Compare(Math.Round(parsed, Options.NumberDecimals),
-                                                    Math.Round(num, Options.NumberDecimals)) == 0)
                                                 {
-                                                    Console.BackgroundColor = item.BackgroundColorIfEqual;
-                                                    Console.ForegroundColor = item.ForegroundColorIfEqual;
-                                                }
+                                                    if (decimal.Compare(Math.Round(parsed, Options.NumberDecimals),
+                                                        Math.Round(num, Options.NumberDecimals)) == 0)
+                                                    {
+                                                        Console.BackgroundColor = item.BackgroundColorIfEqual;
+                                                        Console.ForegroundColor = item.ForegroundColorIfEqual;
+                                                    }
 
-                                                break;
-                                            }
+                                                    break;
+                                                }
                                             default:
                                                 throw new ArgumentOutOfRangeException(
                                                     $"Unrecognized operation {item.Operation}");
@@ -188,15 +188,15 @@ namespace table.lib
                                                 Console.ForegroundColor = item.ForegroundColorIfEqual;
                                                 break;
                                             case HighlightOperation.Equality:
-                                            {
-                                                if (value.Trim() == str)
                                                 {
-                                                    Console.BackgroundColor = item.BackgroundColorIfEqual;
-                                                    Console.ForegroundColor = item.ForegroundColorIfEqual;
-                                                }
+                                                    if (value.Trim() == str)
+                                                    {
+                                                        Console.BackgroundColor = item.BackgroundColorIfEqual;
+                                                        Console.ForegroundColor = item.ForegroundColorIfEqual;
+                                                    }
 
-                                                break;
-                                            }
+                                                    break;
+                                                }
                                             default:
                                                 throw new ArgumentOutOfRangeException(
                                                     $"Unrecognized operation {item.Operation}");

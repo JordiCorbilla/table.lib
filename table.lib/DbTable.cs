@@ -101,17 +101,17 @@ namespace table.lib
                 switch (ColumnAction)
                 {
                     case FilterAction.Include:
-                    {
-                        if (ColumnFilter.ContainsKey(propertyName.Name))
-                            filteredPropertyNames.Add(propertyName);
-                        break;
-                    }
+                        {
+                            if (ColumnFilter.ContainsKey(propertyName.Name))
+                                filteredPropertyNames.Add(propertyName);
+                            break;
+                        }
                     case FilterAction.Exclude:
-                    {
-                        if (!ColumnFilter.ContainsKey(propertyName.Name))
-                            filteredPropertyNames.Add(propertyName);
-                        break;
-                    }
+                        {
+                            if (!ColumnFilter.ContainsKey(propertyName.Name))
+                                filteredPropertyNames.Add(propertyName);
+                            break;
+                        }
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
