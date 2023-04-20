@@ -20,17 +20,12 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
-using System;
-
-namespace table.runner
+namespace table.lib
 {
-    public class TestClass
+    public enum CsvOptionType
     {
-        public int? Field1 { get; set; }
-        public string? Field2 { get; set; }
-        public decimal? Field3 { get; set; }
-        public bool? Field4 { get; set; }
-        public DateTime? Field5 { get; set; }
-        public double? Field6 { get; set; }
+        StartFile,
+        AddToFile,
+        EndFile
     }
 }
