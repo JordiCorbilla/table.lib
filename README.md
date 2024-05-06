@@ -4,6 +4,8 @@ This is a versatile and user-friendly `C# (.NET 6)` table library that can quick
 
 ## Installation
 
+via nuget package -> https://www.nuget.org/packages/table.lib/
+
 ```bash
 dotnet add package table.lib --version 1.13.0
 ```
