@@ -127,8 +127,8 @@ namespace table.lib
             Console.ForegroundColor = ForegroundColor;
 
             if (Operation != null)
-                if (Operation.ContainsKey(column))
-                    foreach (var item in Operation[column])
+                if (Operation.TryGetValue(column, out List<HighlightOperator> operation))
+                    foreach (var item in operation)
                         switch (item.Type)
                         {
                             case HighlightType.Decimal:
