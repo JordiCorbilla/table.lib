@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>table.lib</RootNamespace>
     <Version>1.16.0</Version>
     <Copyright>Jordi Corbilla</Copyright>
