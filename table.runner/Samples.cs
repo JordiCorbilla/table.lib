@@ -35,38 +35,31 @@ namespace table.runner
         {
             var list = new List<TestClass>
             {
-                new TestClass
-                {
+                new() {
                     Field1 = 321121, Field2 = "Hi 312321", Field3 = 2121.32m, Field4 = true,
                     Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
                 },
-                new TestClass
-                {
+                new() {
                     Field1 = 32321, Field2 = "Hi long text", Field3 = 21111111.32m, Field4 = true,
                     Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
                 },
-                new TestClass
-                {
+                new() {
                     Field1 = 321, Field2 = "Hi longer text", Field3 = 2121.32m, Field4 = true,
                     Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
                 },
-                new TestClass
-                {
+                new() {
                     Field1 = 13, Field2 = "Hi very long text", Field3 = 21111121.32m, Field4 = true,
                     Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
                 },
-                new TestClass
-                {
+                new() {
                     Field1 = 13, Field2 = "Hi very, long text", Field3 = 21111121.32m, Field4 = true,
                     Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
                 },
-                new TestClass
-                {
+                new() {
                     Field1 = 13, Field2 = "Hi \"very\" long\n text", Field3 = 21111121.32m, Field4 = true,
                     Field5 = new DateTime(1970, 1, 1), Field6 = 34.4300001
                 },
-                new TestClass
-                {
+                new() {
                     Field1 = 13, Field2 = null, Field3 = 21111121.32m, Field4 = true,
                     Field5 = new DateTime(1970, 1, 1), Field6 = 34.4300001
                 }
@@ -78,8 +71,7 @@ namespace table.runner
         {
             var list = new List<TestClass>
             {
-                new TestClass
-                {
+                new() {
                     Field1 = null, Field2 = null, Field3 = null, Field4 = null,
                     Field5 = null, Field6 = null
                 }
