@@ -234,8 +234,7 @@ SELECT * from test
             {
                 DateFormat = "dd-MM-yy",
                 DecimalFormat = "#,##0.########"
-            })
-                .ToConsole();
+            }).ToConsole();
         }
 
         public static void SimpleConsoleOutputForListNoException()
