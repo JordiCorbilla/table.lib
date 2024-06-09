@@ -240,14 +240,14 @@ SELECT * from test
 
         public static void SimpleConsoleOutputForListNoException()
         {
-            Table<TestClass>.Add(new List<TestClass>()).ToConsole();
+            Table<TestClass>.Add([]).ToConsole();
         }
 
         public static void SimpleConsoleOutputWithHighlighterForList()
         {
             Table<TestClass>.Add(GetSampleOutput())
                 .HighlightValue(new HighlightOperator
-                { Field = "Field3", Type = HighlightType.Decimal, DecimalValue = new List<decimal> { 2121.32m } })
+                { Field = "Field3", Type = HighlightType.Decimal, DecimalValue = [2121.32m] })
                 .ToConsole();
         }
 
@@ -266,7 +266,7 @@ SELECT * from test
 
         public static void SimpleCsvEmptyOutputForList()
         {
-            Table<TestClass>.Add(new List<TestClass>(), new Options { DiscardEmptyList = false }).ToCsv(@"C:\temp\test-list-empty.csv");
+            Table<TestClass>.Add([], new Options { DiscardEmptyList = false }).ToCsv(@"C:\temp\test-list-empty.csv");
         }
 
         public static void SimpleHtmlOutputForList()
@@ -278,7 +278,7 @@ SELECT * from test
         {
             Table<TestClass>.Add(GetSampleOutput())
                 .HighlightValue(new HighlightOperator
-                { Field = "Field3", Type = HighlightType.Decimal, DecimalValue = new List<decimal> { 2121.32m }, Operation = HighlightOperation.Equality })
+                { Field = "Field3", Type = HighlightType.Decimal, DecimalValue = [2121.32m], Operation = HighlightOperation.Equality })
                 .ToHtml(@"C:\temp\test-list-highlight.html");
         }
 
@@ -392,14 +392,14 @@ SELECT * from test
                 {
                     Field = "Field3",
                     Type = HighlightType.Decimal,
-                    DecimalValue = new List<decimal> { 2121.32m },
+                    DecimalValue = [2121.32m],
                     Operation = HighlightOperation.Equality
                 })
                 .HighlightValue(new HighlightOperator
                 {
                     Field = "Field6",
                     Type = HighlightType.Decimal,
-                    DecimalValue = new List<decimal>() { 34.43m, 134.43m },
+                    DecimalValue = [34.43m, 134.43m],
                     Operation = HighlightOperation.Equality
                 })
                 .ToConsole();

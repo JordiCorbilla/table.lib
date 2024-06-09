@@ -35,8 +35,8 @@ namespace table.lib
             if (dictionary.Count == 0) return;
             if (options != null)
                 Options = options;
-            PropertyNames = new List<PropertyName>();
-            MaxWidth = new Dictionary<string, int>();
+            PropertyNames = [];
+            MaxWidth = [];
             Keys = dictionary.Select(x => x.Key).ToList();
             Items = dictionary.Select(x => x.Value).ToList();
 
@@ -134,7 +134,7 @@ namespace table.lib
         public TableDic<TV, T> HighlightValue(HighlightOperator operation)
         {
             if (!Operation.ContainsKey(operation.Field))
-                Operation.Add(operation.Field, new List<HighlightOperator> { operation });
+                Operation.Add(operation.Field, [operation]);
             else
                 Operation[operation.Field].Add(operation);
             return this;

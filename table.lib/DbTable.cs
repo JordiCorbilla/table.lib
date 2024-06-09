@@ -33,13 +33,13 @@ namespace table.lib
         public List<PropertyName> PropertyNames { get; set; }
         public Dictionary<string, int> MaxWidth { get; set; }
         public Options Options { get; set; } = new Options();
-        public Dictionary<string, bool> ColumnFilter { get; set; } = new Dictionary<string, bool>();
+        public Dictionary<string, bool> ColumnFilter { get; set; } = [];
         public FilterAction ColumnAction { get; set; } = FilterAction.Exclude;
 
         public DbTable(IEnumerable<IDictionary<string, object>> list, Options options = null)
         {
-            PropertyNames = new List<PropertyName>();
-            MaxWidth = new Dictionary<string, int>();
+            PropertyNames = [];
+            MaxWidth = [];
             Items = list;
             if (options != null)
                 Options = options;

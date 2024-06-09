@@ -46,8 +46,8 @@ namespace table.lib
                     return;
             }
 
-            PropertyNames = new List<PropertyName>();
-            MaxWidth = new Dictionary<string, int>();
+            PropertyNames = [];
+            MaxWidth = [];
             Items = list;
             var properties = typeof(T).GetProperties();
             ClassName = typeof(T).Name;
@@ -131,7 +131,7 @@ namespace table.lib
         public Table<T> HighlightValue(HighlightOperator operation)
         {
             if (!Operation.ContainsKey(operation.Field))
-                Operation.Add(operation.Field, new List<HighlightOperator> { operation });
+                Operation.Add(operation.Field, [operation]);
             else
                 Operation[operation.Field].Add(operation);
             return this;

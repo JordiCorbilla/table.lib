@@ -12,20 +12,20 @@ namespace table.lib
         public List<PropertyName> PropertyNames { get; set; }
         public int MaxWidthProperties { get; set; }
         public Dictionary<int, int> MaxWidthData { get; set; }
-        public Dictionary<string, string> ColumnNameOverrides { get; set; } = new Dictionary<string, string>();
-        public Dictionary<string, bool> ColumnFilter { get; set; } = new Dictionary<string, bool>();
+        public Dictionary<string, string> ColumnNameOverrides { get; set; } = [];
+        public Dictionary<string, bool> ColumnFilter { get; set; } = [];
         public FilterAction ColumnAction { get; set; } = FilterAction.Exclude;
         public ConsoleColor BackgroundColor { get; set; } = ConsoleColor.Black;
         public ConsoleColor ForegroundColor { get; set; } = ConsoleColor.Green;
-        public List<T> Items { get; set; } = new List<T>();
+        public List<T> Items { get; set; } = [];
 
         public Dictionary<string, List<HighlightOperator>> Operation { get; set; } =
-            new Dictionary<string, List<HighlightOperator>>();
+            [];
 
         public Options Options { get; set; } = new Options();
 
         public Dictionary<string, TextJustification> ColumnTextJustification { get; set; } =
-            new Dictionary<string, TextJustification>();
+            [];
 
         /// <summary>
         ///     Where the magic happens.
@@ -35,11 +35,11 @@ namespace table.lib
         /// <param name="options"></param>
         public Pivot(List<T> list)
         {
-            Data = new Dictionary<string, List<DynamicType>>();
+            Data = [];
 
-            PropertyNames = new List<PropertyName>();
+            PropertyNames = [];
             MaxWidthProperties = "Field".Length;
-            MaxWidthData = new Dictionary<int, int>();
+            MaxWidthData = [];
             Items = list;
             var properties = typeof(T).GetProperties();
             ClassName = typeof(T).Name;
@@ -48,7 +48,7 @@ namespace table.lib
                 PropertyNames.Add(new PropertyName(property.Name));
                 if (property.Name.Length > MaxWidthProperties)
                     MaxWidthProperties = property.Name.Length;
-                Data.Add(property.Name, new List<DynamicType>());
+                Data.Add(property.Name, []);
             }
 
             var index = 0;
