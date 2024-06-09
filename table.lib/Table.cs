@@ -83,7 +83,7 @@ namespace table.lib
                                 try
                                 {
                                     var prop = $"{Options.DynamicName}{index}";
-                                    var res = propertyInfo.GetValue(row, new object[] { index });
+                                    var res = propertyInfo.GetValue(row, [index]);
                                     if (!MaxWidth.ContainsKey(prop))
                                     {
                                         PropertyNames.Add(new PropertyName(prop, index, propertyIndex));

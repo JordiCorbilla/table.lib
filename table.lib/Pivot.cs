@@ -201,7 +201,7 @@ namespace table.lib
             if (property.IsCollection)
             {
                 var prop = item.GetType().GetProperties()[property.PropertyIndex];
-                value = prop.GetValue(item, new object[] { property.Index });
+                value = prop.GetValue(item, [property.Index]);
             }
             else
             {

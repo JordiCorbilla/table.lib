@@ -98,14 +98,14 @@ SELECT * from test
             {
                 DateFormat = "dd-MM-yy",
                 DecimalFormat = "#,##0.########"
-            }).FilterColumns(new[] { "AssetClass" }, FilterAction.Exclude).ToString();
+            }).FilterColumns(["AssetClass"], FilterAction.Exclude).ToString();
             Console.WriteLine(s);
 
             s = DbTable.Add(enumerable, new Options
             {
                 DateFormat = "dd-MM-yy",
                 DecimalFormat = "#,##0.########"
-            }).FilterColumns(new[] { "AssetClass" }, FilterAction.Exclude).ToSpecFlowString();
+            }).FilterColumns(["AssetClass"], FilterAction.Exclude).ToSpecFlowString();
             Console.WriteLine(s);
         }
 
@@ -290,15 +290,15 @@ SELECT * from test
         public static void ComplexConsoleOutputFilteringForList()
         {
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .FilterColumns(new[] { "Dynamic0" }, FilterAction.Include)
+                .FilterColumns(["Dynamic0"], FilterAction.Include)
                 .ToConsole();
 
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .FilterColumns(new[] { "Dynamic0" }, FilterAction.Include)
+                .FilterColumns(["Dynamic0"], FilterAction.Include)
                 .ToConsole();
 
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .FilterColumns(new[] { "Dynamic0", "Dynamic1" }, FilterAction.Include)
+                .FilterColumns(["Dynamic0", "Dynamic1"], FilterAction.Include)
                 .HighlightRows(ConsoleColor.Red, ConsoleColor.White)
                 .ToConsole();
         }
@@ -307,7 +307,7 @@ SELECT * from test
         {
             Table<IEnumerable<string>>.Add(GetStringMatrix())
                 .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
-                .FilterColumns(new[] { "Dynamic0" }, FilterAction.Include)
+                .FilterColumns(["Dynamic0"], FilterAction.Include)
                 .ToConsole();
 
             Table<IEnumerable<string>>.Add(GetStringMatrix())
@@ -315,14 +315,14 @@ SELECT * from test
 
             Table<IEnumerable<string>>.Add(GetStringMatrix())
                 .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
-                .FilterColumns(new[] { "Capacity", "Count" }).ToConsole();
+                .FilterColumns(["Capacity", "Count"]).ToConsole();
 
             Table<IEnumerable<string>>.Add(GetStringMatrix()).OverrideColumnsNames(new Dictionary<string, string>
             {
                 {"Dynamic0", "A"},
                 {"Dynamic1", "B"},
                 {"Dynamic2", "C"}
-            }).FilterColumns(new[] { "Capacity", "Count" }).ColumnContentTextJustification(
+            }).FilterColumns(["Capacity", "Count"]).ColumnContentTextJustification(
                 new Dictionary<string, TextJustification>
                 {
                     {"Dynamic0", TextJustification.Right},
@@ -334,21 +334,21 @@ SELECT * from test
         {
             Table<IEnumerable<string>>.Add(GetStringMatrix())
                 .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
-                .FilterColumns(new[] { "Capacity", "Count" }).ToCsv(@"C:\temp\test.csv");
+                .FilterColumns(["Capacity", "Count"]).ToCsv(@"C:\temp\test.csv");
         }
 
         public static void ComplexHtmlOutputFilteringForList()
         {
             Table<IEnumerable<string>>.Add(GetStringMatrix())
                 .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
-                .FilterColumns(new[] { "Capacity", "Count" }).ToHtml(@"C:\temp\test.html");
+                .FilterColumns(["Capacity", "Count"]).ToHtml(@"C:\temp\test.html");
         }
 
         public static void ComplexMarkDownOutputFilteringForList()
         {
             Table<IEnumerable<string>>.Add(GetStringMatrix())
                 .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
-                .FilterColumns(new[] { "Capacity", "Count" })
+                .FilterColumns(["Capacity", "Count"])
                 .ColumnContentTextJustification(new Dictionary<string, TextJustification>
                     {{"Dynamic0", TextJustification.Right}}).ToMarkDown(@"C:\temp\test.md", true);
         }
