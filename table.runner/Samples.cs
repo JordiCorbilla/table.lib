@@ -383,7 +383,7 @@ SELECT * from test
                 .ToConsole();
 
             TableDic<string, TestClass>.Add(GetSimpleDictionary())
-                .FilterColumns(new[] { "Key_Id" })
+                .FilterColumns(["Key_Id"])
                 .ToConsole();
 
             TableDic<decimal, TestClass>.Add(GetSimpleDictionaryDecimal())
