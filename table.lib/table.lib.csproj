@@ -7,19 +7,24 @@
     <Copyright>Jordi Corbilla</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/JordiCorbilla/table.lib</RepositoryUrl>
-    <PackageReleaseNotes>v1.16
-- Include Pivot table class</PackageReleaseNotes>
+    <PackageReleaseNotes>v1.17
+- Upgrade to .net 8</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Description>This is a versatile and user-friendly C# (.NET 8) table library that can quickly render any List&lt;T&gt; or Dictionary&lt;TV, T&gt; into a visually appealing markdown, CSV, HTML, SpecFlow, SQL-insert, or console table format, while providing flexibility for other formats as well. In addition, it also supports dynamic returns from Dapper as IEnumerable&lt;IDictionary&lt;string, object&gt;&gt; via DBTable object. Whether you need to format data for documentation, testing, or display purposes, this library makes it easy to do so in a variety of formats, with just a few lines of code.</Description>
     <AssemblyVersion>1.17.0.0</AssemblyVersion>
     <FileVersion>1.17.0.0</FileVersion>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="..\LICENSE">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 
