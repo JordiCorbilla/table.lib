@@ -10,18 +10,15 @@ namespace table.lib.tests
         {
             var list = new List<TestClass>
             {
-                new TestClass
-                {
+                new() {
                     Field1 = 321121, Field2 = "AA", Field3 = 2121.32m, Field4 = true,
                     Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
                 },
-                new TestClass
-                {
+                new() {
                     Field1 = 32321, Field2 = "BB", Field3 = 21111111.32m, Field4 = true,
                     Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
                 },
-                new TestClass
-                {
+                new() {
                     Field1 = 321, Field2 = "CC", Field3 = 2121.32m, Field4 = true,
                     Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
                 }

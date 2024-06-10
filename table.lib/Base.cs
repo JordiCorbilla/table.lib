@@ -1,6 +1,6 @@
 ﻿//MIT License
 
-//Copyright (c) 2020-2023 Jordi Corbilla
+//Copyright (c) 2020-2024 Jordi Corbilla
 
 //Permission is hereby granted, free of charge, to any person obtaining a copy
 //of this software and associated documentation files (the "Software"), to deal
@@ -30,20 +30,18 @@ namespace table.lib
         public string ClassName { get; set; }
         public List<PropertyName> PropertyNames { get; set; }
         public Dictionary<string, int> MaxWidth { get; set; }
-        public Dictionary<string, string> ColumnNameOverrides { get; set; } = new Dictionary<string, string>();
-        public Dictionary<string, bool> ColumnFilter { get; set; } = new Dictionary<string, bool>();
+        public Dictionary<string, string> ColumnNameOverrides { get; set; } = [];
+        public Dictionary<string, bool> ColumnFilter { get; set; } = [];
         public FilterAction ColumnAction { get; set; } = FilterAction.Exclude;
         public ConsoleColor BackgroundColor { get; set; } = ConsoleColor.Black;
         public ConsoleColor ForegroundColor { get; set; } = ConsoleColor.Green;
-        public List<T> Items { get; set; } = new List<T>();
+        public List<T> Items { get; set; } = [];
 
-        public Dictionary<string, List<HighlightOperator>> Operation { get; set; } =
-            new Dictionary<string, List<HighlightOperator>>();
+        public Dictionary<string, List<HighlightOperator>> Operation { get; set; } = [];
 
         public Options Options { get; set; } = new Options();
 
-        public Dictionary<string, TextJustification> ColumnTextJustification { get; set; } =
-            new Dictionary<string, TextJustification>();
+        public Dictionary<string, TextJustification> ColumnTextJustification { get; set; } = [];
 
         public string GetValue(T item, PropertyName property)
         {
@@ -52,7 +50,7 @@ namespace table.lib
             if (property.IsCollection)
             {
                 var prop = item.GetType().GetProperties()[property.PropertyIndex];
-                value = prop.GetValue(item, new object[] { property.Index });
+                value = prop.GetValue(item, [property.Index]);
             }
             else
             {
@@ -70,7 +68,7 @@ namespace table.lib
             if (property.IsCollection)
             {
                 var prop = item.GetType().GetProperties()[property.PropertyIndex];
-                value = prop.GetValue(item, new object[] { property.Index });
+                value = prop.GetValue(item, [property.Index]);
             }
             else
             {
@@ -129,8 +127,8 @@ namespace table.lib
             Console.ForegroundColor = ForegroundColor;
 
             if (Operation != null)
-                if (Operation.ContainsKey(column))
-                    foreach (var item in Operation[column])
+                if (Operation.TryGetValue(column, out List<HighlightOperator> operation))
+                    foreach (var item in operation)
                         switch (item.Type)
                         {
                             case HighlightType.Decimal:

@@ -1,6 +1,6 @@
 ﻿//MIT License
 
-//Copyright (c) 2020-2023 Jordi Corbilla
+//Copyright (c) 2020-2024 Jordi Corbilla
 
 //Permission is hereby granted, free of charge, to any person obtaining a copy
 //of this software and associated documentation files (the "Software"), to deal
@@ -33,13 +33,13 @@ namespace table.lib
         public List<PropertyName> PropertyNames { get; set; }
         public Dictionary<string, int> MaxWidth { get; set; }
         public Options Options { get; set; } = new Options();
-        public Dictionary<string, bool> ColumnFilter { get; set; } = new Dictionary<string, bool>();
+        public Dictionary<string, bool> ColumnFilter { get; set; } = [];
         public FilterAction ColumnAction { get; set; } = FilterAction.Exclude;
 
         public DbTable(IEnumerable<IDictionary<string, object>> list, Options options = null)
         {
-            PropertyNames = new List<PropertyName>();
-            MaxWidth = new Dictionary<string, int>();
+            PropertyNames = [];
+            MaxWidth = [];
             Items = list;
             if (options != null)
                 Options = options;

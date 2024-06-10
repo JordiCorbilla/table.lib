@@ -1,6 +1,6 @@
 ﻿//MIT License
 
-//Copyright (c) 2020-2023 Jordi Corbilla
+//Copyright (c) 2020-2024 Jordi Corbilla
 
 //Permission is hereby granted, free of charge, to any person obtaining a copy
 //of this software and associated documentation files (the "Software"), to deal
@@ -35,38 +35,31 @@ namespace table.runner
         {
             var list = new List<TestClass>
             {
-                new TestClass
-                {
+                new() {
                     Field1 = 321121, Field2 = "Hi 312321", Field3 = 2121.32m, Field4 = true,
                     Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
                 },
-                new TestClass
-                {
+                new() {
                     Field1 = 32321, Field2 = "Hi long text", Field3 = 21111111.32m, Field4 = true,
                     Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
                 },
-                new TestClass
-                {
+                new() {
                     Field1 = 321, Field2 = "Hi longer text", Field3 = 2121.32m, Field4 = true,
                     Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
                 },
-                new TestClass
-                {
+                new() {
                     Field1 = 13, Field2 = "Hi very long text", Field3 = 21111121.32m, Field4 = true,
                     Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
                 },
-                new TestClass
-                {
+                new() {
                     Field1 = 13, Field2 = "Hi very, long text", Field3 = 21111121.32m, Field4 = true,
                     Field5 = new DateTime(1970, 1, 1), Field6 = 34.43
                 },
-                new TestClass
-                {
+                new() {
                     Field1 = 13, Field2 = "Hi \"very\" long\n text", Field3 = 21111121.32m, Field4 = true,
                     Field5 = new DateTime(1970, 1, 1), Field6 = 34.4300001
                 },
-                new TestClass
-                {
+                new() {
                     Field1 = 13, Field2 = null, Field3 = 21111121.32m, Field4 = true,
                     Field5 = new DateTime(1970, 1, 1), Field6 = 34.4300001
                 }
@@ -78,8 +71,7 @@ namespace table.runner
         {
             var list = new List<TestClass>
             {
-                new TestClass
-                {
+                new() {
                     Field1 = null, Field2 = null, Field3 = null, Field4 = null,
                     Field5 = null, Field6 = null
                 }
@@ -106,14 +98,14 @@ SELECT * from test
             {
                 DateFormat = "dd-MM-yy",
                 DecimalFormat = "#,##0.########"
-            }).FilterColumns(new[] { "AssetClass" }, FilterAction.Exclude).ToString();
+            }).FilterColumns(["AssetClass"], FilterAction.Exclude).ToString();
             Console.WriteLine(s);
 
             s = DbTable.Add(enumerable, new Options
             {
                 DateFormat = "dd-MM-yy",
                 DecimalFormat = "#,##0.########"
-            }).FilterColumns(new[] { "AssetClass" }, FilterAction.Exclude).ToSpecFlowString();
+            }).FilterColumns(["AssetClass"], FilterAction.Exclude).ToSpecFlowString();
             Console.WriteLine(s);
         }
 
@@ -242,20 +234,19 @@ SELECT * from test
             {
                 DateFormat = "dd-MM-yy",
                 DecimalFormat = "#,##0.########"
-            })
-                .ToConsole();
+            }).ToConsole();
         }
 
         public static void SimpleConsoleOutputForListNoException()
         {
-            Table<TestClass>.Add(new List<TestClass>()).ToConsole();
+            Table<TestClass>.Add([]).ToConsole();
         }
 
         public static void SimpleConsoleOutputWithHighlighterForList()
         {
             Table<TestClass>.Add(GetSampleOutput())
                 .HighlightValue(new HighlightOperator
-                { Field = "Field3", Type = HighlightType.Decimal, DecimalValue = new List<decimal> { 2121.32m } })
+                { Field = "Field3", Type = HighlightType.Decimal, DecimalValue = [2121.32m] })
                 .ToConsole();
         }
 
@@ -274,7 +265,7 @@ SELECT * from test
 
         public static void SimpleCsvEmptyOutputForList()
         {
-            Table<TestClass>.Add(new List<TestClass>(), new Options { DiscardEmptyList = false }).ToCsv(@"C:\temp\test-list-empty.csv");
+            Table<TestClass>.Add([], new Options { DiscardEmptyList = false }).ToCsv(@"C:\temp\test-list-empty.csv");
         }
 
         public static void SimpleHtmlOutputForList()
@@ -286,7 +277,7 @@ SELECT * from test
         {
             Table<TestClass>.Add(GetSampleOutput())
                 .HighlightValue(new HighlightOperator
-                { Field = "Field3", Type = HighlightType.Decimal, DecimalValue = new List<decimal> { 2121.32m }, Operation = HighlightOperation.Equality })
+                { Field = "Field3", Type = HighlightType.Decimal, DecimalValue = [2121.32m], Operation = HighlightOperation.Equality })
                 .ToHtml(@"C:\temp\test-list-highlight.html");
         }
 
@@ -298,15 +289,15 @@ SELECT * from test
         public static void ComplexConsoleOutputFilteringForList()
         {
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .FilterColumns(new[] { "Dynamic0" }, FilterAction.Include)
+                .FilterColumns(["Dynamic0"], FilterAction.Include)
                 .ToConsole();
 
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .FilterColumns(new[] { "Dynamic0" }, FilterAction.Include)
+                .FilterColumns(["Dynamic0"], FilterAction.Include)
                 .ToConsole();
 
             Table<IEnumerable<string>>.Add(GetStringMatrix())
-                .FilterColumns(new[] { "Dynamic0", "Dynamic1" }, FilterAction.Include)
+                .FilterColumns(["Dynamic0", "Dynamic1"], FilterAction.Include)
                 .HighlightRows(ConsoleColor.Red, ConsoleColor.White)
                 .ToConsole();
         }
@@ -315,7 +306,7 @@ SELECT * from test
         {
             Table<IEnumerable<string>>.Add(GetStringMatrix())
                 .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
-                .FilterColumns(new[] { "Dynamic0" }, FilterAction.Include)
+                .FilterColumns(["Dynamic0"], FilterAction.Include)
                 .ToConsole();
 
             Table<IEnumerable<string>>.Add(GetStringMatrix())
@@ -323,14 +314,14 @@ SELECT * from test
 
             Table<IEnumerable<string>>.Add(GetStringMatrix())
                 .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
-                .FilterColumns(new[] { "Capacity", "Count" }).ToConsole();
+                .FilterColumns(["Capacity", "Count"]).ToConsole();
 
             Table<IEnumerable<string>>.Add(GetStringMatrix()).OverrideColumnsNames(new Dictionary<string, string>
             {
                 {"Dynamic0", "A"},
                 {"Dynamic1", "B"},
                 {"Dynamic2", "C"}
-            }).FilterColumns(new[] { "Capacity", "Count" }).ColumnContentTextJustification(
+            }).FilterColumns(["Capacity", "Count"]).ColumnContentTextJustification(
                 new Dictionary<string, TextJustification>
                 {
                     {"Dynamic0", TextJustification.Right},
@@ -342,21 +333,21 @@ SELECT * from test
         {
             Table<IEnumerable<string>>.Add(GetStringMatrix())
                 .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
-                .FilterColumns(new[] { "Capacity", "Count" }).ToCsv(@"C:\temp\test.csv");
+                .FilterColumns(["Capacity", "Count"]).ToCsv(@"C:\temp\test.csv");
         }
 
         public static void ComplexHtmlOutputFilteringForList()
         {
             Table<IEnumerable<string>>.Add(GetStringMatrix())
                 .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
-                .FilterColumns(new[] { "Capacity", "Count" }).ToHtml(@"C:\temp\test.html");
+                .FilterColumns(["Capacity", "Count"]).ToHtml(@"C:\temp\test.html");
         }
 
         public static void ComplexMarkDownOutputFilteringForList()
         {
             Table<IEnumerable<string>>.Add(GetStringMatrix())
                 .OverrideColumnsNames(new Dictionary<string, string> { { "Dynamic0", "ColumnA" } })
-                .FilterColumns(new[] { "Capacity", "Count" })
+                .FilterColumns(["Capacity", "Count"])
                 .ColumnContentTextJustification(new Dictionary<string, TextJustification>
                     {{"Dynamic0", TextJustification.Right}}).ToMarkDown(@"C:\temp\test.md", true);
         }
@@ -383,7 +374,7 @@ SELECT * from test
                 .ToConsole();
 
             TableDic<string, TestClass>.Add(GetSimpleDictionary())
-                .FilterColumns(new[] { "Key_Id" })
+                .FilterColumns(["Key_Id"])
                 .ToConsole();
 
             TableDic<decimal, TestClass>.Add(GetSimpleDictionaryDecimal())
@@ -400,14 +391,14 @@ SELECT * from test
                 {
                     Field = "Field3",
                     Type = HighlightType.Decimal,
-                    DecimalValue = new List<decimal> { 2121.32m },
+                    DecimalValue = [2121.32m],
                     Operation = HighlightOperation.Equality
                 })
                 .HighlightValue(new HighlightOperator
                 {
                     Field = "Field6",
                     Type = HighlightType.Decimal,
-                    DecimalValue = new List<decimal>() { 34.43m, 134.43m },
+                    DecimalValue = [34.43m, 134.43m],
                     Operation = HighlightOperation.Equality
                 })
                 .ToConsole();
