@@ -86,16 +86,17 @@ namespace table.lib
                             while (reading)
                                 try
                                 {
-                                    var value = $"{Options.DynamicName}{index}";
+                                    var valueProp = $"{Options.DynamicName}{index}";
                                     var res = propertyInfo.GetValue(row, [index]);
-                                    if (!MaxWidth.ContainsKey(value))
+                                    if (!MaxWidth.TryGetValue(valueProp, out int value))
                                     {
-                                        PropertyNames.Add(new PropertyName(value, index, propertyIndex));
-                                        MaxWidth.Add(value, value.Length);
+                                        PropertyNames.Add(new PropertyName(valueProp, index, propertyIndex));
+                                        value = valueProp.Length;
+                                        MaxWidth.Add(valueProp, value);
                                     }
 
-                                    if (res.ToString().Length > MaxWidth[value])
-                                        MaxWidth[value] = res.ToString().Length;
+                                    if (res.ToString().Length > value)
+                                        MaxWidth[valueProp] = res.ToString().Length;
                                     index++;
                                 }
                                 catch (Exception)
@@ -105,15 +106,16 @@ namespace table.lib
                         }
                         else
                         {
-                            if (!MaxWidth.ContainsKey(propertyInfo.Name))
+                            if (!MaxWidth.TryGetValue(propertyInfo.Name, out int value))
                             {
                                 PropertyNames.Add(new PropertyName(propertyInfo.Name));
-                                MaxWidth.Add(propertyInfo.Name, propertyInfo.Name.Length);
+                                value = propertyInfo.Name.Length;
+                                MaxWidth.Add(propertyInfo.Name, value);
                             }
 
-                            var value = GetValue(row, new PropertyName(propertyInfo.Name));
-                            if (value.Length > MaxWidth[propertyInfo.Name])
-                                MaxWidth[propertyInfo.Name] = value.Length;
+                            var valueProp = GetValue(row, new PropertyName(propertyInfo.Name));
+                            if (valueProp.Length > value)
+                                MaxWidth[propertyInfo.Name] = valueProp.Length;
                         }
 
                         propertyIndex++;
@@ -133,10 +135,10 @@ namespace table.lib
 
         public TableDic<TV, T> HighlightValue(HighlightOperator operation)
         {
-            if (!Operation.ContainsKey(operation.Field))
+            if (!Operation.TryGetValue(operation.Field, out List<HighlightOperator> value))
                 Operation.Add(operation.Field, [operation]);
             else
-                Operation[operation.Field].Add(operation);
+                value.Add(operation);
             return this;
         }
 
@@ -172,8 +174,8 @@ namespace table.lib
             foreach (var property in filteredPropertyNames)
             {
                 var headerName = property.Name;
-                if (ColumnNameOverrides.ContainsKey(property.Name))
-                    headerName = ColumnNameOverrides[property.Name];
+                if (ColumnNameOverrides.TryGetValue(property.Name, out string value))
+                    headerName = value;
 
                 var length = MaxWidth[property.Name] - headerName.Length;
 
@@ -200,8 +202,8 @@ namespace table.lib
 
                         var lengthParsed = MaxWidth[property.Name] - keyValueParsed.Length;
 
-                        if (ColumnTextJustification.ContainsKey(property.Name))
-                            switch (ColumnTextJustification[property.Name])
+                        if (ColumnTextJustification.TryGetValue(property.Name, out TextJustification value))
+                            switch (value)
                             {
                                 case TextJustification.Centered:
                                     var totalLength = $"{new string(' ', lengthParsed)}{keyValueParsed.ToValidOutput()}"
@@ -234,34 +236,34 @@ namespace table.lib
                     }
                     else
                     {
-                        var value = GetValue(row, property);
-                        var length = MaxWidth[property.Name] - value.Length;
+                        var valueProp = GetValue(row, property);
+                        var length = MaxWidth[property.Name] - valueProp.Length;
 
-                        if (ColumnTextJustification.ContainsKey(property.Name))
-                            switch (ColumnTextJustification[property.Name])
+                        if (ColumnTextJustification.TryGetValue(property.Name, out TextJustification value))
+                            switch (value)
                             {
                                 case TextJustification.Centered:
-                                    var totalLength = $"{new string(' ', length)}{value.ToValidOutput()}".Length;
+                                    var totalLength = $"{new string(' ', length)}{valueProp.ToValidOutput()}".Length;
                                     var remaining =
-                                        totalLength - $"{new string(' ', length / 2)}{value.ToValidOutput()}".Length;
+                                        totalLength - $"{new string(' ', length / 2)}{valueProp.ToValidOutput()}".Length;
                                     ConsoleRender(
-                                        $"{new string(' ', length / 2)}{value.ToValidOutput()}{new string(' ', remaining)}",
+                                        $"{new string(' ', length / 2)}{valueProp.ToValidOutput()}{new string(' ', remaining)}",
                                         property.Name);
                                     break;
                                 case TextJustification.Right:
-                                    ConsoleRender($"{new string(' ', length)}{value.ToValidOutput()}", property.Name);
+                                    ConsoleRender($"{new string(' ', length)}{valueProp.ToValidOutput()}", property.Name);
                                     break;
                                 case TextJustification.Left:
-                                    ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}", property.Name);
+                                    ConsoleRender($"{valueProp.ToValidOutput()}{new string(' ', length)}", property.Name);
                                     break;
                                 case TextJustification.Justified:
-                                    ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}", property.Name);
+                                    ConsoleRender($"{valueProp.ToValidOutput()}{new string(' ', length)}", property.Name);
                                     break;
                                 default:
                                     throw new ArgumentOutOfRangeException();
                             }
                         else
-                            ConsoleRender($"{value.ToValidOutput()}{new string(' ', length)}", property.Name);
+                            ConsoleRender($"{valueProp.ToValidOutput()}{new string(' ', length)}", property.Name);
                     }
 
                 Console.Write(Environment.NewLine);
@@ -281,8 +283,8 @@ namespace table.lib
             foreach (var property in filteredPropertyNames)
             {
                 var headerName = property.Name;
-                if (ColumnNameOverrides.ContainsKey(property.Name))
-                    headerName = ColumnNameOverrides[property.Name];
+                if (ColumnNameOverrides.TryGetValue(property.Name, out string value))
+                    headerName = value;
 
                 var length = MaxWidth[property.Name] - headerName.Length;
 
@@ -309,8 +311,8 @@ namespace table.lib
 
                         var lengthParsed = MaxWidth[property.Name] - keyValueParsed.Length;
 
-                        if (ColumnTextJustification.ContainsKey(property.Name))
-                            switch (ColumnTextJustification[property.Name])
+                        if (ColumnTextJustification.TryGetValue(property.Name, out TextJustification value))
+                            switch (value)
                             {
                                 case TextJustification.Centered:
                                     var totalLength = $"{new string(' ', lengthParsed)}{keyValueParsed.ToValidOutput()}"
@@ -349,32 +351,32 @@ namespace table.lib
                     }
                     else
                     {
-                        var value = GetValue(row, property);
-                        var length = MaxWidth[property.Name] - value.Length;
+                        var valueProp = GetValue(row, property);
+                        var length = MaxWidth[property.Name] - valueProp.Length;
 
-                        if (ColumnTextJustification.ContainsKey(property.Name))
-                            switch (ColumnTextJustification[property.Name])
+                        if (ColumnTextJustification.TryGetValue(property.Name, out TextJustification value))
+                            switch (value)
                             {
                                 case TextJustification.Centered:
-                                    var totalLength = $"{new string(' ', length)}{value.ToValidOutput()}".Length;
-                                    var remaining = totalLength - $"{new string(' ', length / 2)}{value.ToValidOutput()}".Length;
+                                    var totalLength = $"{new string(' ', length)}{valueProp.ToValidOutput()}".Length;
+                                    var remaining = totalLength - $"{new string(' ', length / 2)}{valueProp.ToValidOutput()}".Length;
                                     stringBuilder.Append(' ');
-                                    stringBuilder.Append($"{new string(' ', length / 2)}{value.ToValidOutput()}{new string(' ', remaining)}");
+                                    stringBuilder.Append($"{new string(' ', length / 2)}{valueProp.ToValidOutput()}{new string(' ', remaining)}");
                                     stringBuilder.Append(" |");
                                     break;
                                 case TextJustification.Right:
                                     stringBuilder.Append(' ');
-                                    stringBuilder.Append($"{new string(' ', length)}{value.ToValidOutput()}");
+                                    stringBuilder.Append($"{new string(' ', length)}{valueProp.ToValidOutput()}");
                                     stringBuilder.Append(" |");
                                     break;
                                 case TextJustification.Left:
                                     stringBuilder.Append(' ');
-                                    stringBuilder.Append($"{value.ToValidOutput()}{new string(' ', length)}");
+                                    stringBuilder.Append($"{valueProp.ToValidOutput()}{new string(' ', length)}");
                                     stringBuilder.Append(" |");
                                     break;
                                 case TextJustification.Justified:
                                     stringBuilder.Append(' ');
-                                    stringBuilder.Append($"{value.ToValidOutput()}{new string(' ', length)}");
+                                    stringBuilder.Append($"{valueProp.ToValidOutput()}{new string(' ', length)}");
                                     stringBuilder.Append(" |");
                                     break;
                                 default:
@@ -383,7 +385,7 @@ namespace table.lib
                         else
                         {
                             stringBuilder.Append(' ');
-                            stringBuilder.Append($"{value.ToValidOutput()}{new string(' ', length)}");
+                            stringBuilder.Append($"{valueProp.ToValidOutput()}{new string(' ', length)}");
                             stringBuilder.Append(" |");
                         }
                     }
@@ -410,8 +412,8 @@ namespace table.lib
             foreach (var property in filteredPropertyNames)
             {
                 var headerName = property.Name;
-                if (ColumnNameOverrides.ContainsKey(property.Name))
-                    headerName = ColumnNameOverrides[property.Name];
+                if (ColumnNameOverrides.TryGetValue(property.Name, out string value))
+                    headerName = value;
 
                 s += $"{headerName.ToCsv()},";
             }
@@ -463,8 +465,8 @@ namespace table.lib
             foreach (var property in filteredPropertyNames)
             {
                 var headerName = property.Name;
-                if (ColumnNameOverrides.ContainsKey(property.Name))
-                    headerName = ColumnNameOverrides[property.Name];
+                if (ColumnNameOverrides.TryGetValue(property.Name, out string value))
+                    headerName = value;
 
                 var length = MaxWidth[property.Name] - headerName.Length;
                 s += $" {headerName.ToValidOutput()}{new string(' ', length)} |";
@@ -476,8 +478,8 @@ namespace table.lib
             foreach (var property in filteredPropertyNames)
             {
                 var columnSeparator = $" {new string('-', MaxWidth[property.Name])} |";
-                if (ColumnTextJustification.ContainsKey(property.Name))
-                    switch (ColumnTextJustification[property.Name])
+                if (ColumnTextJustification.TryGetValue(property.Name, out TextJustification value))
+                    switch (value)
                     {
                         case TextJustification.Centered:
                             columnSeparator = columnSeparator.Replace("- ", ": ");
@@ -543,8 +545,8 @@ namespace table.lib
             foreach (var property in filteredPropertyNames)
             {
                 var headerName = property.Name;
-                if (ColumnNameOverrides.ContainsKey(property.Name))
-                    headerName = ColumnNameOverrides[property.Name];
+                if (ColumnNameOverrides.TryGetValue(property.Name, out string value))
+                    headerName = value;
 
                 stringBuilder.AppendLine(
                     $"<th style=\"text-align: center; background-color: #04163d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">{headerName.ToHtml()}</th>");
