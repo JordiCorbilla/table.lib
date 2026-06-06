@@ -7,7 +7,7 @@ This is a versatile and user-friendly `C# (.NET 8 and .NET 10)` table library th
 via nuget package -> https://www.nuget.org/packages/table.lib/
 
 ```bash
-dotnet add package table.lib --version 1.18.0
+dotnet add package table.lib --version 1.19.0
 ```
 
 ## Build and publish
@@ -16,7 +16,7 @@ dotnet add package table.lib --version 1.18.0
 dotnet restore
 dotnet test table.sln --configuration Release
 dotnet pack table.lib/table.lib.csproj --configuration Release --no-build
-dotnet nuget push artifacts/package/table.lib.1.18.0.nupkg --api-key <NUGET_API_KEY> --source https://api.nuget.org/v3/index.json
+dotnet nuget push artifacts/package/table.lib.1.19.0.nupkg --api-key <NUGET_API_KEY> --source https://api.nuget.org/v3/index.json
 ```
 
 The SQL Server integration tests are opt-in. Set `TABLE_LIB_SQL_PRODUCTS_CONNECTION` and `TABLE_LIB_SQL_USERS_CONNECTION` when you want to run them against a local database.

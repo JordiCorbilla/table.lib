@@ -8,21 +8,22 @@
     <Authors>Jordi Corbilla</Authors>
     <Company>Jordi Corbilla</Company>
     <Product>table.lib</Product>
-    <Version>1.18.0</Version>
+    <Version>1.19.0</Version>
     <Copyright>Jordi Corbilla</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/JordiCorbilla/table.lib</PackageProjectUrl>
     <RepositoryUrl>https://github.com/JordiCorbilla/table.lib</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>table;markdown;csv;html;specflow;sql;console;formatting</PackageTags>
-    <PackageReleaseNotes>v1.18
+    <PackageReleaseNotes>v1.19
+- Replaces the incorrect 1.18.0 package.
 - Add .NET 10 target while retaining .NET 8 compatibility.
 - Refresh NuGet package metadata for publishing.</PackageReleaseNotes>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Description>This is a versatile and user-friendly C# (.NET 8 and .NET 10) table library that can quickly render any List&lt;T&gt; or Dictionary&lt;TV, T&gt; into a visually appealing markdown, CSV, HTML, SpecFlow, SQL-insert, or console table format, while providing flexibility for other formats as well. In addition, it also supports dynamic returns from Dapper as IEnumerable&lt;IDictionary&lt;string, object&gt;&gt; via DBTable object. Whether you need to format data for documentation, testing, or display purposes, this library makes it easy to do so in a variety of formats, with just a few lines of code.</Description>
-    <AssemblyVersion>1.18.0.0</AssemblyVersion>
-    <FileVersion>1.18.0.0</FileVersion>
+    <AssemblyVersion>1.19.0.0</AssemblyVersion>
+    <FileVersion>1.19.0.0</FileVersion>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageOutputPath>..\artifacts\package</PackageOutputPath>
     <IncludeSymbols>true</IncludeSymbols>
