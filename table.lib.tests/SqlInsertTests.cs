@@ -1,7 +1,7 @@
 using Dapper;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using table.runner;
 
@@ -19,13 +19,13 @@ namespace table.lib.tests
         {
             var s = Table<TestClass>.Add(Samples.GetSampleOutput()).ToSqlInsertString();
             var lines = s.Split(Environment.NewLine);
-            Assert.Multiple(() =>
+            Assert.Multiple((Action)(() =>
             {
                 Assert.That(lines[0], Is.EqualTo("INSERT INTO TestClass (Field1,Field2,Field3,Field4,Field5,Field6) VALUES (321121,'Hi 312321',2121.32,1,'1970-01-01',34.43);"));
                 Assert.That(lines[1], Is.EqualTo("INSERT INTO TestClass (Field1,Field2,Field3,Field4,Field5,Field6) VALUES (32321,'Hi long text',21111111.32,1,'1970-01-01',34.43);"));
                 Assert.That(lines[2], Is.EqualTo("INSERT INTO TestClass (Field1,Field2,Field3,Field4,Field5,Field6) VALUES (321,'Hi longer text',2121.32,1,'1970-01-01',34.43);"));
                 Assert.That(lines[3], Is.EqualTo("INSERT INTO TestClass (Field1,Field2,Field3,Field4,Field5,Field6) VALUES (13,'Hi very long text',21111121.32,1,'1970-01-01',34.43);"));
-            });
+            }));
         }
 
         [Test]
@@ -33,17 +33,21 @@ namespace table.lib.tests
         {
             var s = Table<TestClass>.Add(Samples.GetNullOutput()).ToSqlInsertString();
             var lines = s.Split(Environment.NewLine);
-            Assert.Multiple(() =>
+            Assert.Multiple((Action)(() =>
             {
                 Assert.That(lines[0], Is.EqualTo("INSERT INTO TestClass (Field1,Field2,Field3,Field4,Field5,Field6) VALUES (NULL,NULL,NULL,NULL,NULL,NULL);"));
-            });
+            }));
         }
 
         [Test]
         public void TestNullFromDBGeneration()
         {
+            var connectionString = Environment.GetEnvironmentVariable("TABLE_LIB_SQL_USERS_CONNECTION");
+            if (string.IsNullOrWhiteSpace(connectionString))
+                Assert.Ignore("Set TABLE_LIB_SQL_USERS_CONNECTION to run this SQL Server integration test.");
+
             IEnumerable<IDictionary<string, object>> table;
-            using (var connection = new SqlConnection(@"Data Source=DESKTOP-TTUSQLJ\SQLEXPRESS;Initial Catalog=store;Integrated Security=True"))
+            using (var connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 const string data = @"
@@ -59,10 +63,10 @@ SELECT PhoneNumber, LockoutEnd
 
             var s = DbTable.Add(enumerable).ToSqlInsertString();
             var lines = s.Split(Environment.NewLine);
-            Assert.Multiple(() =>
+            Assert.Multiple((Action)(() =>
             {
                 Assert.That(lines[0], Is.EqualTo("INSERT INTO Table1 (PhoneNumber,LockoutEnd) VALUES (NULL,NULL);"));
-            });
+            }));
         }
     }
 }
