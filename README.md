@@ -1,12 +1,23 @@
 # table.lib
 
-Simple `c# (.NET 6)` table library that renders any `List<T>` or `Dictionary<TV, T>` into a nicely formatted `markdown`, `csv`, `html`, `specflow`, `sql-insert` or `console` table, allowing for extra formats. It also supports `dynamic` returns from Dapper as `IEnumerable<IDictionary<string, object>>` via `DBTable` object.
+Simple `c# (.NET 8 and .NET 10)` table library that renders any `List<T>` or `Dictionary<TV, T>` into a nicely formatted `markdown`, `csv`, `html`, `specflow`, `sql-insert` or `console` table, allowing for extra formats. It also supports `dynamic` returns from Dapper as `IEnumerable<IDictionary<string, object>>` via `DBTable` object.
 
 ## Installation
 
 ```bash
-dotnet add package table.lib --version 1.8.1
+dotnet add package table.lib --version 1.18.0
 ```
+
+## Build and publish
+
+```bash
+dotnet restore
+dotnet test table.sln --configuration Release
+dotnet pack table.lib/table.lib.csproj --configuration Release --no-build
+dotnet nuget push artifacts/package/table.lib.1.18.0.nupkg --api-key <NUGET_API_KEY> --source https://api.nuget.org/v3/index.json
+```
+
+The SQL Server integration tests are opt-in. Set `TABLE_LIB_SQL_PRODUCTS_CONNECTION` and `TABLE_LIB_SQL_USERS_CONNECTION` when you want to run them against a local database.
 
 ## Markdown format in the `console` output
 

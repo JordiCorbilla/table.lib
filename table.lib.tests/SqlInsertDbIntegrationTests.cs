@@ -1,7 +1,7 @@
 ﻿using Dapper;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 
 namespace table.lib.tests
@@ -17,9 +17,12 @@ namespace table.lib.tests
         [Test]
         public void TestGeneration()
         {
+            var connectionString = Environment.GetEnvironmentVariable("TABLE_LIB_SQL_PRODUCTS_CONNECTION");
+            if (string.IsNullOrWhiteSpace(connectionString))
+                Assert.Ignore("Set TABLE_LIB_SQL_PRODUCTS_CONNECTION to run this SQL Server integration test.");
+
             IEnumerable<IDictionary<string, object>> table;
-            using (var connection =
-                new SqlConnection(@"Data Source=DESKTOP-TTUSQLJ\SQLEXPRESS;Initial Catalog=Store;Integrated Security=True"))
+            using (var connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 const string data = @"
