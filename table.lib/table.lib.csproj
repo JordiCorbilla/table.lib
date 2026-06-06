@@ -21,7 +21,7 @@
 - Refresh NuGet package metadata for publishing.</PackageReleaseNotes>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Description>This is a versatile and user-friendly C# (.NET 8 and .NET 10) table library that can quickly render any List&lt;T&gt; or Dictionary&lt;TV, T&gt; into a visually appealing markdown, CSV, HTML, SpecFlow, SQL-insert, or console table format, while providing flexibility for other formats as well. In addition, it also supports dynamic returns from Dapper as IEnumerable&lt;IDictionary&lt;string, object&gt;&gt; via DBTable object. Whether you need to format data for documentation, testing, or display purposes, this library makes it easy to do so in a variety of formats, with just a few lines of code.</Description>
+    <Description>This is a versatile and user-friendly C# (.NET 8 and .NET 10) table library that can quickly render any List&lt;T&gt; or Dictionary&lt;TV, T&gt; into a visually appealing markdown, CSV, HTML, SpecFlow, SQL-insert, or console table format, while providing flexibility for other formats as well. In addition, it also supports dynamic returns from Dapper as IEnumerable&lt;IDictionary&lt;string, object&gt;&gt; via DbTable object. Whether you need to format data for documentation, testing, or display purposes, this library makes it easy to do so in a variety of formats, with just a few lines of code.</Description>
     <AssemblyVersion>1.19.0.0</AssemblyVersion>
     <FileVersion>1.19.0.0</FileVersion>
     <PackageReadmeFile>README.md</PackageReadmeFile>
