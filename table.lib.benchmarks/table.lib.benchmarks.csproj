@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+    <UseBaseline Condition="'$(UseBaseline)' == ''">false</UseBaseline>
+    <RestoreConfigFile>$(MSBuildThisFileDirectory)..\NuGet.Config</RestoreConfigFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.15.8" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(UseBaseline)' == 'true'">
+    <DefineConstants>$(DefineConstants);BASELINE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(UseBaseline)' == 'true' and '$(BaselineAssemblyPath)' == ''">
+    <PackageReference Include="table.lib" Version="1.19.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UseBaseline)' == 'true' and '$(BaselineAssemblyPath)' != ''">
+    <Reference Include="table.lib" HintPath="$(BaselineAssemblyPath)\lib\$(TargetFramework)\table.lib.dll" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UseBaseline)' != 'true'">
+    <ProjectReference Include="..\table.lib\table.lib.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main, feature-1]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+
+      - name: Restore
+        run: dotnet restore table.sln --configfile NuGet.Config
+
+      - name: Build
+        run: dotnet build table.sln --configuration Release --no-restore
+
+      - name: Unit tests
+        run: dotnet test table.lib.tests/table.lib.tests.csproj --configuration Release --no-build
+
+      - name: Integration test contract
+        run: dotnet test table.lib.integrationtests/table.lib.integrationtests.csproj --configuration Release --no-build
+
+      - name: Pack and validate NuGet package
+        if: runner.os == 'Linux'
+        run: dotnet pack table.lib/table.lib.csproj --configuration Release --no-build --output artifacts/package
+
+      - name: Upload NuGet package
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: table.lib-nuget
+          path: |
+            artifacts/package/*.nupkg
+            artifacts/package/*.snupkg
+          if-no-files-found: error

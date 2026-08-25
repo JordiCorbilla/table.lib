@@ -7,19 +7,43 @@ This is a versatile and user-friendly `C# (.NET 8 and .NET 10)` table library th
 via nuget package -> https://www.nuget.org/packages/table.lib/
 
 ```bash
-dotnet add package table.lib --version 1.19.0
+dotnet add package table.lib --version 1.20.0
 ```
 
 ## Build and publish
 
 ```bash
-dotnet restore
+dotnet restore table.sln --configfile NuGet.Config
 dotnet test table.sln --configuration Release
-dotnet pack table.lib/table.lib.csproj --configuration Release --no-build
-dotnet nuget push artifacts/package/table.lib.1.19.0.nupkg --api-key <NUGET_API_KEY> --source https://api.nuget.org/v3/index.json
+dotnet pack table.lib/table.lib.csproj --configuration Release --output artifacts/package
+dotnet nuget push artifacts/package/table.lib.1.20.0.nupkg --api-key <NUGET_API_KEY> --source https://api.nuget.org/v3/index.json
 ```
 
-The SQL Server integration tests are opt-in. Set `TABLE_LIB_SQL_PRODUCTS_CONNECTION` and `TABLE_LIB_SQL_USERS_CONNECTION` when you want to run them against a local database.
+The SQL Server integration tests in `table.lib.integrationtests` are opt-in. Set `TABLE_LIB_SQL_PRODUCTS_CONNECTION` and `TABLE_LIB_SQL_USERS_CONNECTION` when you want to run them against a local database.
+
+## Streaming output
+
+Use the `TextWriter` APIs for large tables so the complete output does not need to be held in memory:
+
+```c#
+var table = Table<TestClass>.Add(list);
+
+await using var stream = File.CreateText("output.csv");
+table.WriteCsv(stream);
+```
+
+`WriteCsv`, `WriteMarkdown`, `WriteHtml`, `WriteSpecFlow`, and `WriteSqlInsert` are available on `Table<T>`. `TableDic<TV, T>` supports CSV, Markdown, and HTML writers, while `DbTable` supports SpecFlow and SQL writers. The existing string and file APIs remain available.
+
+## Performance
+
+Release `1.20.0` caches compiled property accessors, avoids exception-driven collection traversal, and writes rendering output incrementally. Benchmarks cover 10, 1,000, and 10,000 rows on both supported target frameworks.
+
+In the local .NET 10 BenchmarkDotNet comparison, rendering a 1,000-row `Table<T>` to CSV improved from 1,515 us and 2,451 KB allocated in `1.19.0` to 963 us and 885 KB allocated in `1.20.0` (about 36% faster with 64% less managed allocation). Results vary by hardware and runtime configuration.
+
+```bash
+dotnet run --project table.lib.benchmarks/table.lib.benchmarks.csproj --configuration Release --framework net10.0 -- --filter "*Csv*"
+dotnet run --project table.lib.benchmarks/table.lib.benchmarks.csproj --configuration Release --framework net10.0 -p:UseBaseline=true -- --filter "*Csv*"
+```
 
 ## Markdown format in the `console` output
 

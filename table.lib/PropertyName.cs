@@ -43,5 +43,6 @@ namespace table.lib
         public int Index { get; set; }
         public bool IsCollection { get; set; }
         public int PropertyIndex { get; set; }
+        internal object Accessor { get; set; }
     }
 }

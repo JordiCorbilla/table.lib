@@ -21,6 +21,7 @@
 //SOFTWARE.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -32,15 +33,19 @@ namespace table.lib
     {
         public TableDic(Dictionary<TV, T> dictionary, Options options = null)
         {
-            if (dictionary.Count == 0) return;
             if (options != null)
                 Options = options;
             PropertyNames = [];
             MaxWidth = [];
-            Keys = dictionary.Select(x => x.Key).ToList();
-            Items = dictionary.Select(x => x.Value).ToList();
+            Keys = new List<TV>(dictionary.Count);
+            Items = new List<T>(dictionary.Count);
+            foreach (var (key, value) in dictionary)
+            {
+                Keys.Add(key);
+                Items.Add(value);
+            }
 
-            var properties = typeof(T).GetProperties();
+            var properties = TypeMetadata<T>.Properties;
 
             //Add the additional Key
             PropertyNames.Add(new PropertyName(Options.KeyName));
@@ -48,7 +53,7 @@ namespace table.lib
 
             foreach (var property in properties)
             {
-                PropertyNames.Add(new PropertyName(property.Name));
+                PropertyNames.Add(new PropertyName(property.Name) { Accessor = property });
                 MaxWidth.Add(property.Name, property.Name.Length);
             }
 
@@ -62,49 +67,44 @@ namespace table.lib
             }
 
             foreach (var row in Items)
-                if (properties.Length != 0)
+                if (properties.Count != 0)
                 {
-                    foreach (var property in PropertyNames)
+                    foreach (var property in properties)
                     {
-                        var value = GetValue(row, new PropertyName(property.Name));
+                        var value = ObjectToString(property.GetValue(row));
                         if (value.Length > MaxWidth[property.Name])
                             MaxWidth[property.Name] = value.Length;
                     }
                 }
                 else
                 {
-                    var props = row.GetType().GetProperties();
+                    var props = TypeMetadata<T>.GetRuntimeProperties(row.GetType());
 
                     var propertyIndex = 0;
                     foreach (var propertyInfo in props)
                     {
                         // Indexed property (collections)
-                        if (propertyInfo.GetIndexParameters().Length > 0)
+                        var indexParameters = propertyInfo.GetIndexParameters();
+                        if (indexParameters.Length == 1 && indexParameters[0].ParameterType == typeof(int) &&
+                            row is IEnumerable enumerable)
                         {
-                            var reading = true;
                             var index = 0;
-                            while (reading)
-                                try
+                            foreach (var result in enumerable)
+                            {
+                                var valueName = $"{Options.DynamicName}{index}";
+                                if (!MaxWidth.TryGetValue(valueName, out var width))
                                 {
-                                    var valueProp = $"{Options.DynamicName}{index}";
-                                    var res = propertyInfo.GetValue(row, [index]);
-                                    if (!MaxWidth.TryGetValue(valueProp, out int value))
-                                    {
-                                        PropertyNames.Add(new PropertyName(valueProp, index, propertyIndex));
-                                        value = valueProp.Length;
-                                        MaxWidth.Add(valueProp, value);
-                                    }
+                                    PropertyNames.Add(new PropertyName(valueName, index, propertyIndex));
+                                    width = valueName.Length;
+                                    MaxWidth.Add(valueName, width);
+                                }
 
-                                    if (res.ToString().Length > value)
-                                        MaxWidth[valueProp] = res.ToString().Length;
-                                    index++;
-                                }
-                                catch (Exception)
-                                {
-                                    reading = false;
-                                }
+                                var text = ObjectToString(result);
+                                if (text.Length > width) MaxWidth[valueName] = text.Length;
+                                index++;
+                            }
                         }
-                        else
+                        else if (indexParameters.Length == 0)
                         {
                             if (!MaxWidth.TryGetValue(propertyInfo.Name, out int value))
                             {
@@ -400,181 +400,148 @@ namespace table.lib
         public void ToCsv(string fileName)
         {
             using var file = new StreamWriter(fileName);
-            file.WriteLine(ToCsv());
+            WriteCsv(file);
         }
 
         public string ToCsv()
         {
-            var stringBuilder = new StringBuilder();
-            if (Items.Count == 0) return "";
-            var s = "";
-            var filteredPropertyNames = FilterProperties();
-            foreach (var property in filteredPropertyNames)
+            return Items.Count == 0 ? string.Empty : RenderingHelpers.RenderToString(WriteCsv);
+        }
+
+        public void WriteCsv(TextWriter writer)
+        {
+            ArgumentNullException.ThrowIfNull(writer);
+            if (Items.Count == 0) return;
+
+            var properties = FilterProperties();
+            for (var index = 0; index < properties.Count; index++)
             {
-                var headerName = property.Name;
-                if (ColumnNameOverrides.TryGetValue(property.Name, out string value))
-                    headerName = value;
-
-                s += $"{headerName.ToCsv()},";
+                if (index > 0) writer.Write(',');
+                var property = properties[index];
+                var header = ColumnNameOverrides.TryGetValue(property.Name, out var value) ? value : property.Name;
+                RenderingHelpers.WriteCsvValue(writer, header);
             }
+            writer.WriteLine();
 
-            s = s.Remove(s.Length - 1);
-            stringBuilder.AppendLine(s);
-
-            for (var i = 0; i < Items.Count; i++)
+            for (var rowIndex = 0; rowIndex < Items.Count; rowIndex++)
             {
-                var row = Items[i];
-                s = "";
-                foreach (var t in filteredPropertyNames)
-                    if (t.Name == Options.KeyName)
-                    {
-                        var keyValueParsed = ObjectToString(Keys[i]);
-                        s += $"{keyValueParsed.ToCsv()},";
-                    }
-                    else
-                    {
-                        var property = t;
-                        var s1 = GetValue(row, property);
-                        s += $"{s1.ToCsv()},";
-                    }
-
-                s = s.Remove(s.Length - 1);
-                stringBuilder.AppendLine(s);
+                for (var index = 0; index < properties.Count; index++)
+                {
+                    if (index > 0) writer.Write(',');
+                    var property = properties[index];
+                    var value = property.Name == Options.KeyName
+                        ? ObjectToString(Keys[rowIndex])
+                        : GetValue(Items[rowIndex], property);
+                    RenderingHelpers.WriteCsvValue(writer, value);
+                }
+                writer.WriteLine();
             }
-
-            return stringBuilder.ToString();
         }
 
         public void ToMarkDown(string fileName, bool consoleVerbose = false)
         {
             using var file = new StreamWriter(fileName);
-            file.WriteLine(ToMarkDown());
+            WriteMarkdown(file);
 
             if (consoleVerbose)
-                Console.WriteLine(ToMarkDown());
+                WriteMarkdown(Console.Out);
         }
 
         public string ToMarkDown()
         {
-            if (Items.Count == 0) return "";
-            var stringBuilder = new StringBuilder();
-            var s = "|";
+            return Items.Count == 0 ? string.Empty : RenderingHelpers.RenderToString(WriteMarkdown);
+        }
 
-            var filteredPropertyNames = FilterProperties();
+        public void WriteMarkdown(TextWriter writer)
+        {
+            ArgumentNullException.ThrowIfNull(writer);
+            if (Items.Count == 0) return;
 
-            foreach (var property in filteredPropertyNames)
+            var properties = FilterProperties();
+            writer.Write('|');
+            foreach (var property in properties)
             {
-                var headerName = property.Name;
-                if (ColumnNameOverrides.TryGetValue(property.Name, out string value))
-                    headerName = value;
-
-                var length = MaxWidth[property.Name] - headerName.Length;
-                s += $" {headerName.ToValidOutput()}{new string(' ', length)} |";
+                var header = ColumnNameOverrides.TryGetValue(property.Name, out var value) ? value : property.Name;
+                RenderingHelpers.WriteValueCell(writer, header.ToValidOutput(), MaxWidth[property.Name]);
             }
+            writer.WriteLine();
 
-            stringBuilder.AppendLine(s);
-
-            s = "|";
-            foreach (var property in filteredPropertyNames)
+            writer.Write('|');
+            foreach (var property in properties)
             {
-                var columnSeparator = $" {new string('-', MaxWidth[property.Name])} |";
-                if (ColumnTextJustification.TryGetValue(property.Name, out TextJustification value))
-                    switch (value)
-                    {
-                        case TextJustification.Centered:
-                            columnSeparator = columnSeparator.Replace("- ", ": ");
-                            columnSeparator = columnSeparator.Replace(" -", " :");
-                            break;
-                        case TextJustification.Right:
-                            columnSeparator = columnSeparator.Replace("- ", ": ");
-                            break;
-                        case TextJustification.Left:
-                            columnSeparator = columnSeparator.Replace(" -", " :");
-                            break;
-                        case TextJustification.Justified:
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-
-                s += columnSeparator;
+                var justification = ColumnTextJustification.TryGetValue(property.Name, out var value)
+                    ? value
+                    : TextJustification.Justified;
+                writer.Write(' ');
+                if (justification is TextJustification.Centered or TextJustification.Left) writer.Write(':');
+                RenderingHelpers.WriteRepeated(writer, '-', MaxWidth[property.Name] -
+                    (justification == TextJustification.Centered ? 2 : justification is TextJustification.Right or TextJustification.Left ? 1 : 0));
+                if (justification is TextJustification.Centered or TextJustification.Right) writer.Write(':');
+                writer.Write(" |");
             }
+            writer.WriteLine();
 
-            stringBuilder.AppendLine(s);
-
-            for (var i = 0; i < Items.Count; i++)
+            for (var rowIndex = 0; rowIndex < Items.Count; rowIndex++)
             {
-                var row = Items[i];
-                s = "|";
-                foreach (var property in filteredPropertyNames)
-                    if (property.Name == Options.KeyName)
-                    {
-                        var keyValueParsed = ObjectToString(Keys[i]);
-                        var length = MaxWidth[property.Name] - keyValueParsed.Length;
-                        s += $" {keyValueParsed.ToValidOutput()}{new string(' ', length)} |";
-                    }
-                    else
-                    {
-                        var value = GetValue(row, property);
-                        var length = MaxWidth[property.Name] - value.Length;
-                        s += $" {value.ToValidOutput()}{new string(' ', length)} |";
-                    }
-
-                stringBuilder.AppendLine(s);
+                writer.Write('|');
+                foreach (var property in properties)
+                {
+                    var value = property.Name == Options.KeyName
+                        ? ObjectToString(Keys[rowIndex])
+                        : GetValue(Items[rowIndex], property);
+                    RenderingHelpers.WriteValueCell(writer, value.ToValidOutput(), MaxWidth[property.Name]);
+                }
+                writer.WriteLine();
             }
-
-            stringBuilder.AppendLine();
-
-            return stringBuilder.ToString();
+            writer.WriteLine();
         }
 
         public void ToHtml(string fileName)
         {
             using var file = new StreamWriter(fileName);
-            file.WriteLine(ToHtml());
+            WriteHtml(file);
         }
 
         public string ToHtml()
         {
-            var stringBuilder = new StringBuilder();
-            if (Items.Count == 0) return "";
-            stringBuilder.AppendLine("<table style=\"border-collapse: collapse; width: 100%;\">");
-            stringBuilder.AppendLine("<tr>");
+            return Items.Count == 0 ? string.Empty : RenderingHelpers.RenderToString(WriteHtml);
+        }
 
-            var filteredPropertyNames = FilterProperties();
-            foreach (var property in filteredPropertyNames)
+        public void WriteHtml(TextWriter writer)
+        {
+            ArgumentNullException.ThrowIfNull(writer);
+            if (Items.Count == 0) return;
+
+            writer.WriteLine("<table style=\"border-collapse: collapse; width: 100%;\">");
+            writer.WriteLine("<tr>");
+            var properties = FilterProperties();
+            foreach (var property in properties)
             {
-                var headerName = property.Name;
-                if (ColumnNameOverrides.TryGetValue(property.Name, out string value))
-                    headerName = value;
-
-                stringBuilder.AppendLine(
-                    $"<th style=\"text-align: center; background-color: #04163d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">{headerName.ToHtml()}</th>");
+                var header = ColumnNameOverrides.TryGetValue(property.Name, out var value) ? value : property.Name;
+                writer.Write("<th style=\"text-align: center; background-color: #04163d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">");
+                writer.Write(header.ToHtml());
+                writer.WriteLine("</th>");
             }
+            writer.WriteLine("</tr>");
 
-            stringBuilder.AppendLine("</tr>");
-
-            var rowNumber = 1;
-            for (var index = 0; index < Items.Count; index++)
+            for (var rowIndex = 0; rowIndex < Items.Count; rowIndex++)
             {
-                var row = Items[index];
-                stringBuilder.AppendLine("<tr>");
-                foreach (var property in filteredPropertyNames)
+                writer.WriteLine("<tr>");
+                var color = (rowIndex + 1) % 2 == 0 ? "#f2f2f2" : "white";
+                foreach (var property in properties)
                 {
-                    var color = rowNumber % 2 == 0 ? "#f2f2f2" : "white";
-                    var value = property.Name == Options.KeyName ? ObjectToString(Keys[index]) : GetValue(row, property);
-
-                    stringBuilder.AppendLine(
-                        $"<td style=\"text-align: right; color: black; background-color: {color};padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">{value.ToHtml()}</td>");
+                    var value = property.Name == Options.KeyName
+                        ? ObjectToString(Keys[rowIndex])
+                        : GetValue(Items[rowIndex], property);
+                    writer.Write("<td style=\"text-align: right; color: black; background-color: ");
+                    writer.Write(color);
+                    writer.Write(";padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">");
+                    writer.Write(value.ToHtml());
+                    writer.WriteLine("</td>");
                 }
-
-                rowNumber++;
-                stringBuilder.AppendLine("</tr>");
+                writer.WriteLine("</tr>");
             }
-
-            stringBuilder.AppendLine("</table>");
-
-            return stringBuilder.ToString();
+            writer.WriteLine("</table>");
         }
 
         public static TableDic<TV, T> Add(Dictionary<TV, T> dictionary)

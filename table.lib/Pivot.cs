@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.IO;
 using table.lib.Entities;
 
 namespace table.lib
@@ -41,11 +41,11 @@ namespace table.lib
             MaxWidthProperties = "Field".Length;
             MaxWidthData = [];
             Items = list;
-            var properties = typeof(T).GetProperties();
+            var properties = TypeMetadata<T>.Properties;
             ClassName = typeof(T).Name;
             foreach (var property in properties)
             {
-                PropertyNames.Add(new PropertyName(property.Name));
+                PropertyNames.Add(new PropertyName(property.Name) { Accessor = property });
                 if (property.Name.Length > MaxWidthProperties)
                     MaxWidthProperties = property.Name.Length;
                 Data.Add(property.Name, []);
@@ -54,7 +54,7 @@ namespace table.lib
             var index = 0;
             foreach (var row in Items)
             {
-                if (properties.Length != 0)
+                if (properties.Count != 0)
                 {
                     MaxWidthData.Add(index, $"T{index}".Length);
                     foreach (var property in PropertyNames)
@@ -78,135 +78,54 @@ namespace table.lib
 
         public override string ToString()
         {
-            if (Data.Count == 0) return string.Empty;
-
-            var s = "|";
-            var sb = new StringBuilder();
-
-            var header = "Field";
-            var length = MaxWidthProperties - header.Length;
-            var totalLength = $"{new string(' ', length)}{header}".Length;
-            var remaining = totalLength - $"{new string(' ', length / 2)}{header}".Length;
-            s += $" {new string(' ', length / 2)}{header}{new string(' ', remaining)} |";
-
-            foreach (var col in MaxWidthData)
-            {
-                header = $"T{col.Key}";
-                length = MaxWidthData[col.Key] - header.Length;
-                totalLength = $"{new string(' ', length)}{header}".Length;
-                remaining = totalLength - $"{new string(' ', length / 2)}{header}".Length;
-                s += $" {new string(' ', length / 2)}{header}{new string(' ', remaining)} |";
-            }
-
-            sb.AppendLine(s);
-
-            s = "|";
-            s += $" {new string('-', MaxWidthProperties)} |";
-
-            foreach (var col in MaxWidthData)
-            {
-                s += $" {new string('-', MaxWidthData[col.Key])} |";
-            }
-
-            sb.AppendLine(s);
-
-            foreach (var p in Data)
-            {
-                s = "|";
-                header = p.Key;
-                length = MaxWidthProperties - header.Length;
-                totalLength = $"{new string(' ', length)}{header}".Length;
-                remaining = totalLength - $"{new string(' ', length / 2)}{header}".Length;
-                s += $" {new string(' ', length / 2)}{header}{new string(' ', remaining)} |";
-
-                var index = 0;
-                foreach (var q in p.Value)
-                {
-                    header = q.Value;
-                    length = MaxWidthData[index++] - header.Length;
-                    totalLength = $"{new string(' ', length)}{header}".Length;
-                    remaining = totalLength - $"{new string(' ', length / 2)}{header}".Length;
-                    s += $" {new string(' ', length / 2)}{header}{new string(' ', remaining)} |";
-                }
-
-                sb.AppendLine(s);
-            }
-
-            return sb.ToString();
+            return Data.Count == 0 ? string.Empty : RenderingHelpers.RenderToString(WriteTable);
         }
 
 
         public void ToConsole()
         {
             if (Data.Count == 0) return;
-
-            var s = "|";
-
-            var header = "Field";
-            var length = MaxWidthProperties - header.Length;
-            var totalLength = $"{new string(' ', length)}{header}".Length;
-            var remaining = totalLength - $"{new string(' ', length / 2)}{header}".Length;
-            s += $" {new string(' ', length / 2)}{header}{new string(' ', remaining)} |";
-
-            foreach (var col in MaxWidthData)
-            {
-                header = $"T{col.Key}";
-                length = MaxWidthData[col.Key] - header.Length;
-                totalLength = $"{new string(' ', length)}{header}".Length;
-                remaining = totalLength - $"{new string(' ', length / 2)}{header}".Length;
-                s += $" {new string(' ', length / 2)}{header}{new string(' ', remaining)} |";
-            }
-
-            Console.WriteLine(s);
-
-            s = "|";
-            s += $" {new string('-', MaxWidthProperties)} |";
-
-            foreach (var col in MaxWidthData)
-            {
-                s += $" {new string('-', MaxWidthData[col.Key])} |";
-            }
-
-            Console.WriteLine(s);
-
-            foreach (var p in Data)
-            {
-                s = "|";
-                header = p.Key;
-                length = MaxWidthProperties - header.Length;
-                totalLength = $"{new string(' ', length)}{header}".Length;
-                remaining = totalLength - $"{new string(' ', length / 2)}{header}".Length;
-                s += $" {new string(' ', length / 2)}{header}{new string(' ', remaining)} |";
-
-                var index = 0;
-                foreach (var q in p.Value)
-                {
-                    header = q.Value;
-                    length = MaxWidthData[index++] - header.Length;
-                    totalLength = $"{new string(' ', length)}{header}".Length;
-                    remaining = totalLength - $"{new string(' ', length / 2)}{header}".Length;
-                    s += $" {new string(' ', length / 2)}{header}{new string(' ', remaining)} |";
-                }
-
-                Console.WriteLine(s);
-            }
-
+            WriteTable(Console.Out);
             Console.WriteLine();
+        }
+
+        private void WriteTable(TextWriter writer)
+        {
+            writer.Write('|');
+            RenderingHelpers.WriteCenteredCell(writer, "Field", MaxWidthProperties);
+            foreach (var column in MaxWidthData)
+                RenderingHelpers.WriteCenteredCell(writer, $"T{column.Key}", column.Value);
+            writer.WriteLine();
+
+            writer.Write('|');
+            RenderingHelpers.WriteSeparatorCell(writer, MaxWidthProperties);
+            foreach (var column in MaxWidthData)
+                RenderingHelpers.WriteSeparatorCell(writer, column.Value);
+            writer.WriteLine();
+
+            foreach (var (name, values) in Data)
+            {
+                writer.Write('|');
+                RenderingHelpers.WriteCenteredCell(writer, name, MaxWidthProperties);
+                for (var index = 0; index < values.Count; index++)
+                    RenderingHelpers.WriteCenteredCell(writer, values[index].Value, MaxWidthData[index]);
+                writer.WriteLine();
+            }
         }
 
         public string GetValue(T item, PropertyName property)
         {
             if (string.IsNullOrEmpty(property.Name)) return null;
             object value;
-            if (property.IsCollection)
-            {
-                var prop = item.GetType().GetProperties()[property.PropertyIndex];
-                value = prop.GetValue(item, [property.Index]);
-            }
+            if (property.Accessor is PropertyAccessor<T> directAccessor)
+                value = directAccessor.GetValue(item);
+            else if (TypeMetadata<T>.PropertiesByName.TryGetValue(property.Name, out var accessor))
+                value = accessor.GetValue(item);
             else
             {
-                var properties = item.GetType().GetProperty(property.Name);
-                value = properties?.GetValue(item, null);
+                var runtimeProperty = Array.Find(TypeMetadata<T>.GetRuntimeProperties(item.GetType()),
+                    candidate => candidate.Name == property.Name && candidate.GetIndexParameters().Length == 0);
+                value = runtimeProperty?.GetValue(item, null);
             }
 
             return ObjectToString(value);

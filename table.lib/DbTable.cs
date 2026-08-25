@@ -1,68 +1,41 @@
-﻿//MIT License
+//MIT License
 
 //Copyright (c) 2020-2024 Jordi Corbilla
 
-//Permission is hereby granted, free of charge, to any person obtaining a copy
-//of this software and associated documentation files (the "Software"), to deal
-//in the Software without restriction, including without limitation the rights
-//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-//copies of the Software, and to permit persons to whom the Software is
-//furnished to do so, subject to the following conditions:
-
-//The above copyright notice and this permission notice shall be included in all
-//copies or substantial portions of the Software.
-
-//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-//SOFTWARE.
-
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
+using System.Linq;
 
 namespace table.lib
 {
     public class DbTable
     {
-        public IEnumerable<IDictionary<string, object>> Items { get; set; }
-        public List<PropertyName> PropertyNames { get; set; }
-        public Dictionary<string, int> MaxWidth { get; set; }
+        private List<IDictionary<string, object>> _items = [];
+
+        public IEnumerable<IDictionary<string, object>> Items
+        {
+            get => _items;
+            set
+            {
+                ArgumentNullException.ThrowIfNull(value);
+                _items = value as List<IDictionary<string, object>> ?? value.ToList();
+                RebuildMetadata();
+            }
+        }
+
+        public List<PropertyName> PropertyNames { get; set; } = [];
+        public Dictionary<string, int> MaxWidth { get; set; } = [];
         public Options Options { get; set; } = new Options();
         public Dictionary<string, bool> ColumnFilter { get; set; } = [];
         public FilterAction ColumnAction { get; set; } = FilterAction.Exclude;
 
         public DbTable(IEnumerable<IDictionary<string, object>> list, Options options = null)
         {
-            PropertyNames = [];
-            MaxWidth = [];
+            ArgumentNullException.ThrowIfNull(list);
+            if (options != null) Options = options;
             Items = list;
-            if (options != null)
-                Options = options;
-            var addedProperties = false;
-            foreach (var row in Items)
-            {
-                var columnIndex = 0;
-                foreach (var (key, value) in row)
-                    if (!addedProperties)
-                    {
-                        PropertyNames.Add(new PropertyName(key, columnIndex++, columnIndex));
-                        MaxWidth.Add(key, key.Length);
-                        if (value != null && ObjectToString(value).Length > MaxWidth[key])
-                            MaxWidth[key] = ObjectToString(value).Length;
-                    }
-                    else
-                    {
-                        if (value != null && ObjectToString(value).Length > MaxWidth[key])
-                            MaxWidth[key] = ObjectToString(value).Length;
-                    }
-
-                addedProperties = true;
-            }
         }
 
         public static DbTable Add(IEnumerable<IDictionary<string, object>> list, Options options = null)
@@ -72,8 +45,8 @@ namespace table.lib
 
         public DbTable FilterColumns(string[] columns, FilterAction action = FilterAction.Exclude)
         {
-            var filter = columns.ToDictionary(column => column, column => false);
-            ColumnFilter = filter;
+            ArgumentNullException.ThrowIfNull(columns);
+            ColumnFilter = columns.ToDictionary(column => column, _ => false, StringComparer.Ordinal);
             ColumnAction = action;
             return this;
         }
@@ -82,173 +55,139 @@ namespace table.lib
         {
             return value switch
             {
-                string s => s,
-                int _ => value.ToString(),
-                long _ => value.ToString(),
-                bool _ => value.ToString(),
+                string text => text,
                 DateTime time => time.ToString(Options.DateFormat),
-                decimal value1 => value1.ToString(Options.DecimalFormat),
-                double value1 => value1.ToString(Options.DecimalFormat),
-                _ => (value != null ? value.ToString() : "")
+                decimal number => number.ToString(Options.DecimalFormat),
+                double number => number.ToString(Options.DecimalFormat),
+                _ => value?.ToString() ?? string.Empty
             };
         }
 
         public List<PropertyName> FilterProperties()
         {
-            var filteredPropertyNames = new List<PropertyName>();
+            if (ColumnAction is not FilterAction.Include and not FilterAction.Exclude)
+                throw new ArgumentOutOfRangeException(nameof(ColumnAction), ColumnAction, "Unsupported filter action.");
 
-            foreach (var propertyName in PropertyNames)
-                switch (ColumnAction)
-                {
-                    case FilterAction.Include:
-                        {
-                            if (ColumnFilter.ContainsKey(propertyName.Name))
-                                filteredPropertyNames.Add(propertyName);
-                            break;
-                        }
-                    case FilterAction.Exclude:
-                        {
-                            if (!ColumnFilter.ContainsKey(propertyName.Name))
-                                filteredPropertyNames.Add(propertyName);
-                            break;
-                        }
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-            return filteredPropertyNames;
+            var properties = new List<PropertyName>(PropertyNames.Count);
+            foreach (var property in PropertyNames)
+            {
+                var selected = ColumnFilter.ContainsKey(property.Name);
+                if ((ColumnAction == FilterAction.Include && selected) ||
+                    (ColumnAction == FilterAction.Exclude && !selected))
+                    properties.Add(property);
+            }
+            return properties;
         }
 
         public override string ToString()
         {
-            if (!Items.Any()) return string.Empty;
-            var s = "|";
-            var sb = new StringBuilder();
-
-            var filteredPropertyNames = FilterProperties();
-
-            foreach (var property in filteredPropertyNames)
-            {
-                var headerName = property.Name;
-                var length = MaxWidth[property.Name] - headerName.Length;
-                var header = headerName.ToValidOutput();
-                var totalLength = $"{new string(' ', length)}{header}".Length;
-                var remaining = totalLength - $"{new string(' ', length / 2)}{header}".Length;
-                s += $" {new string(' ', length / 2)}{header}{new string(' ', remaining)} |";
-            }
-
-            sb.AppendLine(s);
-
-            s = filteredPropertyNames.Aggregate("|",
-                (current, name) => current + $" {new string('-', MaxWidth[name.Name])} |");
-
-            sb.AppendLine(s);
-
-            foreach (var row in Items)
-            {
-                sb.Append('|');
-                foreach (var (key, value) in row)
-                {
-                    var text = value ?? "";
-                    var obj = ObjectToString(text);
-                    var length = MaxWidth[key] - obj.Length;
-                    var output = obj.ToValidOutput();
-                    sb.Append(' ');
-                    sb.Append($"{output}{new string(' ', length)}");
-                    sb.Append(" |");
-                }
-
-                sb.Append(Environment.NewLine);
-            }
-
-            sb.AppendLine("");
-            return sb.ToString();
+            return _items.Count == 0 ? string.Empty : RenderingHelpers.RenderToString(WriteTable);
         }
 
         public string ToSpecFlowString()
         {
-            if (!Items.Any()) return string.Empty;
-            var s = "|";
-            var sb = new StringBuilder();
+            return _items.Count == 0 ? string.Empty : RenderingHelpers.RenderToString(WriteSpecFlow);
+        }
 
-            var filteredPropertyNames = FilterProperties();
+        public void WriteSpecFlow(TextWriter writer)
+        {
+            ArgumentNullException.ThrowIfNull(writer);
+            if (_items.Count == 0) return;
 
-            foreach (var property in filteredPropertyNames)
-            {
-                var headerName = property.Name;
-                var length = MaxWidth[property.Name] - headerName.Length;
-                var header = headerName.ToValidOutput();
-                var totalLength = $"{new string(' ', length)}{header}".Length;
-                var remaining = totalLength - $"{new string(' ', length / 2)}{header}".Length;
-                s += $" {new string(' ', length / 2)}{header}{new string(' ', remaining)} |";
-            }
-
-            sb.AppendLine(s);
-
-            foreach (var row in Items)
-            {
-                sb.Append('|');
-                foreach (var (key, value) in row)
-                {
-                    var text = value ?? "";
-                    var obj = ObjectToString(text);
-                    var length = MaxWidth[key] - obj.Length;
-                    var output = obj.ToValidOutput();
-                    sb.Append(' ');
-                    sb.Append($"{output}{new string(' ', length)}");
-                    sb.Append(" |");
-                }
-
-                sb.Append(Environment.NewLine);
-            }
-
-            sb.AppendLine("");
-            return sb.ToString();
+            var properties = FilterProperties();
+            WriteHeader(writer, properties);
+            WriteRows(writer, properties);
+            writer.WriteLine();
         }
 
         public string ToSqlInsertString()
         {
-            var stringBuilder = new StringBuilder();
-            if (!Items.Any()) return "";
-            var header = $"INSERT INTO Table1 (";
-            var filteredPropertyNames = FilterProperties();
-            foreach (var property in filteredPropertyNames)
-            {
-                var headerName = property.Name;
+            return _items.Count == 0 ? string.Empty : RenderingHelpers.RenderToString(WriteSqlInsert);
+        }
 
-                header += $"{headerName.ToSqlColumn()},";
+        public void WriteSqlInsert(TextWriter writer)
+        {
+            ArgumentNullException.ThrowIfNull(writer);
+            if (_items.Count == 0) return;
+
+            var properties = FilterProperties();
+            var prefix = new StringBuilder("INSERT INTO Table1 (");
+            for (var index = 0; index < properties.Count; index++)
+            {
+                if (index > 0) prefix.Append(',');
+                prefix.Append(properties[index].Name.ToSqlColumn());
             }
+            prefix.Append(") VALUES (");
 
-            header = header.Remove(header.Length - 1);
-            header += ") VALUES (";
-
-            foreach (var row in Items)
+            foreach (var row in _items)
             {
-                var s = "";
+                writer.Write(prefix);
+                for (var index = 0; index < properties.Count; index++)
+                {
+                    if (index > 0) writer.Write(',');
+                    row.TryGetValue(properties[index].Name, out var value);
+                    writer.Write(RenderingHelpers.ToSqlLiteral(value));
+                }
+                writer.WriteLine(");");
+            }
+        }
 
+        private void RebuildMetadata()
+        {
+            PropertyNames = [];
+            MaxWidth = [];
+
+            foreach (var row in _items)
+            {
                 foreach (var (key, value) in row)
                 {
-                    var obj = value;
-                    var p = obj switch
+                    if (!MaxWidth.TryGetValue(key, out var width))
                     {
-                        string z => "'" + z.ToSql() + "'",
-                        int _ => obj.ToString().ToSql(),
-                        long _ => obj.ToString().ToSql(),
-                        bool _ => obj.ToString().ToSql() == "True" ? "1" : "0",
-                        DateTime time => "'" + time.ToString("yyyy-MM-dd") + "'",
-                        decimal value1 => value1.ToString("#0.0###"),
-                        double value1 => value1.ToString("#0.0###"),
-                        _ => (obj != null ? obj.ToString().ToSql() : "NULL")
-                    };
-                    s += $"{p},";
+                        PropertyNames.Add(new PropertyName(key));
+                        width = key.Length;
+                        MaxWidth.Add(key, width);
+                    }
+
+                    var text = ObjectToString(value);
+                    if (text.Length > width) MaxWidth[key] = text.Length;
                 }
-
-                s = s.Remove(s.Length - 1);
-                s += ");";
-                stringBuilder.AppendLine($"{header}{s}");
             }
+        }
 
-            return stringBuilder.ToString();
+        private void WriteTable(TextWriter writer)
+        {
+            var properties = FilterProperties();
+            WriteHeader(writer, properties);
+
+            writer.Write('|');
+            foreach (var property in properties)
+                RenderingHelpers.WriteSeparatorCell(writer, MaxWidth[property.Name]);
+            writer.WriteLine();
+
+            WriteRows(writer, properties);
+            writer.WriteLine();
+        }
+
+        private void WriteHeader(TextWriter writer, IReadOnlyList<PropertyName> properties)
+        {
+            writer.Write('|');
+            foreach (var property in properties)
+                RenderingHelpers.WriteCenteredCell(writer, property.Name.ToValidOutput(), MaxWidth[property.Name]);
+            writer.WriteLine();
+        }
+
+        private void WriteRows(TextWriter writer, IReadOnlyList<PropertyName> properties)
+        {
+            foreach (var row in _items)
+            {
+                writer.Write('|');
+                foreach (var property in properties)
+                {
+                    row.TryGetValue(property.Name, out var value);
+                    RenderingHelpers.WriteValueCell(writer, ObjectToString(value).ToValidOutput(), MaxWidth[property.Name]);
+                }
+                writer.WriteLine();
+            }
         }
     }
 }

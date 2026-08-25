@@ -21,6 +21,7 @@
 //SOFTWARE.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace table.lib
@@ -46,19 +47,7 @@ namespace table.lib
         public string GetValue(T item, PropertyName property)
         {
             if (string.IsNullOrEmpty(property.Name)) return null;
-            object value;
-            if (property.IsCollection)
-            {
-                var prop = item.GetType().GetProperties()[property.PropertyIndex];
-                value = prop.GetValue(item, [property.Index]);
-            }
-            else
-            {
-                var properties = item.GetType().GetProperty(property.Name);
-                value = properties?.GetValue(item, null);
-            }
-
-            return ObjectToString(value);
+            return ObjectToString(GetOriginalValue(item, property));
         }
 
         public object GetOriginalValue(T item, PropertyName property)
@@ -67,12 +56,23 @@ namespace table.lib
             object value;
             if (property.IsCollection)
             {
-                var prop = item.GetType().GetProperties()[property.PropertyIndex];
-                value = prop.GetValue(item, [property.Index]);
+                if (item is IList list)
+                    value = property.Index >= 0 && property.Index < list.Count ? list[property.Index] : null;
+                else
+                {
+                    var runtimeProperties = TypeMetadata<T>.GetRuntimeProperties(item.GetType());
+                    var prop = runtimeProperties[property.PropertyIndex];
+                    value = prop.GetValue(item, [property.Index]);
+                }
             }
+            else if (property.Accessor is PropertyAccessor<T> directAccessor)
+                value = directAccessor.GetValue(item);
+            else if (TypeMetadata<T>.PropertiesByName.TryGetValue(property.Name, out var accessor))
+                value = accessor.GetValue(item);
             else
             {
-                var properties = item.GetType().GetProperty(property.Name);
+                var properties = Array.Find(TypeMetadata<T>.GetRuntimeProperties(item.GetType()),
+                    candidate => candidate.Name == property.Name && candidate.GetIndexParameters().Length == 0);
                 value = properties?.GetValue(item, null);
             }
 
@@ -92,6 +92,11 @@ namespace table.lib
                 double value1 => value1.ToString(Options.DecimalFormat),
                 _ => (value != null ? value.ToString() : "")
             };
+        }
+
+        internal static string ToSqlLiteral(object value)
+        {
+            return RenderingHelpers.ToSqlLiteral(value);
         }
 
         public List<PropertyName> FilterProperties()

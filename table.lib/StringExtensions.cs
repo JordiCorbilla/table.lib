@@ -21,6 +21,7 @@
 //SOFTWARE.
 
 using System;
+using System.Net;
 
 namespace table.lib
 {
@@ -28,15 +29,10 @@ namespace table.lib
     {
         public static string ToCsv(this string value)
         {
-            var enclose = false;
-            if (value.Contains('"'))
-            {
-                value = value.Replace("\"", "\"\"");
-                enclose = true;
-            }
+            if (value == null) return string.Empty;
 
-            if (value.Contains(Environment.NewLine) || value.Contains(',')) enclose = true;
-
+            var enclose = value.IndexOfAny([',', '"', '\r', '\n']) >= 0;
+            if (value.Contains('"')) value = value.Replace("\"", "\"\"");
             return enclose ? $"\"{value}\"" : value;
         }
 
@@ -52,40 +48,33 @@ namespace table.lib
 
         public static string ToSql(this string value)
         {
-            if (value.Contains('\''))
-            {
-                value = value.Replace("\'", "\"");
-            }
+            if (value == null) return string.Empty;
 
-            if (value.Contains(Environment.NewLine))
-            {
-                value = value.Replace(Environment.NewLine, " ");
-            }
-
-            if (value.Contains(','))
-            {
-                value = value.Replace(",", "-");
-            }
-
-            return value;
+            return value
+                .Replace("'", "''")
+                .Replace("\r\n", " ")
+                .Replace('\r', ' ')
+                .Replace('\n', ' ');
         }
 
         public static string ToValidOutput(this string value)
         {
-            if (value.Contains(Environment.NewLine)) value = value.Replace(Environment.NewLine, " ");
+            if (value == null) return string.Empty;
 
-            if (value.Contains('\n')) value = value.Replace("\n", " ");
-
-            return value;
+            return value
+                .Replace("\r\n", " ")
+                .Replace('\r', ' ')
+                .Replace('\n', ' ');
         }
 
         public static string ToHtml(this string value)
         {
-            if (value.Contains(Environment.NewLine)) value = value.Replace(Environment.NewLine, "<br>");
+            if (value == null) return string.Empty;
 
-            if (value.Contains('\n')) value = value.Replace("\n", "<br>");
-
-            return value;
+            return WebUtility.HtmlEncode(value)
+                .Replace("\r\n", "<br>")
+                .Replace("\r", "<br>")
+                .Replace("\n", "<br>");
         }
     }
 }

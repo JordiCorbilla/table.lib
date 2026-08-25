@@ -21,6 +21,7 @@
 //SOFTWARE.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -49,58 +50,53 @@ namespace table.lib
             PropertyNames = [];
             MaxWidth = [];
             Items = list;
-            var properties = typeof(T).GetProperties();
+            var properties = TypeMetadata<T>.Properties;
             ClassName = typeof(T).Name;
             foreach (var property in properties)
             {
-                PropertyNames.Add(new PropertyName(property.Name));
+                PropertyNames.Add(new PropertyName(property.Name) { Accessor = property });
                 MaxWidth.Add(property.Name, property.Name.Length);
             }
 
             foreach (var row in Items)
-                if (properties.Length != 0)
+                if (properties.Count != 0)
                 {
                     foreach (var property in PropertyNames)
                     {
-                        var value = GetValue(row, new PropertyName(property.Name));
+                        var value = GetValue(row, property);
                         if (value.Length > MaxWidth[property.Name])
                             MaxWidth[property.Name] = value.Length;
                     }
                 }
                 else
                 {
-                    var props = row.GetType().GetProperties();
+                    var props = TypeMetadata<T>.GetRuntimeProperties(row.GetType());
 
                     var propertyIndex = 0;
                     foreach (var propertyInfo in props)
                     {
                         // Indexed property (collections)
-                        if (propertyInfo.GetIndexParameters().Length > 0)
+                        var indexParameters = propertyInfo.GetIndexParameters();
+                        if (indexParameters.Length == 1 && indexParameters[0].ParameterType == typeof(int) &&
+                            row is IEnumerable enumerable)
                         {
-                            var reading = true;
                             var index = 0;
-                            while (reading)
-                                try
+                            foreach (var res in enumerable)
+                            {
+                                var prop = $"{Options.DynamicName}{index}";
+                                if (!MaxWidth.TryGetValue(prop, out var width))
                                 {
-                                    var prop = $"{Options.DynamicName}{index}";
-                                    var res = propertyInfo.GetValue(row, [index]);
-                                    if (!MaxWidth.TryGetValue(prop, out int value))
-                                    {
-                                        PropertyNames.Add(new PropertyName(prop, index, propertyIndex));
-                                        value = prop.Length;
-                                        MaxWidth.Add(prop, value);
-                                    }
+                                    PropertyNames.Add(new PropertyName(prop, index, propertyIndex));
+                                    width = prop.Length;
+                                    MaxWidth.Add(prop, width);
+                                }
 
-                                    if (res.ToString().Length > value)
-                                        MaxWidth[prop] = res.ToString().Length;
-                                    index++;
-                                }
-                                catch (Exception)
-                                {
-                                    reading = false;
-                                }
+                                var text = ObjectToString(res);
+                                if (text.Length > width) MaxWidth[prop] = text.Length;
+                                index++;
+                            }
                         }
-                        else
+                        else if (indexParameters.Length == 0)
                         {
                             if (!MaxWidth.TryGetValue(propertyInfo.Name, out int value))
                             {
@@ -320,289 +316,177 @@ namespace table.lib
 
         public string ToSpecFlowString()
         {
-            if (Items.Count == 0) return string.Empty;
-            var s = "|";
-            var sb = new StringBuilder();
+            return Items.Count == 0 ? string.Empty : RenderingHelpers.RenderToString(WriteSpecFlow);
+        }
 
-            var filteredPropertyNames = FilterProperties();
+        public void WriteSpecFlow(TextWriter writer)
+        {
+            ArgumentNullException.ThrowIfNull(writer);
+            if (Items.Count == 0) return;
 
-            foreach (var property in filteredPropertyNames)
+            var properties = FilterProperties();
+            writer.Write('|');
+            foreach (var property in properties)
             {
-                var headerName = property.Name;
-                if (ColumnNameOverrides.TryGetValue(property.Name, out string value))
-                    headerName = value;
-
-                var length = MaxWidth[property.Name] - headerName.Length;
-
-                var header = headerName.ToValidOutput();
-                var totalLength = $"{new string(' ', length)}{header}".Length;
-                var remaining = totalLength - $"{new string(' ', length / 2)}{header}".Length;
-                s += $" {new string(' ', length / 2)}{header}{new string(' ', remaining)} |";
+                var header = ColumnNameOverrides.TryGetValue(property.Name, out var value) ? value : property.Name;
+                RenderingHelpers.WriteCenteredCell(writer, header.ToValidOutput(), MaxWidth[property.Name]);
             }
-
-            sb.AppendLine(s);
+            writer.WriteLine();
 
             foreach (var row in Items)
             {
-                sb.Append('|');
-                foreach (var property in filteredPropertyNames)
+                writer.Write('|');
+                foreach (var property in properties)
                 {
-                    var valueProp = GetValue(row, property);
-                    var length = MaxWidth[property.Name] - valueProp.Length;
-                    var output = valueProp.ToValidOutput();
-                    if (ColumnTextJustification.TryGetValue(property.Name, out TextJustification value))
-                    {
-                        switch (value)
-                        {
-                            case TextJustification.Centered:
-                                var totalLength = $"{new string(' ', length)}{output}".Length;
-                                var remaining = totalLength - $"{new string(' ', length / 2)}{output}".Length;
-                                sb.Append(' ');
-                                sb.Append($"{new string(' ', length / 2)}{output}{new string(' ', remaining)}");
-                                sb.Append(" |");
-                                break;
-                            case TextJustification.Right:
-                                sb.Append(' ');
-                                sb.Append($"{new string(' ', length)}{output}");
-                                sb.Append(" |");
-                                break;
-                            case TextJustification.Left:
-                                sb.Append(' ');
-                                sb.Append($"{output}{new string(' ', length)}");
-                                sb.Append(" |");
-                                break;
-                            case TextJustification.Justified:
-                                sb.Append(' ');
-                                sb.Append($"{output}{new string(' ', length)}");
-                                sb.Append(" |");
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
-                    }
-                    else
-                    {
-                        sb.Append(' ');
-                        sb.Append($"{output}{new string(' ', length)}");
-                        sb.Append(" |");
-                    }
+                    var output = GetValue(row, property).ToValidOutput();
+                    var justification = ColumnTextJustification.TryGetValue(property.Name, out var value)
+                        ? value
+                        : TextJustification.Left;
+                    RenderingHelpers.WriteValueCell(writer, output, MaxWidth[property.Name], justification);
                 }
-
-                sb.Append(Environment.NewLine);
+                writer.WriteLine();
             }
-
-            sb.AppendLine("");
-            return sb.ToString();
+            writer.WriteLine();
         }
 
         public void ToMarkDown(string fileName, bool consoleVerbose = false)
         {
             using var file = new StreamWriter(fileName);
-            file.WriteLine(ToMarkDown());
+            WriteMarkdown(file);
 
             if (consoleVerbose)
-                Console.WriteLine(ToMarkDown());
+                WriteMarkdown(Console.Out);
         }
 
         public string ToMarkDown()
         {
-            if (Items.Count == 0) return "";
-            var stringBuilder = new StringBuilder();
-            var s = "|";
+            return Items.Count == 0 ? string.Empty : RenderingHelpers.RenderToString(WriteMarkdown);
+        }
 
-            var filteredPropertyNames = FilterProperties();
+        public void WriteMarkdown(TextWriter writer)
+        {
+            ArgumentNullException.ThrowIfNull(writer);
+            if (Items.Count == 0) return;
 
-            foreach (var property in filteredPropertyNames)
+            var properties = FilterProperties();
+            writer.Write('|');
+            foreach (var property in properties)
             {
-                var headerName = property.Name;
-                if (ColumnNameOverrides.TryGetValue(property.Name, out string value))
-                    headerName = value;
-
-                var length = MaxWidth[property.Name] - headerName.Length;
-                s += $" {headerName.ToValidOutput()}{new string(' ', length)} |";
+                var header = ColumnNameOverrides.TryGetValue(property.Name, out var value) ? value : property.Name;
+                RenderingHelpers.WriteValueCell(writer, header.ToValidOutput(), MaxWidth[property.Name]);
             }
+            writer.WriteLine();
 
-            stringBuilder.AppendLine(s);
-
-            s = "|";
-            foreach (var property in filteredPropertyNames)
+            writer.Write('|');
+            foreach (var property in properties)
             {
-                var columnSeparator = $" {new string('-', MaxWidth[property.Name])} |";
-                if (ColumnTextJustification.TryGetValue(property.Name, out TextJustification value))
-                    switch (value)
-                    {
-                        case TextJustification.Centered:
-                            columnSeparator = columnSeparator.Replace("- ", ": ");
-                            columnSeparator = columnSeparator.Replace(" -", " :");
-                            break;
-                        case TextJustification.Right:
-                            columnSeparator = columnSeparator.Replace("- ", ": ");
-                            break;
-                        case TextJustification.Left:
-                            columnSeparator = columnSeparator.Replace(" -", " :");
-                            break;
-                        case TextJustification.Justified:
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException(
-                                $"Unrecognized TextJustification {value}");
-                    }
-
-                s += columnSeparator;
+                var justification = ColumnTextJustification.TryGetValue(property.Name, out var value)
+                    ? value
+                    : TextJustification.Justified;
+                writer.Write(' ');
+                if (justification is TextJustification.Centered or TextJustification.Left) writer.Write(':');
+                RenderingHelpers.WriteRepeated(writer, '-', MaxWidth[property.Name] -
+                    (justification == TextJustification.Centered ? 2 : justification is TextJustification.Right or TextJustification.Left ? 1 : 0));
+                if (justification is TextJustification.Centered or TextJustification.Right) writer.Write(':');
+                writer.Write(" |");
             }
-
-            stringBuilder.AppendLine(s);
+            writer.WriteLine();
 
             foreach (var row in Items)
             {
-                s = "|";
-                foreach (var property in filteredPropertyNames)
-                {
-                    var value = GetValue(row, property);
-                    var length = MaxWidth[property.Name] - value.Length;
-                    s += $" {value.ToValidOutput()}{new string(' ', length)} |";
-                }
-
-                stringBuilder.AppendLine(s);
+                writer.Write('|');
+                foreach (var property in properties)
+                    RenderingHelpers.WriteValueCell(writer, GetValue(row, property).ToValidOutput(), MaxWidth[property.Name]);
+                writer.WriteLine();
             }
-
-            stringBuilder.AppendLine();
-
-            return stringBuilder.ToString();
+            writer.WriteLine();
         }
 
         public void ToHtml(string fileName)
         {
             using var file = new StreamWriter(fileName);
-            file.WriteLine(ToHtml());
+            WriteHtml(file);
         }
 
         public string ToHtml()
         {
-            var stringBuilder = new StringBuilder();
-            if (Items.Count == 0) return "";
-            stringBuilder.AppendLine("<table style=\"border-collapse: collapse; width: 100%;\">");
-            stringBuilder.AppendLine("<tr>");
+            return Items.Count == 0 ? string.Empty : RenderingHelpers.RenderToString(WriteHtml);
+        }
 
-            var filteredPropertyNames = FilterProperties();
-            foreach (var property in filteredPropertyNames)
+        public void WriteHtml(TextWriter writer)
+        {
+            ArgumentNullException.ThrowIfNull(writer);
+            if (Items.Count == 0) return;
+
+            writer.WriteLine("<table style=\"border-collapse: collapse; width: 100%;\">");
+            writer.WriteLine("<tr>");
+            var properties = FilterProperties();
+            foreach (var property in properties)
             {
-                var headerName = property.Name;
-                if (ColumnNameOverrides.TryGetValue(property.Name, out string value))
-                    headerName = value;
-
-                stringBuilder.AppendLine(
-                    $"<th style=\"text-align: center; background-color: #04163d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">{headerName.ToHtml()}</th>");
+                var header = ColumnNameOverrides.TryGetValue(property.Name, out var value) ? value : property.Name;
+                writer.Write("<th style=\"text-align: center; background-color: #04163d; color: white;padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">");
+                writer.Write(header.ToHtml());
+                writer.WriteLine("</th>");
             }
-
-            stringBuilder.AppendLine("</tr>");
+            writer.WriteLine("</tr>");
 
             var rowNumber = 1;
             foreach (var row in Items)
             {
-                stringBuilder.AppendLine("<tr>");
-                foreach (var property in filteredPropertyNames)
+                writer.WriteLine("<tr>");
+                foreach (var property in properties)
                 {
-                    var valueProp = GetValue(row, property);
-                    var color = rowNumber % 2 == 0 ? "#f2f2f2" : "white";
-
-                    if (Operation != null && Operation.TryGetValue(property.Name, out List<HighlightOperator> value))
-                    {
-                        foreach (var item in value)
-                            switch (item.Type)
-                            {
-                                case HighlightType.Decimal:
-                                    try
-                                    {
-                                        var parsed = decimal.Parse(valueProp.Trim());
-                                        foreach (var num in item.DecimalValue)
-                                            switch (item.Operation)
-                                            {
-                                                case HighlightOperation.Differences
-                                                    when decimal.Compare(Math.Round(parsed, Options.NumberDecimals),
-                                                        Math.Round(num, Options.NumberDecimals)) != 0:
-                                                    color = "#f9f948";
-                                                    break;
-                                                case HighlightOperation.Differences:
-                                                    color = "#f9f948";
-                                                    break;
-                                                case HighlightOperation.Equality:
-                                                    {
-                                                        if (decimal.Compare(Math.Round(parsed, Options.NumberDecimals),
-                                                            Math.Round(num, Options.NumberDecimals)) == 0)
-                                                        {
-                                                            color = "#f9f948";
-                                                        }
-
-                                                        break;
-                                                    }
-                                                default:
-                                                    throw new ArgumentOutOfRangeException(
-                                                        $"Unrecognized operation {item.Operation}");
-                                            }
-                                    }
-                                    catch
-                                    {
-                                        // do nothing
-                                    }
-
-                                    break;
-                                case HighlightType.String:
-                                    try
-                                    {
-                                        foreach (var str in item.StringValue)
-                                            switch (item.Operation)
-                                            {
-                                                case HighlightOperation.Differences
-                                                    when valueProp.Trim() != str:
-                                                    color = "#f9f948";
-                                                    break;
-                                                case HighlightOperation.Differences:
-                                                    color = "#f9f948";
-                                                    break;
-                                                case HighlightOperation.Equality:
-                                                    {
-                                                        if (valueProp.Trim() == str)
-                                                        {
-                                                            color = "#f9f948";
-                                                        }
-
-                                                        break;
-                                                    }
-                                                default:
-                                                    throw new ArgumentOutOfRangeException(
-                                                        $"Unrecognized operation {item.Operation}");
-                                            }
-                                    }
-                                    catch
-                                    {
-                                        // do nothing
-                                    }
-
-                                    break;
-                                default:
-                                    throw new ArgumentOutOfRangeException($"Unrecognized type {item.Type}");
-                            }
-
-                    }
-
-                    stringBuilder.AppendLine(
-                        $"<td style=\"text-align: right; color: black; background-color: {color};padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">{valueProp.ToHtml()}</td>");
+                    var value = GetValue(row, property);
+                    var color = GetHtmlCellColor(property.Name, value, rowNumber);
+                    writer.Write("<td style=\"text-align: right; color: black; background-color: ");
+                    writer.Write(color);
+                    writer.Write(";padding: 4px;border: 1px solid #dddddd; font-family:monospace; font-size: 14px;\">");
+                    writer.Write(value.ToHtml());
+                    writer.WriteLine("</td>");
                 }
-
                 rowNumber++;
-                stringBuilder.AppendLine("</tr>");
+                writer.WriteLine("</tr>");
             }
+            writer.WriteLine("</table>");
+        }
 
-            stringBuilder.AppendLine("</table>");
+        private string GetHtmlCellColor(string propertyName, string value, int rowNumber)
+        {
+            var color = rowNumber % 2 == 0 ? "#f2f2f2" : "white";
+            if (!Operation.TryGetValue(propertyName, out var operations)) return color;
 
-            return stringBuilder.ToString();
+            foreach (var operation in operations)
+            {
+                switch (operation.Type)
+                {
+                    case HighlightType.Decimal when decimal.TryParse(value.Trim(), out var parsed):
+                        foreach (var expected in operation.DecimalValue)
+                        {
+                            var equal = decimal.Compare(Math.Round(parsed, Options.NumberDecimals),
+                                Math.Round(expected, Options.NumberDecimals)) == 0;
+                            if ((operation.Operation == HighlightOperation.Equality && equal) ||
+                                (operation.Operation == HighlightOperation.Differences && !equal))
+                                color = "#f9f948";
+                        }
+                        break;
+                    case HighlightType.String:
+                        foreach (var expected in operation.StringValue)
+                        {
+                            var equal = value.Trim() == expected;
+                            if ((operation.Operation == HighlightOperation.Equality && equal) ||
+                                (operation.Operation == HighlightOperation.Differences && !equal))
+                                color = "#f9f948";
+                        }
+                        break;
+                }
+            }
+            return color;
         }
 
         public void ToCsv(string fileName)
         {
             using var file = new StreamWriter(fileName);
-            file.WriteLine(ToCsv());
+            WriteCsv(file);
         }
 
         public void ToCsv(string fileName, CsvOptionType option, List<string> cache)
@@ -620,88 +504,75 @@ namespace table.lib
 
         public string ToCsv()
         {
-            var stringBuilder = new StringBuilder();
-            if (Items.Count == 0)
-            {
-                if (Options != null && Options.DiscardEmptyList)
-                    return "";
-            }
-            var s = "";
-            var filteredPropertyNames = FilterProperties();
-            foreach (var property in filteredPropertyNames)
-            {
-                var headerName = property.Name;
-                if (ColumnNameOverrides.TryGetValue(property.Name, out string value))
-                    headerName = value;
+            if (Items.Count == 0 && Options.DiscardEmptyList) return string.Empty;
+            return RenderingHelpers.RenderToString(WriteCsv);
+        }
 
-                s += $"{headerName.ToCsv()},";
-            }
+        public void WriteCsv(TextWriter writer)
+        {
+            ArgumentNullException.ThrowIfNull(writer);
+            if (Items.Count == 0 && Options.DiscardEmptyList) return;
 
-            s = s.Remove(s.Length - 1);
-            stringBuilder.AppendLine(s);
+            var properties = FilterProperties();
+            for (var index = 0; index < properties.Count; index++)
+            {
+                if (index > 0) writer.Write(',');
+                var property = properties[index];
+                var header = ColumnNameOverrides.TryGetValue(property.Name, out var value) ? value : property.Name;
+                RenderingHelpers.WriteCsvValue(writer, header);
+            }
+            writer.WriteLine();
 
             foreach (var row in Items)
             {
-                s = (from property in filteredPropertyNames
-                     select GetValue(row, property)).Aggregate("", (current, value) => current + $"{value.ToCsv()},");
-                s = s.Remove(s.Length - 1);
-                stringBuilder.AppendLine(s);
+                for (var index = 0; index < properties.Count; index++)
+                {
+                    if (index > 0) writer.Write(',');
+                    RenderingHelpers.WriteCsvValue(writer, GetValue(row, properties[index]));
+                }
+                writer.WriteLine();
             }
-
-            return stringBuilder.ToString();
         }
 
         public void ToSqlInsertString(string fileName)
         {
             using var file = new StreamWriter(fileName);
-            file.WriteLine(ToSqlInsertString());
+            WriteSqlInsert(file);
         }
 
         public string ToSqlInsertString()
         {
-            var stringBuilder = new StringBuilder();
-            if (Items.Count == 0) return "";
-            var header = $"INSERT INTO {ClassName} (";
-            var filteredPropertyNames = FilterProperties();
-            foreach (var property in filteredPropertyNames)
+            return Items.Count == 0 ? string.Empty : RenderingHelpers.RenderToString(WriteSqlInsert);
+        }
+
+        public void WriteSqlInsert(TextWriter writer)
+        {
+            ArgumentNullException.ThrowIfNull(writer);
+            if (Items.Count == 0) return;
+
+            var properties = FilterProperties();
+            var prefix = new StringBuilder("INSERT INTO ");
+            prefix.Append(ClassName);
+            prefix.Append(" (");
+            for (var index = 0; index < properties.Count; index++)
             {
-                var headerName = property.Name;
-                if (ColumnNameOverrides.TryGetValue(property.Name, out string value))
-                    headerName = value;
-
-                header += $"{headerName.ToSqlColumn()},";
+                if (index > 0) prefix.Append(',');
+                var property = properties[index];
+                var header = ColumnNameOverrides.TryGetValue(property.Name, out var value) ? value : property.Name;
+                prefix.Append(header.ToSqlColumn());
             }
-
-            header = header.Remove(header.Length - 1);
-            header += ") VALUES (";
+            prefix.Append(") VALUES (");
 
             foreach (var row in Items)
             {
-                var s = "";
-                foreach (var property in filteredPropertyNames)
+                writer.Write(prefix);
+                for (var index = 0; index < properties.Count; index++)
                 {
-                    var obj = GetOriginalValue(row, property);
-
-                    var p = obj switch
-                    {
-                        string z => "'" + z.ToSql() + "'",
-                        int _ => obj.ToString().ToSql(),
-                        long _ => obj.ToString().ToSql(),
-                        bool _ => obj.ToString().ToSql() == "True" ? "1" : "0",
-                        DateTime time => "'" + time.ToString("yyyy-MM-dd") + "'",
-                        decimal value1 => value1.ToString("#0.0###"),
-                        double value1 => value1.ToString("#0.0###"),
-                        _ => (obj != null ? obj.ToString().ToSql() : "NULL")
-                    };
-                    s += $"{p},";
+                    if (index > 0) writer.Write(',');
+                    writer.Write(ToSqlLiteral(GetOriginalValue(row, properties[index])));
                 }
-
-                s = s.Remove(s.Length - 1);
-                s += ");";
-                stringBuilder.AppendLine($"{header}{s}");
+                writer.WriteLine(");");
             }
-
-            return stringBuilder.ToString();
         }
     }
 }

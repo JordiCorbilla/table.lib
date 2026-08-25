@@ -1,9 +1,4 @@
-using Dapper;
 using System;
-using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
-using System.Linq;
-using table.runner;
 
 namespace table.lib.tests
 {
@@ -36,36 +31,6 @@ namespace table.lib.tests
             Assert.Multiple((Action)(() =>
             {
                 Assert.That(lines[0], Is.EqualTo("INSERT INTO TestClass (Field1,Field2,Field3,Field4,Field5,Field6) VALUES (NULL,NULL,NULL,NULL,NULL,NULL);"));
-            }));
-        }
-
-        [Test]
-        public void TestNullFromDBGeneration()
-        {
-            var connectionString = Environment.GetEnvironmentVariable("TABLE_LIB_SQL_USERS_CONNECTION");
-            if (string.IsNullOrWhiteSpace(connectionString))
-                Assert.Ignore("Set TABLE_LIB_SQL_USERS_CONNECTION to run this SQL Server integration test.");
-
-            IEnumerable<IDictionary<string, object>> table;
-            using (var connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                const string data = @"
-SELECT PhoneNumber, LockoutEnd
-  FROM [store].[dbo].[AspNetUsers]
-";
-                table = connection.Query(data) as IEnumerable<IDictionary<string, object>>;
-            }
-
-            var enumerable = table as IDictionary<string, object>[] ??
-                             (table ?? throw new InvalidOperationException()).ToArray();
-
-
-            var s = DbTable.Add(enumerable).ToSqlInsertString();
-            var lines = s.Split(Environment.NewLine);
-            Assert.Multiple((Action)(() =>
-            {
-                Assert.That(lines[0], Is.EqualTo("INSERT INTO Table1 (PhoneNumber,LockoutEnd) VALUES (NULL,NULL);"));
             }));
         }
     }
